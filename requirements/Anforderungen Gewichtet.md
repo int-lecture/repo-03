@@ -1,19 +1,19 @@
-#MVP
+# MVP
 
-##F
+## F
   * Ich als Nutzer möchte Nachrichten verschicken können, um zu Chatten.
 
-##NF
+## NF
   * Ich als Nutzer möchte dauerhafte Verfügbarkeit, um jederzeit Chatten können.
   
-#Mittel
+# Mittel
 
-##F
+## F
 
 * Ich als Nutzer möchte eine Blockierfunktion, um unerwünschte Nutzer zu blockieren.
 * Ich als Nutzer möchte eine leicht bedienbare Oberfläche, um mich nicht einarbeiten zu müssen.
 
-##NF
+## NF
 
   * Ich als Nutzer möchte geringstmögliche Verzögungen, um unterbrechungsfrei Chatten zu können. 
   * Ich als Nutzer möchte eine sichere Übermittlung der Daten, um keine Informationen an Fremde zu verlieren.
@@ -21,9 +21,9 @@
   * Ich als Betreiber möchte Erweiterbarkeit, um neue Funktionen ohne großen Aufwand implementieren zu können.
   * Ich als Betreiber möchte gute Wartbarkeit, um den Code ordentlich pflegen zu können.
 
-#Gold Plating
+# Gold Plating
 
-##F
+## F
 
   * Ich als Nutzer möchte Emoji´s, um besser meine Gefühle ausdrücken zu können.
   * Ich als Nutzer möchte Gruppen erstellen können, um mit mehreren Leuten gleichzeitig zu kommunizieren.
@@ -34,7 +34,7 @@
   * Ich als Nutzer möchte meine Daten löschen, um nicht für ewig in dem System zu sein.
   * Ich als Betreiber möchte eine Nutzerverwaltung, um adminisrative Aufgaben zu verringern.
 
-##NF
+## NF
 
   * Ich als Nutzer möchte Portabilität, um nicht von einem Gerät abhägig zu sein.
   * Ich als Nutzer möchte Benachrichtigungen, um rechtzeitig informiert zu werden.
