@@ -15,7 +15,7 @@ h4 {
 	padding-left: 0.8em;
 	padding-right: 0.8em;
 	-webkit-box-shadow: 0 0 0.8em grey;
-			box-shadow: 0 0 0.8em grey;
+		box-shadow: 0 0 0.8em grey;
 }
 
 .topnav a {
@@ -33,6 +33,7 @@ h4 {
     background-color: #FFA54F;
     color: black;
 }
+
 
 .topnav a.active {
     background-color: #E0EEEE;

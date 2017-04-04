@@ -2,17 +2,20 @@
 		$strVorname = $_POST["vorname"];
 		$strNachname = $_POST["nachname"];
 		$strEmail = $_POST["email"];
-		
-		if(vorname == "" || nachname == "" || email == "" || !ja) {
-			echo "Bitte alle Daten eingeben und der Datenspeicherung zustimmen!";
+		if($strVorname == "" || $strNachname == "" || $strEmail == "" || !(isset( $_POST[datenspeicherung]))) {
+			header("Location: registrierenFail.html");
+			exit;
+			
 		}
 		else {
-			$handle = fopen ('newsletterAbos.txt', 'w'	);
-			fwrite($handle, $strVorname);
-			fwrite($handle, $strNachname);
-			fwrite($handle, $strEmail);
+			$handle = fopen ('newsletterAbos.txt', 'a+'	);
+			fwrite($handle, $strVorname . ",");
+			fwrite($handle, $strNachname. ",");
+			fwrite($handle, $strEmail. ", \n");
 			fclose($handle);
-			echo "Die Speicherung war erfolgreich!";
+			header("Location: registrierenSuccess.html");
+			exit;
+			
 		}
 			
 	?>
