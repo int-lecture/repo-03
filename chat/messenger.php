@@ -21,15 +21,21 @@
 		<! Formular für die Registrierung>
 		<form method="get" action="messenger.php">
 			<p>Nutzer: <input type="text" name="nutzer" /></p>
+			<p>Partner: <input type="text" name="partner" /></p>
 			<p><input type="submit" value="Start" /></p>
 		</form>
 
 <?php
 		//Nutzer wird eingelesen.
 		$strNutzer = $_GET["nutzer"];
+		$strPartner= $_GET["partner"];
 		if($strNutzer==""){
 			echo "Gib die Namen ein";
 		}else{
+			if($strPartner!=""){
+				echo" <a href=messenger_chat.php?nutzer=".$strNutzer."&partner=".$strPartner.">".$strPartner."</a> </br>";	
+				echo "<hr/>";	
+			}
 			$alledateien = scandir('chats');
 		
 			foreach($alledateien as $datei){
