@@ -24,25 +24,38 @@
 			<p>Partner: <input type="text" name="partner" /></p>
 			<p><input type="submit" value="Start" /></p>
 		</form>
+		<hr />
 <?php
 		//Nutzer wird eingelesen.
-		$strNutzer = $_GET["nutzer"];
-		$strPartner = $_GET["partner"];
+		$strNutzer ="";
+		$strPartner ="";
 		$datei;
-			if($strNutzer==""|| $strPartner==""){
-				echo "Gib die Namen ein";
-			}else{
-				if((strcmp($strNutzer, $strPartner))<=0){
-					$datei = fopen($strNutzer."_".$strPartner.".txt", "a+");
-					chmod($strNutzer."_".$strPartner.".txt", 0666);
-				}
-				if((strcmp($strPartner, $strNutzer))<0){
-					$datei = fopen($strPartner."_".$strNutzer.".txt", "a+");
-					chmod($strPartner."_".$strNutzer.".txt", 0666);
-				}
-			
-			}
+		$chat;
+		if(isset($_GET["nutzer"]) && isset($_GET["nutzer"])) {
+			$strNutzer = $_GET["nutzer"];
+			$strPartner = $_GET["partner"];
+		}
 		
+		if($strNutzer==""|| $strPartner==""){
+			echo "Gib die Namen ein";
+		}else{
+			if((strcmp($strNutzer, $strPartner))<=0){
+				$datei = fopen($strNutzer."_".$strPartner.".txt", "a+");
+				chmod($strNutzer."_".$strPartner.".txt", 0666);
+				$chat = file_get_contents($strNutzer."_".$strPartner.".txt");
+				echo nl2br($chat);
+			}
+			if((strcmp($strPartner, $strNutzer))<0){
+				$datei = fopen($strPartner."_".$strNutzer.".txt", "a+");
+				chmod($strPartner."_".$strNutzer.".txt", 0666);
+				$chat = file_get_contents($strPartner."_".$strNutzer.".txt");
+				echo nl2br($chat);
+			}
+			
+		}
+		echo "<form method='post' action='messenger.php?nutzer=$nutzer&partner=$partner'>
+			 <p>Nachricht: <input type='text' name='nachricht' />
+			 <input type='submit' value='Senden' /> "
 	?>
 	</div>
 	
