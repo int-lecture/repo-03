@@ -19,15 +19,15 @@
 	<div class="content" id="myContent">
 		<h2> Registrierung </h2> 
 		<! Formular für die Registrierung>
-		<form method="post" action="messenger.php">
+		<form method="get" action="messenger.php">
 			<p>Nutzer: <input type="text" name="nutzer" /></p>
 			<p>Partner: <input type="text" name="partner" /></p>
 			<p><input type="submit" value="Start" /></p>
 		</form>
-	</div>
-	<?php
-		$strNutzer = $_POST["nutzer"];
-		$strPartner = $_POST["partner"];
+<?php
+		//Nutzer wird eingelesen.
+		$strNutzer = $_GET["nutzer"];
+		$strPartner = $_GET["partner"];
 		$datei;
 			if($strNutzer==""|| $strPartner==""){
 				echo "Gib die Namen ein";
@@ -44,6 +44,8 @@
 			}
 		
 	?>
+	</div>
+	
 	
 	
 
