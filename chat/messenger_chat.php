@@ -55,7 +55,7 @@
 			
 		}
 		echo "<h3>".$strNutzer." du chattest jetzt mit ".$strPartner."</h2><form method='post' action='messenger.php?nutzer=".$strNutzer."&partner='>
-			 <input type='submit' class='button' value='Menü' /></form><p id='chatInhalt'>".nl2br($chat).
+			 <input type='submit' class='button' value='Kontaktliste' /></form><p id='chatInhalt'>".nl2br($chat).
 			 "</p><form method='post' action='messenger_chat.php?nutzer=".$strNutzer."&partner=".$strPartner."'>
 			 <input type='text' class='button' name='nachricht' placeholder='Nachricht eingeben...'/></br>
 			 <input type='submit' id='senden' value='Senden' /> </form>

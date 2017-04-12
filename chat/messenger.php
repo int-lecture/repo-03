@@ -22,7 +22,7 @@
 		<! Formular zum einloggen>
 		<form method="get" action="messenger.php">
 			<p><input  type="text" class="pflichtfeld" name="nutzer" placeholder="Nutzernamen eingeben..." required/></p>
-			<p><input type="text" name="partner" placeholder="Partnernamen eingeben..." /></p>
+			<p><input type="text" name="partner" placeholder="Partnernamen eingeben (optional)..." /></p>
 			<p><input type="submit" class="button" value="Start" /></p> <hr/>
 		</form>
 
