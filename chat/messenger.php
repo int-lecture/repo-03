@@ -34,8 +34,7 @@
 			echo "Gib die Namen ein";
 		}else{
 			if($strPartner!=""){
-				echo" <a href=messenger_chat.php?nutzer=".$strNutzer."&partner=".$strPartner.">".$strPartner."</a> </br>";	
-				echo "<hr/>";	
+				header("location: messenger_chat.php?nutzer=".$strNutzer."&partner=".$strPartner);	
 			}
 			$alledateien = scandir('chats');
 		

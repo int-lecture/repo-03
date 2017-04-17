@@ -46,8 +46,11 @@
 			if(isset($_POST["nachricht"])){
 				$strNachricht=$_POST["nachricht"];	
 				if($strNachricht!=""){
-		
-					fwrite($datei, $strNachricht."\n");	
+					date_default_timezone_set("Europe/Berlin");
+					$timestamp = time();
+					$datum = date("d.m.Y",$timestamp);
+					$uhrzeit = date("H:i",$timestamp);
+					fwrite($datei, $strNutzer."  ".$datum." - ".$uhrzeit." : ".$strNachricht."\n");	
 				}
 			}
 			fclose($datei);
