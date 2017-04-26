@@ -36,8 +36,8 @@ public class Service {
 	 */
 	@PUT
 	@Path("/send")
-	@Produces(MediaType.TEXT_PLAIN)
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response send(String json) {
 		try {
 			Message msg = Message.fromJson(json);
@@ -76,6 +76,7 @@ public class Service {
 	 * returns 204(No Content).
 	 */
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/messages/{userid}")
 	public Response getMessages(@PathParam("userid") String userID) {
 		return getMessages(userID, 0);
@@ -89,6 +90,7 @@ public class Service {
 	 * returns 204(No Content).
 	 */
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/messages/{userid}/{sequenceNumber}")
 	public Response getMessages(@PathParam("userid") String userID, @PathParam("sequenceNumber") int sequenceNumber) {
 		if (Service.users.containsKey(userID)) {
