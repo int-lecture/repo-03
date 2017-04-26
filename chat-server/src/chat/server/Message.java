@@ -100,9 +100,25 @@ public class Message {
 				sdf.format(new Date()), text);
 	}
 
-	public String toResponse() {
+	/**
+	 * Converts the message to a JSON object.
+	 * @param isRecvConfirmation If true only date and sequence number are added to the JSON object.
+	 * @return Returns a JSON object representing the message.
+	 * @throws JSONException Somehow the message could not be converted.
+	 */
+	public JSONObject toJson(boolean isRecvConfirmation) throws JSONException {
+		JSONObject obj = new JSONObject();
 		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+		obj.put("date", sdf.format(date));
+		obj.put("sequence", sequence);
 
-		return String.format("{'date': '%s', 'sequence': '%d'}".replace('\'', '"'), sdf.format(new Date()), sequence);
+		// The servers confirms a received client message by returning the messages date and sequence number.
+		if (!isRecvConfirmation) {
+			obj.put("from", from);
+			obj.put("to", to);
+			obj.put("text", text);
+		}
+
+		return obj;
 	}
 }

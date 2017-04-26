@@ -7,14 +7,13 @@ import java.util.Queue;
 
 /**
  * A chat user. Contains the user's name and information about his messages.
- *
  */
 public class User {
 
 	private static final boolean removeOldMessages = true;
 
 	/**
-	 * The username.
+	 * The user's name.
 	 */
 	private String name;
 
@@ -24,7 +23,7 @@ public class User {
 	private int sequenceNumber;
 
 	/**
-	 * Messages to be delievered.
+	 * Messages to be delivered.
 	 */
 	private Queue<Message> messages = new ArrayDeque<Message>();
 
@@ -80,7 +79,7 @@ public class User {
 			}
 		}
 		// Fetch all new messages without deleting them.
-		for (Message message : recvMsgs) {
+		for (Message message : this.messages) {
 			recvMsgs.add(message);
 		}
 
