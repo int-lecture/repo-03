@@ -65,6 +65,12 @@ public class User {
 	public List<Message> receiveMessages(int sequenceNumber) {
 		ArrayList<Message> recvMsgs = new ArrayList<>();
 
+		for (Message message : messages) {
+			if (sequenceNumber == 0 || message.sequence > sequenceNumber) {
+				recvMsgs.add(message);
+			}
+		}
+
 		// Remove all message with a sequence <= the parameter. This removes all
 		// messages from storage that
 		// the client confirmed as received.
@@ -77,10 +83,6 @@ public class User {
 					break;
 				}
 			}
-		}
-		// Fetch all new messages without deleting them.
-		for (Message message : this.messages) {
-			recvMsgs.add(message);
 		}
 
 		return recvMsgs;
