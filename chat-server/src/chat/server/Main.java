@@ -27,13 +27,12 @@ public class Main {
 		}
 		System.out.printf("Grizzly läuft unter %s%n", baseUri);
 		System.out.println("[ENTER] drücken, um Grizzly zu beenden");
+		// Wait forever
 		try {
-			System.in.read();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Thread.currentThread().join();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		threadSelector.stopEndpoint();
 		System.out.println("Grizzly wurde beendet");
 		System.exit(0);
 	}
