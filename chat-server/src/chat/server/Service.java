@@ -23,7 +23,7 @@ import org.json.JSONException;
 public class Service {
 
 	/** String for date parsing in ISO 8601 format. */
-	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ss";
+	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 	/**
 	 * The user base.
 	 */

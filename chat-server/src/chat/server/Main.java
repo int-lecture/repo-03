@@ -26,7 +26,6 @@ public class Main {
 			e.printStackTrace();
 		}
 		System.out.printf("Grizzly läuft unter %s%n", baseUri);
-		System.out.println("[ENTER] drücken, um Grizzly zu beenden");
 		// Wait forever
 		try {
 			Thread.currentThread().join();
