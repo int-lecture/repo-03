@@ -60,7 +60,7 @@ Ist die SessionID nicht korrekt formatiert oder abgelaufen, sendet der Server de
 Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
 
 Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antwort-JSON mit allen Daten des geforderten Profils.
-Hier ist zu beachten das die Kontaktliste und die E-Mail nur zurück gegeben wenn der Nutzer eine Anfrage über sich selbst macht. z.B. :
+Hier ist zu beachten das die Kontaktliste und die E-Mail nur zurückgegeben wenn der Nutzer eine Anfrage über sich selbst macht. z.B. :
 
 ```json
 {
