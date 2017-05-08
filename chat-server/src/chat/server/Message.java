@@ -83,7 +83,7 @@ public class Message {
 			}
 
 			return new Message(obj.getString("from"), obj.getString("to"), date, obj.getString("text"),
-					obj.getInt("sequence"));
+					obj.optInt("sequence"));
 		} catch (JSONException ex) {
 			throw new ParseException("String was not a valid JSON Message object.", -1);
 		}
