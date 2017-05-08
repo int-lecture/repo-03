@@ -11,7 +11,7 @@
   "password" : "halloIchbinBob"
 }
 ```
-Die SessioID ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
+Die SessionID ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
 
 Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
 
@@ -32,6 +32,7 @@ Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antw
 {
   "sessionid": "test123",
   "username": "bob"
+  "expire-date": "2017-03-30T17:00:00Z"
 }
 ```
 
