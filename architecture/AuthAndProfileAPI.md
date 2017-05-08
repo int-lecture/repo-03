@@ -1,5 +1,10 @@
 # API für Authentifizierung und Profile
 
+  ## Ports der Services :
+  
+  * Login : 5001
+  * Registrierung : 5002
+  
   ## Login eines Benutzers
   
   Loginanfragen werden bei der URL `/login` per `POST` als JSON-Dokument (Mime-Type: `application/json`) abgegeben. 
