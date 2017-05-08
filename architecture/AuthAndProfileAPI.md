@@ -13,7 +13,7 @@
 ```
 Das Token ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
 
-Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
+Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 400. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
 
 Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antwort-JSON mit der Token in Base64-Format und dem Auslaufdatum. Z.B.:
 
