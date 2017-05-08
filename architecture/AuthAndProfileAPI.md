@@ -8,7 +8,6 @@
 ```json
 {
   "user": "bob@web.de",
-  "pseudonym": "hans",
   "password": "halloIchbinBob"
 }
 ```
@@ -53,7 +52,6 @@ Ist das Token nicht korrekt formatiert oder abgelaufen, sendet der Server den St
 ```json
 {
   "token": "test123",
-  "name": "bob",
   "getprofile": "susi"
 }
 ```
@@ -78,9 +76,9 @@ Hier ist zu beachten das die Kontaktliste und die E-Mail nur zurückgegeben wenn
 
 ```json
 {
-  "username": "bob",
+  "pseudonym": "bob",
   "password": "halloIchbinBob",
-  "email": "bob@web.de"
+  "user": "bob@web.de"
 }
 ```
 Die SessioID ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
