@@ -60,10 +60,6 @@ public class Service {
 			}
 
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			System.err.println("TODO : Return 4xx error.");
-			System.err.println(e.getErrorOffset());
-			e.printStackTrace();
 		}
 
 		return Response.status(Response.Status.BAD_REQUEST).entity("Message was not correctly formatted").build();

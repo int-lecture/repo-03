@@ -82,8 +82,8 @@ public class Message {
 				date = sdf.parse(obj.getString("date"));
 			}
 
-			return new Message(obj.optString("from"), obj.optString("to"), date, obj.optString("text"),
-					obj.optInt("sequence"));
+			return new Message(obj.getString("from"), obj.getString("to"), date, obj.getString("text"),
+					obj.getInt("sequence"));
 		} catch (JSONException ex) {
 			throw new ParseException("String was not a valid JSON Message object.", -1);
 		}
