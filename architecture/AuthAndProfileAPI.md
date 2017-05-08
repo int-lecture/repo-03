@@ -7,31 +7,32 @@
 
 ```json
 {
-  "username": "bob",
+  "user": "bob@web.de",
+  "pseudonym": "hans",
   "password": "halloIchbinBob"
 }
 ```
-Die SessionID ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
+Das Token ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
 
 Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
 
-Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antwort-JSON mit der SessionID in Base64-Format und dem Auslaufdatum. Z.B.:
+Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antwort-JSON mit der Token in Base64-Format und dem Auslaufdatum. Z.B.:
 
 ```json
 {
-  "sessionid": "test123",
+  "token": "test123",
   "expire-date": "2017-03-30T17:00:00Z"
 }
 ```
-  ## Authentifizierung des Benutzers
+  ## Validierung des Tokens
   
   Authentifizierungsanfragen werden bei der URL `/auth` per `POST` als JSON-Dokument (Mime-Type: `application/json`) abgegeben. 
   Eine beispielhafte Nachricht sieht wie folgt aus:
 
 ```json
 {
-  "sessionid": "test123",
-  "username": "bob"
+  "token": "test123",
+  "pseudonym": "hans"
 }
 ```
 Falls die Authentifizierung erfolgreich ist sendet der Server den Statuscode 200 und eine json response zurück.
@@ -42,7 +43,7 @@ Falls die Authentifizierung erfolgreich ist sendet der Server den Statuscode 200
   "expire-date": "2017-03-30T17:00:00Z"
 }
 ```
-Ist die SessionID nicht korrekt formatiert oder abgelaufen, sendet der Server den Statuscode 401. 
+Ist das Token nicht korrekt formatiert oder abgelaufen, sendet der Server den Statuscode 401. 
 
 ## Profilanfragen
   
@@ -51,7 +52,7 @@ Ist die SessionID nicht korrekt formatiert oder abgelaufen, sendet der Server de
 
 ```json
 {
-  "sessionid": "test123",
+  "token": "test123",
   "name": "bob",
   "getprofile": "susi"
 }
@@ -96,11 +97,11 @@ Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antw
 
 ## Chat Server Änderungen
 
-Die /send Methode des Chat Servers muss um die SessionID des Absenders ergänzt werden.
+Die /send Methode des Chat Servers muss um das Token des Absenders ergänzt werden.
 
 ```json
 {
-  "sessionid": "1234acbd",
+  "token": "1234acbd",
   "from": "bob",
   "to" : "jim",
   "date": "2017-03-30T17:00:00Z",
