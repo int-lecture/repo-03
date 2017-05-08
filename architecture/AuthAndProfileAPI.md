@@ -72,7 +72,7 @@ Hier ist zu beachten das die Kontaktliste und die E-Mail nur zurückgegeben wenn
 
 ## Registrierungsanfragen
   
- Registrierungsanfragen werden bei der URL `/register` per `POST` als JSON-Dokument (Mime-Type: `application/json`) abgegeben. 
+ Registrierungsanfragen werden bei der URL `/register` per `PUT` als JSON-Dokument (Mime-Type: `application/json`) abgegeben. 
   Eine beispielhafte Nachricht sieht wie folgt aus:
 
 ```json
