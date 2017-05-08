@@ -31,14 +31,18 @@ Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antw
 ```json
 {
   "sessionid": "test123",
-  "username": "bob",
+  "username": "bob"
+}
+```
+Falls die Authentifizierung erfolgreich ist sendet der Server den Statuscode 200 und eine json response zurück.
+
+```json
+{
+  "success": "true",
   "expire-date": "2017-03-30T17:00:00Z"
 }
 ```
-
-Ist die SessionID nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
-
-Ist die SessionID korrekt formatiert, sendet der Server den Status 200. 
+Ist die SessionID nicht korrekt formatiert oder abgelaufen, sendet der Server den Statuscode 401. 
 
 ## Profilanfragen
   
@@ -88,6 +92,19 @@ Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antw
 }
 ```
 
+## Chat Server Änderungen
 
+Die /send Methode des Chat Servers muss um die SessionID des Absenders ergänzt werden.
 
+```json
+{
+  "sessionid": "1234acbd",
+  "from": "bob",
+  "to" : "jim",
+  "date": "2017-03-30T17:00:00Z",
+  "text": "Hallo Jim, wie geht es Dir?"  
+}
+```
+
+Außerdem muss ein neuer response Typ 401 (Unauthorized) zurück gegeben werden falls die sessionid ungültig oder abgelaufen ist.
 
