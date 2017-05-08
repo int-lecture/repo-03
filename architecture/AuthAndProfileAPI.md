@@ -52,14 +52,14 @@ Ist das Token nicht korrekt formatiert oder abgelaufen, sendet der Server den St
 ```json
 {
   "token": "test123",
-  "getprofile": "susi"
+  "getownprofile": "bob"
 }
 ```
 
-Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
+Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 400. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
 
-Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antwort-JSON mit allen Daten des geforderten Profils.
-Hier ist zu beachten das die Kontaktliste und die E-Mail nur zurückgegeben wenn der Nutzer eine Anfrage über sich selbst macht. z.B. :
+Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antwort-JSON mit allen Daten des eigenen Profils.
+z.B:
 
 ```json
 {
@@ -81,9 +81,10 @@ Hier ist zu beachten das die Kontaktliste und die E-Mail nur zurückgegeben wenn
   "user": "bob@web.de"
 }
 ```
-Die SessioID ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
 
-Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
+Sind die Daten nicht korrekt formatiert, sendet der Server den Statuscode 400. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
+
+Ist ein Pseudonym  oder user schon vergeben, sendet der Server den Statudscode 418.
 
 Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antwort-JSON mit dem Resultat. Z.B.:
 
