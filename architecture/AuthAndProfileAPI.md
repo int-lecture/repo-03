@@ -1,4 +1,4 @@
-# Schnittstellen für die Authentifizierung
+# API für Authentifizierung und Profile
 
   ## Login eines Benutzers
   
