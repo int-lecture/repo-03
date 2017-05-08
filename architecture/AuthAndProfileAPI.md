@@ -8,7 +8,7 @@
 ```json
 {
   "username": "bob",
-  "password" : "halloIchbinBob"
+  "password": "halloIchbinBob"
 }
 ```
 Die SessionID ist gemäß [Base64](https://de.wikipedia.org/wiki/Base64) formatiert.
@@ -38,7 +38,7 @@ Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antw
 
 Ist die SessionID nicht korrekt formatiert, sendet der Server den Statuscode 401. Zusätzliche Felder werden aber ignoriert, damit man später das Protokoll einfacher erweitern kann.
 
-Ist die SessionID korrekt formatiert, sendet der Server den Status 200 . 
+Ist die SessionID korrekt formatiert, sendet der Server den Status 200. 
 
 ## Profilanfragen
   
@@ -48,7 +48,7 @@ Ist die SessionID korrekt formatiert, sendet der Server den Status 200 .
 ```json
 {
   "sessionid": "test123",
-  "getprofile" : "susi"
+  "getprofile": "susi"
 }
 ```
 
