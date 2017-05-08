@@ -31,7 +31,7 @@ Sind die Daten korrekt formatiert, sendet der Server den Status 200 und ein Antw
 ```json
 {
   "sessionid": "test123",
-  "username": "bob"
+  "username": "bob",
   "expire-date": "2017-03-30T17:00:00Z"
 }
 ```
