@@ -19,12 +19,13 @@ import org.json.JSONObject;
 import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
+@Path("/")
 public class Service {
 	/** String for date parsing in ISO 8601 format. */
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
 	public static void main(String[] args) {
-		final String baseUri = "http://localhost:5000/";
+		final String baseUri = "http://localhost:5001/";
 		final String paket = "login.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
 
@@ -40,7 +41,7 @@ public class Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.printf("Grizzly läuft unter %s%n", baseUri);
+		System.out.printf("Grizzly(loginServer) läuft unter %s%n", baseUri);
 		// Wait forever
 		try {
 			Thread.currentThread().join();
@@ -78,12 +79,17 @@ public class Service {
 		String password = "";
 		try {
 			JSONObject obj = new JSONObject(jsonString);
-			user = obj.getString("user");
 			password = obj.getString("password");
+			System.out.println("password: " + password);
+			user = obj.getString("user");
+			System.out.println("user: " + user);
+
 		} catch (JSONException e) {
+			e.printStackTrace();
+			System.out.println("Problem beim jsonString extrahieren");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		if (password == testLoginData.get(user)) {
+		if (testLoginData.get(user).equals(password)) {
 			JSONObject obj = new JSONObject();
 			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
 			try {
@@ -92,6 +98,8 @@ public class Service {
 				// und nicht von nem anderen Server kommt
 				obj.put("token", "YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlka");
 			} catch (JSONException e) {
+				System.out.println("Problem beim jasonobjekt füllen");
+				e.printStackTrace();
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			}
 			return Response.status(Response.Status.OK).entity(obj.toString()).build();
