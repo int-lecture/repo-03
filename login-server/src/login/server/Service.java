@@ -129,9 +129,10 @@ public class Service {
 			token = obj.getString("token");
 			pseudonym = obj.getString("pseudonym");
 		} catch (JSONException e) {
+			System.out.println("Fehler beim extrahieren des jsonObject");
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
-		if (token == testValidateData.get(pseudonym)) {
+		if (token.equals(testValidateData.get(pseudonym))) {
 			JSONObject obj = new JSONObject();
 			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
 			try {
@@ -139,11 +140,13 @@ public class Service {
 				obj.put("expire-date", sdf.format(new Date()));
 
 			} catch (JSONException e) {
+				System.out.println("Fehlöer beim jsonObject füllen");
 				return Response.status(Response.Status.UNAUTHORIZED).build();
 			}
 			return Response.status(Response.Status.OK).entity(obj.toString()).build();
 
 		}
+		System.out.println("unberechtiger zugriff");
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 
 	}
