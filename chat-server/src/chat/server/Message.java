@@ -27,6 +27,9 @@ public class Message {
 	/** Sequence number. */
 	int sequence;
 
+	/** Token. */
+	String token;
+
 	/**
 	 * Create a new message.
 	 *
@@ -41,11 +44,12 @@ public class Message {
 	 * @param sequence
 	 *            Sequence-Number.
 	 */
-	public Message(String from, String to, Date date, String text, int sequence) {
+	public Message(String from, String to, Date date, String text, String token, int sequence) {
 		this.from = from;
 		this.to = to;
 		this.date = date;
 		this.text = text;
+		this.token = token;
 		this.sequence = sequence;
 	}
 
@@ -61,8 +65,8 @@ public class Message {
 	 * @param text
 	 *            Contents.
 	 */
-	public Message(String from, String to, Date date, String text) {
-		this(from, to, date, text, 0);
+	public Message(String from, String to, Date date, String text, String token) {
+		this(from, to, date, text, token, 0);
 	}
 
 	/**
@@ -82,7 +86,7 @@ public class Message {
 				date = sdf.parse(obj.getString("date"));
 			}
 
-			return new Message(obj.getString("from"), obj.getString("to"), date, obj.getString("text"),
+			return new Message(obj.getString("from"), obj.getString("to"), date, obj.getString("text"), obj.getString("token"),
 					obj.optInt("sequence"));
 		} catch (JSONException ex) {
 			throw new ParseException("String was not a valid JSON Message object.", -1);
@@ -96,8 +100,8 @@ public class Message {
 	public String toString() {
 		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
 
-		return String.format("{ 'from': '%s', 'to': '%s', 'date': '%s', 'text': '%s'}".replace('\'', '"'), from, to,
-				sdf.format(new Date()), text);
+		return String.format("{ 'from': '%s', 'to': '%s', 'date': '%s', 'text': '%s', 'token': '%s'}".replace('\'', '"'), from, to,
+				sdf.format(new Date()), text, token);
 	}
 
 	/**
@@ -117,6 +121,7 @@ public class Message {
 			obj.put("from", from);
 			obj.put("to", to);
 			obj.put("text", text);
+			obj.put("token", token);
 		}
 
 		return obj;

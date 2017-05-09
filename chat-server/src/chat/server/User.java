@@ -2,6 +2,7 @@ package chat.server;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Queue;
 
@@ -28,6 +29,16 @@ public class User {
 	private Queue<Message> messages = new ArrayDeque<Message>();
 
 	/**
+	 * The user´s token.
+	 */
+	private String token;
+
+	/**
+	 * The expiration date of the token.
+	 */
+	private Date expirationDate;
+
+	/**
 	 * Creates a new user with the given name.
 	 *
 	 * @param name
@@ -46,6 +57,7 @@ public class User {
 	 * @return The sent message with the correct sequence number.
 	 */
 	public Message sendMessage(Message msg) {
+		authenticateUser(msg.token);
 		msg.sequence = sequenceNumber++;
 		messages.add(msg);
 		System.out.println(String.format("%s -> %s [%d]: %s", msg.from, msg.to, msg.sequence, msg.text));
@@ -86,5 +98,24 @@ public class User {
 		}
 
 		return recvMsgs;
+	}
+
+	/**
+	 * Method to authenticate a user with his token.
+	 * @return Returns true if the authentication was successfull and false if not
+	 */
+	private boolean authenticateUser(String token) {
+		if(this.token == token) {
+		//	if(expirationDate >= aktuelles Datum) {
+			// return true;
+			// }
+
+			// TODO: Anfrage mit token und name an /auth
+		}
+		else {
+			//TODO: Anfrage mit token und name an /auth
+		}
+
+		return false;
 	}
 }
