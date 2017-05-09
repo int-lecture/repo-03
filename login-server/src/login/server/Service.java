@@ -1,6 +1,8 @@
 package login.server;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,10 +13,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 public class Service {
+	/** String for date parsing in ISO 8601 format. */
+	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+
 	public static void main(String[] args) {
 		final String baseUri = "http://localhost:5000/";
 		final String paket = "login.server";
@@ -47,31 +55,88 @@ public class Service {
 	/**
 	 * The user base. Keys are tokens.
 	 */
-	private static Map<String,User> users = new HashMap<>();
+	private static Map<String, User> users = new HashMap<>();
+
+	private static Map<String, String> testLoginData = new HashMap<>();
+	private static Map<String, String> testValidateData = new HashMap<>();
 
 	/**
 	 * Logs a user in if his credentials are valid.
-	 * @param jsonString A JSON object containing the fields user(email) and password.
-	 * @return Returns a JSON object containing the fields token and expire-date.
+	 *
+	 * @param jsonString
+	 *            A JSON object containing the fields user(email) and password.
+	 * @return Returns a JSON object containing the fields token and
+	 *         expire-date.
 	 */
 	@POST
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response LoginUser(String jsonString){
-		return null;
+	public Response LoginUser(String jsonString) {
+		testLoginData.put("bob@web.de", "halloIchbinBob");
+		String user = "";
+		String password = "";
+		try {
+			JSONObject obj = new JSONObject(jsonString);
+			user = obj.getString("user");
+			password = obj.getString("password");
+		} catch (JSONException e) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		if (password == testLoginData.get(user)) {
+			JSONObject obj = new JSONObject();
+			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+			try {
+				obj.put("expire-date", sdf.format(new Date()));
+				// TODO: Token generator(wenn wir das überhaupt machen müssen
+				// und nicht von nem anderen Server kommt
+				obj.put("token", "YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlka");
+			} catch (JSONException e) {
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			}
+			return Response.status(Response.Status.OK).entity(obj.toString()).build();
+		} else {
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		}
 	}
 
 	/**
 	 * Validates a user token.
-	 * @param jsonString A JSON object containing the fields token and pseudonym.
-	 * @return Returns a JSON object containing the fields expire-date and success.
+	 *
+	 * @param jsonString
+	 *            A JSON object containing the fields token and pseudonym.
+	 * @return Returns a JSON object containing the fields expire-date and
+	 *         success.
 	 */
 	@POST
 	@Path("/auth")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response ValidateToken(String jsonString){
-		return null;
+	public Response ValidateToken(String jsonString) {
+		testValidateData.put("bob", "YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlka");
+		String token = "";
+		String pseudonym = "";
+		try {
+			JSONObject obj = new JSONObject(jsonString);
+			token = obj.getString("token");
+			pseudonym = obj.getString("pseudonym");
+		} catch (JSONException e) {
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		}
+		if (token == testValidateData.get(pseudonym)) {
+			JSONObject obj = new JSONObject();
+			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+			try {
+				obj.put("success", "true");
+				obj.put("expire-date", sdf.format(new Date()));
+
+			} catch (JSONException e) {
+				return Response.status(Response.Status.UNAUTHORIZED).build();
+			}
+			return Response.status(Response.Status.OK).entity(obj.toString()).build();
+
+		}
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+
 	}
 }
