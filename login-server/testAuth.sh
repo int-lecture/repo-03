@@ -1,1 +1,1 @@
-curl -v -H "Content-Type: application/json" -d {"token":"YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlka","pseudonym":"bob"} localhost:5001/auth
+curl -v -H "Content-Type: application/json" -d '{"token":"/Mthj4boCOTl1IPB0oR+fv9e1X12M6DUv0IpYB7zW88=","pseudonym":"Tom"}' localhost:5001/auth

@@ -2,6 +2,7 @@ package login.server;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,9 @@ public class Service {
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
 	public static void main(String[] args) {
+		// TODO : Remove before release!
+		GenerateTestUsers();
+
 		final String baseUri = "http://localhost:5001/";
 		final String paket = "login.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
@@ -54,12 +58,22 @@ public class Service {
 	}
 
 	/**
-	 * The user base. Keys are tokens.
+	 * The user base. Keys are login identifiers i.e. email addresses.
 	 */
 	private static Map<String, User> users = new HashMap<>();
 
-	private static Map<String, String> testLoginData = new HashMap<>();
-	private static Map<String, String> testValidateData = new HashMap<>();
+	/**
+	 * Users with tokens currently in use. Tokens might be expired! Key are
+	 * tokens
+	 */
+	private static Map<String, User> authedUsers = new HashMap<>();
+
+	/**
+	 * Only for debugging and testing!
+	 */
+	private static void GenerateTestUsers() {
+		users.put("bob@web.de", new User("bob@web.de", "halloIchbinBob", "Tom"));
+	}
 
 	/**
 	 * Logs a user in if his credentials are valid.
@@ -74,34 +88,38 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response LoginUser(String jsonString) {
-		testLoginData.put("bob@web.de", "halloIchbinBob");
-		String user = "";
+		String userName = "";
 		String password = "";
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			password = obj.getString("password");
 			System.out.println("password: " + password);
-			user = obj.getString("user");
-			System.out.println("user: " + user);
+			userName = obj.getString("user");
+			System.out.println("user: " + userName);
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 			System.out.println("Problem beim jsonString extrahieren");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		if (testLoginData.get(user).equals(password)) {
+
+		if (users.containsKey(userName) && users.get(userName).VerifyPassword(password)) {
 			JSONObject obj = new JSONObject();
-			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+			User user = users.get(userName);
+			user.GenerateToken();
 			try {
-				obj.put("expire-date", sdf.format(new Date()));
-				// TODO: Token generator(wenn wir das überhaupt machen müssen
-				// und nicht von nem anderen Server kommt
-				obj.put("token", "YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlka");
+				SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+				Calendar expireDate = user.GetTokenExpireDate();
+				sdf.setTimeZone(expireDate.getTimeZone());
+				obj.put("expire-date", sdf.format(expireDate.getTime()));
+				obj.put("token", user.GetToken());
 			} catch (JSONException e) {
 				System.out.println("Problem beim jasonobjekt füllen");
 				e.printStackTrace();
-				return Response.status(Response.Status.BAD_REQUEST).build();
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
+
+			authedUsers.put(user.GetToken(),user);
 			return Response.status(Response.Status.OK).entity(obj.toString()).build();
 		} else {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -121,7 +139,6 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response ValidateToken(String jsonString) {
-		testValidateData.put("bob", "YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlka");
 		String token = "";
 		String pseudonym = "";
 		try {
@@ -130,22 +147,31 @@ public class Service {
 			pseudonym = obj.getString("pseudonym");
 		} catch (JSONException e) {
 			System.out.println("Fehler beim extrahieren des jsonObject");
-			return Response.status(Response.Status.UNAUTHORIZED).build();
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		if (token.equals(testValidateData.get(pseudonym))) {
-			JSONObject obj = new JSONObject();
-			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-			try {
-				obj.put("success", "true");
-				obj.put("expire-date", sdf.format(new Date()));
 
-			} catch (JSONException e) {
-				System.out.println("Fehlöer beim jsonObject füllen");
-				return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (authedUsers.containsKey(token) && authedUsers.get(token).pseudonym.equals(pseudonym)) {
+			User user = authedUsers.get(token);
+			if (user.VerifyToken(token)) {
+				JSONObject obj = new JSONObject();
+				try {
+					SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+					Calendar expireDate = authedUsers.get(token).GetTokenExpireDate();
+					sdf.setTimeZone(expireDate.getTimeZone());
+					obj.put("success", "true");
+					obj.put("expire-date", sdf.format(expireDate.getTime()));
+					return Response.status(Response.Status.OK).entity(obj.toString()).build();
+
+				} catch (JSONException e) {
+					System.out.println("Fehler beim jsonObject füllen");
+					return Response.status(Response.Status.UNAUTHORIZED).build();
+				}
+			} else {
+				// Token has expired
+				authedUsers.remove(token);
 			}
-			return Response.status(Response.Status.OK).entity(obj.toString()).build();
-
 		}
+
 		System.out.println("unberechtiger zugriff");
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 
