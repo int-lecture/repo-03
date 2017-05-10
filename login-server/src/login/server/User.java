@@ -1,5 +1,7 @@
 package login.server;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -21,13 +23,18 @@ public class User {
 
 	/**
 	 * Create a new User with an imported password hash.
-	 * @param email The users registration email address and login identifier.
-	 * @param passwordHash The users hashed password {@see HashPassword}.
-	 * @param pseudonym The users chat pseudonym.
-	 * @param forcePasswordHash Forces the object to import
-	 *  the given hash instead of hashing a password.
+	 *
+	 * @param email
+	 *            The users registration email address and login identifier.
+	 * @param passwordHash
+	 *            The users hashed password {@see HashPassword}.
+	 * @param pseudonym
+	 *            The users chat pseudonym.
+	 * @param forcePasswordHash
+	 *            Forces the object to import the given hash instead of hashing
+	 *            a password.
 	 */
-	public User(String email,String passwordHash,String pseudonym, boolean forcePasswordHash) {
+	public User(String email, String passwordHash, String pseudonym, boolean forcePasswordHash) {
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.pseudonym = pseudonym;
@@ -37,9 +44,14 @@ public class User {
 
 	/**
 	 * Creates a new User.
-	 * @param email The users registration email address and login identifier.
-	 * @param password The users plain-text password. This will only be stored hashed.
-	 * @param pseudonym The users chat pseudonym.
+	 *
+	 * @param email
+	 *            The users registration email address and login identifier.
+	 * @param password
+	 *            The users plain-text password. This will only be stored
+	 *            hashed.
+	 * @param pseudonym
+	 *            The users chat pseudonym.
 	 */
 	public User(String email, String password, String pseudonym) {
 		this.email = email;
@@ -51,6 +63,7 @@ public class User {
 
 	/**
 	 * Gets the users current token. Can be null or empty.
+	 *
 	 * @return Returns the users token.
 	 */
 	public String GetToken() {
@@ -63,7 +76,9 @@ public class User {
 
 	/**
 	 * Checks that the given plain text password is the users password.
-	 * @param password The users plain text password.
+	 *
+	 * @param password
+	 *            The users plain text password.
 	 * @return Returns true if the password was correct otherwise false.
 	 */
 	public boolean VerifyPassword(String password) {
@@ -72,6 +87,7 @@ public class User {
 
 	/**
 	 * Generates a new token for this User.
+	 *
 	 * @return Returns the tokens expire date.
 	 */
 	public void GenerateToken() {
@@ -84,24 +100,41 @@ public class User {
 
 	/**
 	 * Checks that the given token is correct and hasn't expired.
-	 * @param token The users current token.
+	 *
+	 * @param token
+	 *            The users current token.
 	 * @return Returns true if token is valid and false otherwise.
 	 */
 	public boolean VerifyToken(String token) {
 		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
 		Calendar currentTime = Calendar.getInstance();
-		return token.equals(this.currentToken) &&
-				currentTime.before(tokenExpiration);
+		return token.equals(this.currentToken) && currentTime.before(tokenExpiration);
 	}
 
 	/**
 	 * Hashes and salts a password.
-	 * @param password An unhashed user password.
+	 *
+	 * @param password
+	 *            An unhashed user password.
 	 * @return Returns the hashed and salted password.
+	 * @throws NoSuchAlgorithmException
 	 */
 	private String HashPassword(String password) {
-		// A hashing algorithm and salt has not been specified yet.
-		// TODO : Hash here
+		//Basic sha-256 hashing not the final one
+		MessageDigest md;
+		byte byteData[] = null;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+			md.update(password.getBytes());
+			byteData = md.digest();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < byteData.length; i++) {
+			sb.append((Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1)));
+		}
 		return password;
 	}
 }
