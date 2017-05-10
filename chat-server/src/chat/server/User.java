@@ -1,5 +1,6 @@
 package chat.server;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,10 +106,11 @@ public class User {
 	 * @return Returns true if the authentication was successfull and false if not
 	 */
 	private boolean authenticateUser(String token) {
+		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
 		if(this.token == token) {
-		//	if(expirationDate >= aktuelles Datum) {
-			// return true;
-			// }
+		if(sdf.format(new Date()).compareTo(expirationDate.toString()) < 0) {
+			return true;
+		}
 
 			// TODO: Anfrage mit token und name an /auth
 		}
