@@ -1,0 +1,1 @@
+curl -v -H "Content-Type: application/json" -d "{'token':'Das erstellte Token','pseudonym':'Tom'}" localhost:5001/auth
