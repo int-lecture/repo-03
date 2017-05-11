@@ -1,11 +1,20 @@
 package chat.server;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Queue;
+
+import javax.ws.rs.core.MediaType;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.sun.jersey.api.client.Client;
 
 /**
  * A chat user. Contains the user's name and information about his messages.
@@ -14,6 +23,7 @@ public class User {
 
 	private static final boolean removeOldMessages = true;
 
+	private static final String url = "localhost:5001";
 	/**
 	 * The user's name.
 	 */
@@ -37,7 +47,7 @@ public class User {
 	/**
 	 * The expiration date of the token.
 	 */
-	private Date expirationDate;
+	private Date expireDate;
 
 	/**
 	 * Creates a new user with the given name.
@@ -107,17 +117,37 @@ public class User {
 	 */
 	private boolean authenticateUser(String token) {
 		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+
 		if(this.token == token) {
-		if(sdf.format(new Date()).compareTo(expirationDate.toString()) < 0) {
+			if(sdf.format(new Date()).compareTo(expireDate.toString()) < 0) {
 			return true;
+			}
 		}
 
-			// TODO: Anfrage mit token und name an /auth
-		}
-		else {
-			//TODO: Anfrage mit token und name an /auth
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("token", token);
+			obj.put("pseudonym", name);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 
+		Client client = Client.create();
+		String response = client.resource(url + "/auth").accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.APPLICATION_JSON).post(String.class, obj.toString());
+		client.destroy();
+
+		try {
+			JSONObject jo = new JSONObject(response);
+			if (jo.get("success").equals("true")) {
+				this.expireDate = sdf.parse(jo.getString("expire-date"));
+				return true;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 }
