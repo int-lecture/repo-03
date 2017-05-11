@@ -10,7 +10,6 @@ import java.util.Queue;
 
 import javax.ws.rs.core.MediaType;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,7 +22,7 @@ public class User {
 
 	private static final boolean removeOldMessages = true;
 
-	private static final String url = "localhost:5001";
+	private static final String url = "http://localhost:5001";
 	/**
 	 * The user's name.
 	 */
@@ -68,11 +67,10 @@ public class User {
 	 * @return The sent message with the correct sequence number.
 	 */
 	public Message sendMessage(Message msg) {
-		authenticateUser(msg.token);
-		msg.sequence = sequenceNumber++;
-		messages.add(msg);
-		System.out.println(String.format("%s -> %s [%d]: %s", msg.from, msg.to, msg.sequence, msg.text));
-		return msg;
+			msg.sequence = sequenceNumber++;
+			messages.add(msg);
+			System.out.println(String.format("%s -> %s [%d]: %s", msg.from, msg.to, msg.sequence, msg.text));
+			return msg;
 	}
 
 	/**
@@ -113,14 +111,16 @@ public class User {
 
 	/**
 	 * Method to authenticate a user with his token.
-	 * @return Returns true if the authentication was successfull and false if not
+	 *
+	 * @return Returns true if the authentication was successfull and false if
+	 *         not
 	 */
-	private boolean authenticateUser(String token) {
+	public boolean authenticateUser(String token) {
 		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-
-		if(this.token == token) {
-			if(sdf.format(new Date()).compareTo(expireDate.toString()) < 0) {
-			return true;
+		System.out.println(token);
+		if (this.token == token) {
+			if (sdf.format(new Date()).compareTo(expireDate.toString()) < 0) {
+				return true;
 			}
 		}
 

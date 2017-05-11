@@ -10,7 +10,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONArray;
@@ -31,26 +34,43 @@ public class Service {
 
 	/**
 	 * Receives new message from the user.
-	 * @param json A JSON object containing the fields to,from,date and text.
-	 * @return If successful returns 204(Created) and a JSON object containing date and sequenceNumber of the Message.
+	 *
+	 * @param json
+	 *            A JSON object containing the fields to,from,date and text.
+	 * @return If successful returns 204(Created) and a JSON object containing
+	 *         date and sequenceNumber of the Message.
 	 */
 	@PUT
 	@Path("/send")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response send(String json) {
+		System.out.println("Senden...");
 		try {
+			System.out.println(json);
 			Message msg = Message.fromJson(json);
+			System.out.println(msg);
 			if (msg.to != null && msg.from != null && msg.date != null && msg.text != null) {
 				User user;
+				User thisUser;
 				if (!users.containsKey(msg.to)) {
 					user = new User(msg.to);
 					users.put(msg.to, user);
 				} else {
 					user = users.get(msg.to);
 				}
+				if (!users.containsKey(msg.from)) {
+					thisUser = new User(msg.from);
+				} else {
+					thisUser = users.get(msg.to);
+				}
 
-				msg = user.sendMessage(msg);
+				System.out.println("Authentifizieren...");
+				if (thisUser.authenticateUser(msg.token)) {
+					msg = user.sendMessage(msg);
+				} else {
+					return Response.status(Response.Status.UNAUTHORIZED).build();
+				}
 				try {
 					return Response.status(Response.Status.CREATED).entity(msg.toJson(true).toString()).build();
 				} catch (JSONException e) {
@@ -67,53 +87,66 @@ public class Service {
 
 	/**
 	 * Queries new messages for the user.
-	 * @param userID The user's name.
-	 * @return If successful returns 200(OK) and a JSON array of new messages. If no new messages are available
-	 * returns 204(No Content).
+	 *
+	 * @param userID
+	 *            The user's name.
+	 * @return If successful returns 200(OK) and a JSON array of new messages.
+	 *         If no new messages are available returns 204(No Content).
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/messages/{userid}")
-	public Response getMessages(@PathParam("userid") String userID) {
-		return getMessages(userID, 0);
+	public Response getMessages(@PathParam("userid") String userID, @Context HttpHeaders header) {
+		return getMessages(userID, 0, header);
 	}
 
 	/**
-	 * Queries new messages for the user and removes all messages older than the given sequence number.
-	 * @param userID The user's name.
-	 * @param sequenceNumber The starting sequenceNumber.
-	 * @return If successful returns 200(OK) and a JSON array of new messages. If no new messages are available
-	 * returns 204(No Content).
+	 * Queries new messages for the user and removes all messages older than the
+	 * given sequence number.
+	 *
+	 * @param userID
+	 *            The user's name.
+	 * @param sequenceNumber
+	 *            The starting sequenceNumber.
+	 * @return If successful returns 200(OK) and a JSON array of new messages.
+	 *         If no new messages are available returns 204(No Content).
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/messages/{userid}/{sequenceNumber}")
-	public Response getMessages(@PathParam("userid") String userID, @PathParam("sequenceNumber") int sequenceNumber) {
+	public Response getMessages(@PathParam("userid") String userID, @PathParam("sequenceNumber") int sequenceNumber,
+			@Context HttpHeaders header) {
+		MultivaluedMap<String, String> map = header.getRequestHeaders();
 		if (Service.users.containsKey(userID)) {
 			JSONArray jsonMsgs = new JSONArray();
 			User user = Service.users.get(userID);
-			List<Message> newMsgs = user.receiveMessages(sequenceNumber);
-			if (newMsgs.isEmpty()) {
-				return Response.status(Response.Status.NO_CONTENT).entity("No new messages").build();
-			} else {
-				for (Message msg : newMsgs) {
+			System.out.println(user.authenticateUser(map.get("Authorization").get(0)));
+			if (user.authenticateUser(map.get("Authorization").get(1))) {
+				List<Message> newMsgs = user.receiveMessages(sequenceNumber);
+				if (newMsgs.isEmpty()) {
+					return Response.status(Response.Status.NO_CONTENT).entity("No new messages").build();
+				} else {
+					for (Message msg : newMsgs) {
+						try {
+							jsonMsgs.put(msg.toJson(false));
+						} catch (JSONException e) {
+							e.printStackTrace();
+							return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+						}
+					}
+
 					try {
-						jsonMsgs.put(msg.toJson(false));
-					} catch (JSONException e) {
+						return Response.status(Response.Status.OK).entity(jsonMsgs.toString(4)).build();
+					} catch (Exception e) {
 						e.printStackTrace();
 						return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 					}
 				}
-
-				try {
-					return Response.status(Response.Status.OK).entity(jsonMsgs.toString(4)).build();
-				} catch (Exception e) {
-					e.printStackTrace();
-					return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-				}
+			} else {
+				return Response.status(Response.Status.BAD_REQUEST).entity("User not found.").build();
 			}
 		} else {
-			return Response.status(Response.Status.BAD_REQUEST).entity("User not found.").build();
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 	}
 }

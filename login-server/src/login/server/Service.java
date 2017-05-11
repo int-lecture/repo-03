@@ -3,7 +3,6 @@ package login.server;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +71,7 @@ public class Service {
 	 * Only for debugging and testing!
 	 */
 	private static void GenerateTestUsers() {
-		users.put("bob@web.de", new User("bob@web.de", "halloIchbinBob", "Tom"));
+		users.put("bob@web.de", new User("bob@web.de", "halloIchbinBob", "tom"));
 	}
 
 	/**
@@ -145,6 +144,8 @@ public class Service {
 			JSONObject obj = new JSONObject(jsonString);
 			token = obj.getString("token");
 			pseudonym = obj.getString("pseudonym");
+			System.out.println(token);
+			System.out.println(pseudonym);
 		} catch (JSONException e) {
 			System.out.println("Fehler beim extrahieren des jsonObject");
 			return Response.status(Response.Status.BAD_REQUEST).build();
@@ -171,7 +172,7 @@ public class Service {
 				authedUsers.remove(token);
 			}
 		}
-
+		System.out.println(authedUsers.get(token).pseudonym);
 		System.out.println("unberechtiger zugriff");
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 
