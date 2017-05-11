@@ -72,6 +72,7 @@ public class Service {
 	 */
 	private static void GenerateTestUsers() {
 		users.put("bob@web.de", new User("bob@web.de", "halloIchbinBob", "tom"));
+		users.put("tom@web.de", new User("tom@web.de", "halloIchbinTom", "hans"));
 	}
 
 	/**
@@ -101,7 +102,7 @@ public class Service {
 			System.out.println("Problem beim jsonString extrahieren");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-
+		System.out.println(users.containsKey(userName)+ " / "+users.get(userName)+" / "+users.get(userName).VerifyPassword(password));
 		if (users.containsKey(userName) && users.get(userName).VerifyPassword(password)) {
 			JSONObject obj = new JSONObject();
 			User user = users.get(userName);
@@ -140,6 +141,7 @@ public class Service {
 	public Response ValidateToken(String jsonString) {
 		String token = "";
 		String pseudonym = "";
+		System.out.println(jsonString);
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			token = obj.getString("token");

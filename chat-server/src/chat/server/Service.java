@@ -121,7 +121,7 @@ public class Service {
 			JSONArray jsonMsgs = new JSONArray();
 			User user = Service.users.get(userID);
 			System.out.println(user.authenticateUser(map.get("Authorization").get(0)));
-			if (user.authenticateUser(map.get("Authorization").get(1))) {
+			if (user.authenticateUser(map.get("Authorization").get(0))) {
 				List<Message> newMsgs = user.receiveMessages(sequenceNumber);
 				if (newMsgs.isEmpty()) {
 					return Response.status(Response.Status.NO_CONTENT).entity("No new messages").build();
@@ -131,10 +131,11 @@ public class Service {
 							jsonMsgs.put(msg.toJson(false));
 						} catch (JSONException e) {
 							e.printStackTrace();
+							System.out.println("Json füllen fehlgeschlagen");
 							return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 						}
 					}
-
+					System.out.println(jsonMsgs);
 					try {
 						return Response.status(Response.Status.OK).entity(jsonMsgs.toString(4)).build();
 					} catch (Exception e) {
