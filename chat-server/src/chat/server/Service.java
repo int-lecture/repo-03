@@ -50,7 +50,7 @@ public class Service {
 			System.out.println(json);
 			Message msg = Message.fromJson(json);
 			System.out.println(msg);
-			if (msg.to != null && msg.from != null && msg.date != null && msg.text != null) {
+			if (msg.to != null && msg.from != null && msg.date != null && msg.text != null && msg.token!=null) {
 				User user;
 				User thisUser;
 				if (!users.containsKey(msg.to)) {
@@ -62,7 +62,7 @@ public class Service {
 				if (!users.containsKey(msg.from)) {
 					thisUser = new User(msg.from);
 				} else {
-					thisUser = users.get(msg.to);
+					thisUser = users.get(msg.from);
 				}
 
 				System.out.println("Authentifizieren...");

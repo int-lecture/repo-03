@@ -102,7 +102,6 @@ public class Service {
 			System.out.println("Problem beim jsonString extrahieren");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		System.out.println(users.containsKey(userName)+ " / "+users.get(userName)+" / "+users.get(userName).VerifyPassword(password));
 		if (users.containsKey(userName) && users.get(userName).VerifyPassword(password)) {
 			JSONObject obj = new JSONObject();
 			User user = users.get(userName);
@@ -173,8 +172,6 @@ public class Service {
 				authedUsers.remove(token);
 			}
 		}
-		System.out.println(authedUsers.get(token).pseudonym);
-		System.out.println("unberechtiger zugriff");
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 
 	}
