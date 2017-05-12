@@ -1,1 +1,1 @@
-curl -X GET localhost:5000/messages/bob/2
+curl -X GET localhost:5000/messages/bob/0 -H "Authorization: Dein Token vom Login, Content-Type: application/json"
