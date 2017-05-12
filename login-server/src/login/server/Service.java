@@ -71,8 +71,8 @@ public class Service {
 	 * Only for debugging and testing!
 	 */
 	private static void GenerateTestUsers() {
-		users.put("bob@web.de", new User("bob@web.de", "halloIchbinBob", "tom"));
-		users.put("tom@web.de", new User("tom@web.de", "halloIchbinTom", "hans"));
+		users.put("bob@web.de", new User("bob@web.de", "halloIchbinBob", "bob"));
+		users.put("tom@web.de", new User("tom@web.de", "halloIchbinTom", "tom"));
 	}
 
 	/**
@@ -141,7 +141,6 @@ public class Service {
 	public Response ValidateToken(String jsonString) {
 		String token = "";
 		String pseudonym = "";
-		System.out.println(jsonString);
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			token = obj.getString("token");

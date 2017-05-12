@@ -67,10 +67,10 @@ public class User {
 	 * @return The sent message with the correct sequence number.
 	 */
 	public Message sendMessage(Message msg) {
-			msg.sequence = sequenceNumber++;
-			messages.add(msg);
-			System.out.println(String.format("%s -> %s [%d]: %s", msg.from, msg.to, msg.sequence, msg.text));
-			return msg;
+		msg.sequence = sequenceNumber++;
+		messages.add(msg);
+		System.out.println(String.format("%s -> %s [%d]: %s", msg.from, msg.to, msg.sequence, msg.text));
+		return msg;
 	}
 
 	/**
@@ -128,15 +128,20 @@ public class User {
 		try {
 			obj.put("token", token);
 			obj.put("pseudonym", name);
+			System.out.println("Authentifiziere "+name+"  "+ token);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
 		Client client = Client.create();
-		String response = client.resource(url + "/auth").accept(MediaType.APPLICATION_JSON)
+		String response;
+		try{
+		response = client.resource(url + "/auth").accept(MediaType.APPLICATION_JSON)
 				.type(MediaType.APPLICATION_JSON).post(String.class, obj.toString());
 		client.destroy();
-
+		}catch(RuntimeException e){
+			return false;
+		}
 		try {
 			JSONObject jo = new JSONObject(response);
 			if (jo.get("success").equals("true")) {
