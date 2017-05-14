@@ -93,7 +93,6 @@ public class Service {
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			password = obj.getString("password");
-			System.out.println("password: " + password);
 			userName = obj.getString("user");
 			System.out.println("user: " + userName);
 
