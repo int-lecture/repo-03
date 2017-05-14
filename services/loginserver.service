@@ -5,7 +5,7 @@ After=network.target
 [Service]
 WorkingDirectory=/tmp/
 SyslogIdentifier=loginserver
-ExecStart=/bin/sh -c "exec java -jar /usr/local/source/repo-03/chat-server/loginServer.jar"
+ExecStart=/bin/sh -c "exec java -jar /usr/local/source/repo-03/services/loginserver.jar"
 Type=simple
 
 [Install]
