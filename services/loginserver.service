@@ -1,0 +1,12 @@
+[Unit]
+Description=loginserver
+After=network.target
+
+[Service]
+WorkingDirectory=/tmp/
+SyslogIdentifier=loginserver
+ExecStart=/bin/sh -c "exec java -jar /usr/local/source/repo-03/chat-server/loginServer.jar"
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

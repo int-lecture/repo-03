@@ -1,0 +1,12 @@
+[Unit]
+Description=chatserver
+After=network.target
+
+[Service]
+WorkingDirectory=/tmp/
+SyslogIdentifier=chatserver
+ExecStart=/bin/sh -c "exec java -jar /usr/local/source/repo-03/chat-server/chatServer.jar"
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
