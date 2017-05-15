@@ -94,6 +94,7 @@
       </plugin>
       <!-- Assemble all required JARs into one big one -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <archive>
