@@ -1,7 +1,7 @@
 #!/bin/bash
 git pull
-./chat-server/build.sh
-./login-server/build.sh
+(cd /chat-server/; mvn clean compile assembly:single)
+(cd /login-server/; mvn clean compile assembly:single)
 echo "Binaries finished building."
 echo "Deploying."
 mv login-server/target/login-server*.jar login-server.jar
