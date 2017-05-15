@@ -99,6 +99,7 @@
 				<configuration>
 					<archive>
 						<manifest>
+							<mainClass>login.server.Service</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
