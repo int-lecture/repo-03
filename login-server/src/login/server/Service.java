@@ -24,6 +24,8 @@ public class Service {
 	/** String for date parsing in ISO 8601 format. */
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
+	private StorageProviderMongoDB spMDB = new StorageProviderMongoDB();
+
 	public static void main(String[] args) {
 		// TODO : Remove before release!
 		GenerateTestUsers();
@@ -101,7 +103,7 @@ public class Service {
 			System.out.println("Problem beim jsonString extrahieren");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		if (users.containsKey(userName) && users.get(userName).VerifyPassword(password)) {
+		if (users.containsKey(userName) && SecurityHelper.validatePassword(password, spMDB.retrieveLoginData(userName))) {
 			JSONObject obj = new JSONObject();
 			User user = users.get(userName);
 			user.GenerateToken();
