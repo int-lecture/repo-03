@@ -4,9 +4,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 
 public class User {
 	public String email;
@@ -105,11 +107,13 @@ public class User {
 	 * @param token
 	 *            The users current token.
 	 * @return Returns true if token is valid and false otherwise.
+	 * @throws ParseException 
 	 */
-	public boolean VerifyToken(String token) {
+	public boolean VerifyToken(String token, String expireDate) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
 		Calendar currentTime = Calendar.getInstance();
-		return token.equals(this.currentToken) && currentTime.before(tokenExpiration);
+		Date date = sdf.parse(expireDate);
+		return token.equals(this.currentToken) && currentTime.before(date);
 	}
 
 	/**

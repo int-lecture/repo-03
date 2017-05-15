@@ -1,6 +1,7 @@
 package login.server;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.and;
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
@@ -13,40 +14,75 @@ import com.mongodb.client.MongoDatabase;
  */
 class StorageProviderMongoDB {
 
-	private static final String MONGO_URL = "mongodb://docker-03:27017";
-    /** URI to the MongoDB instance. */
-    private static MongoClientURI connectionString =
-            new MongoClientURI(MONGO_URL);
+	private static final String MONGO_URL = "mongodb://141.19.142.57:27017";
+	/** URI to the MongoDB instance. */
+	private static MongoClientURI connectionString = new MongoClientURI(MONGO_URL);
 
-    /** Client to be used. */
-    private static MongoClient mongoClient = new MongoClient(connectionString);
+	/** Client to be used. */
+	private static MongoClient mongoClient = new MongoClient(connectionString);
 
-    /** Mongo database. */
-    private static MongoDatabase database = mongoClient.getDatabase("chat");
+	/** Mongo database. */
+	private static MongoDatabase database = mongoClient.getDatabase("users");
 
-    /**
-     * @see var.chat.server.persistence.StorageProvider#retrieveMessages(java.lang.String, long, boolean)
-     */
-    public synchronized String retrieveLoginData(String pseudonym) {
+	/**
+	 * @see var.chat.server.persistence.StorageProvider#retrieveMessages(java.lang.String,
+	 *      long, boolean)
+	 */
+	public synchronized User retrieveUser(String username) {
 
-        MongoCollection<Document> collection = database.getCollection("user");
+		MongoCollection<Document> collection = database.getCollection("account");
 
-        // Retreive the hashed password
-        String hashedPassword = collection.find(eq("pseudonym", pseudonym)).first().getString("password");
+		// Retreive the hashed password
+		Document doc = collection.find(eq("username", username)).first();
+		if (doc == null) {
+			return null;
+		}
+		User user = new User(username, doc.getString("password"), doc.getString("pseudonym"));
+		return user;
+	}
 
-        // No messages for user there
-        if (hashedPassword.isEmpty()) {
-            return null;
-        }
+	/**
+	 *
+	 */
+	public synchronized void saveToken(String token, String expirationDate, String pseudonym) {
 
-        return hashedPassword;
-    }
+		MongoCollection<Document> collection = database.getCollection("token");
 
-    /**
-     * @see var.chat.server.persistence.StorageProvider#clearForTest()
-     */
-    public void clearForTest() {
-        database.getCollection("messages").drop();
-        database.getCollection("sequences").drop();
-    }
+		// add user to database
+		Document doc = new Document("token", token).append("expirationDate", expirationDate).append("pseudonym",
+				pseudonym);
+
+		if (collection.find(eq("pseudonym", pseudonym)).first() != null) {
+			collection.updateOne(eq("pseudonym", pseudonym), new Document("$set", doc));
+		} else {
+			collection.insertOne(doc);
+		}
+	}
+
+	public synchronized String retrieveToken(String pseudonym, String token) {
+		MongoCollection<Document> collection = database.getCollection("token");
+
+		// Retreive the tokeninformation
+		Document doc = collection.find(and(eq("pseudonym", pseudonym), eq("token", token))).first();
+		if (doc == null) {
+			return null;
+		}
+		return doc.getString("expirationDate");
+	}
+
+	/**
+	 *
+	 */
+	public synchronized void deleteToken(String token) {
+		MongoCollection<Document> collection = database.getCollection("token");
+		collection.deleteOne(eq("token", token));
+	}
+
+	/**
+	 * @see var.chat.server.persistence.StorageProvider#clearForTest()
+	 */
+	public void clearForTest() {
+		database.getCollection("messages").drop();
+		database.getCollection("sequences").drop();
+	}
 }

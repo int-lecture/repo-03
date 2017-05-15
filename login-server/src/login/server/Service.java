@@ -1,8 +1,10 @@
 package login.server;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,9 +29,6 @@ public class Service {
 	private StorageProviderMongoDB spMDB = new StorageProviderMongoDB();
 
 	public static void main(String[] args) {
-		// TODO : Remove before release!
-		GenerateTestUsers();
-
 		final String baseUri = "http://localhost:5001/";
 		final String paket = "login.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
@@ -59,25 +58,6 @@ public class Service {
 	}
 
 	/**
-	 * The user base. Keys are login identifiers i.e. email addresses.
-	 */
-	private static Map<String, User> users = new HashMap<>();
-
-	/**
-	 * Users with tokens currently in use. Tokens might be expired! Key are
-	 * tokens
-	 */
-	private static Map<String, User> authedUsers = new HashMap<>();
-
-	/**
-	 * Only for debugging and testing!
-	 */
-	private static void GenerateTestUsers() {
-		users.put("bob@web.de", new User("bob@web.de", "halloIchbinBob", "bob"));
-		users.put("tom@web.de", new User("tom@web.de", "halloIchbinTom", "tom"));
-	}
-
-	/**
 	 * Logs a user in if his credentials are valid.
 	 *
 	 * @param jsonString
@@ -103,9 +83,9 @@ public class Service {
 			System.out.println("Problem beim jsonString extrahieren");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		if (users.containsKey(userName) && SecurityHelper.validatePassword(password, spMDB.retrieveLoginData(userName))) {
+		User user = spMDB.retrieveUser(userName);
+		if (user != null && user.VerifyPassword(password)) {
 			JSONObject obj = new JSONObject();
-			User user = users.get(userName);
 			user.GenerateToken();
 			try {
 				SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
@@ -118,8 +98,10 @@ public class Service {
 				e.printStackTrace();
 				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
-
-			authedUsers.put(user.GetToken(),user);
+			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+			Calendar expireDate = user.GetTokenExpireDate();
+			sdf.setTimeZone(expireDate.getTimeZone());
+			spMDB.saveToken(user.GetToken(), sdf.format(expireDate.getTime()), user.pseudonym);
 			return Response.status(Response.Status.OK).entity(obj.toString()).build();
 		} else {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -151,17 +133,23 @@ public class Service {
 			System.out.println("Fehler beim extrahieren des jsonObject");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-
-		if (authedUsers.containsKey(token) && authedUsers.get(token).pseudonym.equals(pseudonym)) {
-			User user = authedUsers.get(token);
-			if (user.VerifyToken(token)) {
+		String expireDate= spMDB.retrieveToken(pseudonym, token);
+		if (expireDate!=null) {
+			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+			Date date;
+			try {
+				date = sdf.parse(expireDate);
+			} catch (ParseException e1) {
+				System.out.println("invalid Date");
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			}
+			Calendar cal = Calendar.getInstance();
+			if (cal.before(date)) {
 				JSONObject obj = new JSONObject();
 				try {
-					SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-					Calendar expireDate = authedUsers.get(token).GetTokenExpireDate();
-					sdf.setTimeZone(expireDate.getTimeZone());
+					sdf = new SimpleDateFormat(Service.ISO8601);
 					obj.put("success", "true");
-					obj.put("expire-date", sdf.format(expireDate.getTime()));
+					obj.put("expire-date", expireDate);
 					return Response.status(Response.Status.OK).entity(obj.toString()).build();
 
 				} catch (JSONException e) {
@@ -170,7 +158,7 @@ public class Service {
 				}
 			} else {
 				// Token has expired
-				authedUsers.remove(token);
+				spMDB.deleteToken(token);
 			}
 		}
 		return Response.status(Response.Status.UNAUTHORIZED).build();
