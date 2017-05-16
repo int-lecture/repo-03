@@ -1,1 +1,0 @@
-curl -v -H "Content-Type: application/json" -X PUT -d '{"to":"tom","from":"bob","date":"2017-04-26T11:30:30+0200","text":"Test1","token":"YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlkaGFleiA"}' localhost:5000/send
