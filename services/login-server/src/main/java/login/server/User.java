@@ -3,9 +3,12 @@ package login.server;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 
 public class User {
 	public String email;
@@ -82,7 +85,7 @@ public class User {
 	 * @return Returns true if the password was correct otherwise false.
 	 */
 	public boolean VerifyPassword(String password) {
-		return passwordHash.equals(HashPassword(password));
+		return SecurityHelper.validatePassword(password, passwordHash);
 	}
 
 	/**
@@ -104,11 +107,13 @@ public class User {
 	 * @param token
 	 *            The users current token.
 	 * @return Returns true if token is valid and false otherwise.
+	 * @throws ParseException 
 	 */
-	public boolean VerifyToken(String token) {
+	public boolean VerifyToken(String token, String expireDate) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
 		Calendar currentTime = Calendar.getInstance();
-		return token.equals(this.currentToken) && currentTime.before(tokenExpiration);
+		Date date = sdf.parse(expireDate);
+		return token.equals(this.currentToken) && currentTime.before(date);
 	}
 
 	/**
@@ -120,21 +125,15 @@ public class User {
 	 * @throws NoSuchAlgorithmException
 	 */
 	private String HashPassword(String password) {
-		//Basic sha-256 hashing not the final one
-		MessageDigest md;
-		byte byteData[] = null;
 		try {
-			md = MessageDigest.getInstance("SHA-256");
-			md.update(password.getBytes());
-			byteData = md.digest();
+			return SecurityHelper.hashPassword(password);
 		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
-			sb.append((Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1)));
-		}
-		return password;
+		return null;
 	}
 }
