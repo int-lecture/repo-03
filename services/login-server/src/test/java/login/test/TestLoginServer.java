@@ -18,7 +18,7 @@ public class TestLoginServer {
 	public void setUp() {
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
-		RestAssured.port = 5001;
+		RestAssured.port = 5006;
 		Service.starteLoginServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
 	}
 

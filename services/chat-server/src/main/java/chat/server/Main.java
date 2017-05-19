@@ -54,14 +54,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		System.out.printf("Grizzly l�uft unter %s%n", baseUri);
-		// Wait forever
-		try {
-			Thread.currentThread().join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Grizzly wurde beendet");
-		System.exit(0);
+
 	}
 	public static void stopChatServer(){
 		System.exit(0);
