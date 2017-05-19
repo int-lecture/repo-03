@@ -23,7 +23,7 @@ public class TestChatServer {
 		RestAssured.port = 5000;
 		// TODO: Service.starteLoginServer(RestAssured.baseURI + ":" +
 		// RestAssured.basePath + "/");
-		Main.starteChatServer(RestAssured.baseURI + ":" + RestAssured.basePath + "/");
+		Main.starteChatServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
 	}
 
 	@After
