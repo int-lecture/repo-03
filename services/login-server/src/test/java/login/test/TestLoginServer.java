@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import login.server.Service;
 
 public class TestLoginServer {
 	@Before
@@ -18,16 +19,18 @@ public class TestLoginServer {
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
 		RestAssured.port = 5001;
-		// LoginServerMain.startGrizzly(RestAssured.baseURI + ":"+
-		// RestAssured.basePath+ "/");
+		Service.starteLoginServer(RestAssured.baseURI + ":" + RestAssured.basePath + "/");
 	}
 
 	@After
 	public void tearDown() {
-		// LoginServer.stopGrizzly();
+		Service.stopLoginServer();
 	}
+
 	/**
-	 * This test will check the login with one valid user and 2 invalid users to test the BadRequest and 1 valid user with wrong password, to check the unauthorized.
+	 * This test will check the login with one valid user and 2 invalid users to
+	 * test the BadRequest and 1 valid user with wrong password, to check the
+	 * unauthorized.
 	 */
 	@Test
 	public void testLogin() {
@@ -47,8 +50,10 @@ public class TestLoginServer {
 				.body(("{'user': 'bob@web.de', 'password': 'HalloIfsegbinBob', 'pseudonym': 'bob'}".replace('\'', '"')))
 				.when().post("/login");
 	}
+
 	/**
-	 * This test will login bob and then try to authanticate whith the responsed token.
+	 * This test will login bob and then try to authanticate whith the responsed
+	 * token.
 	 */
 	@Test
 	public void testValidate() {

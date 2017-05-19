@@ -45,7 +45,7 @@ public class Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.printf("Grizzly(loginServer) läuft unter %s%n", baseUri);
+		System.out.printf("Grizzly(loginServer) lï¿½uft unter %s%n", baseUri);
 		// Wait forever
 		try {
 			Thread.currentThread().join();
@@ -54,6 +54,38 @@ public class Service {
 		}
 
 		System.out.println("Grizzly wurde beendet");
+		System.exit(0);
+	}
+
+	public static void starteLoginServer(String uri){
+		final String baseUri = uri;
+		final String paket = "login.server";
+		final Map<String, String> initParams = new HashMap<String, String>();
+
+		initParams.put("com.sun.jersey.config.property.packages", paket);
+		System.out.println("Starte grizzly...");
+		SelectorThread threadSelector = null;
+		try {
+			threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.printf("Grizzly(loginServer) lï¿½uft unter %s%n", baseUri);
+		// Wait forever
+		try {
+			Thread.currentThread().join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Grizzly wurde beendet");
+		System.exit(0);
+	}
+	public static void stopLoginServer(){
 		System.exit(0);
 	}
 
@@ -94,7 +126,7 @@ public class Service {
 				obj.put("expire-date", sdf.format(expireDate.getTime()));
 				obj.put("token", user.GetToken());
 			} catch (JSONException e) {
-				System.out.println("Problem beim jasonobjekt füllen");
+				System.out.println("Problem beim jasonobjekt fï¿½llen");
 				e.printStackTrace();
 				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
@@ -153,7 +185,7 @@ public class Service {
 					return Response.status(Response.Status.OK).entity(obj.toString()).build();
 
 				} catch (JSONException e) {
-					System.out.println("Fehler beim jsonObject füllen");
+					System.out.println("Fehler beim jsonObject fï¿½llen");
 					return Response.status(Response.Status.UNAUTHORIZED).build();
 				}
 			} else {

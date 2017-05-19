@@ -9,6 +9,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mongodb.connection.Server;
+
+import chat.server.Main;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
@@ -18,13 +21,14 @@ public class TestChatServer {
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
 		RestAssured.port = 5000;
-		// LoginServerMain.startGrizzly(RestAssured.baseURI + ":"+
-		// RestAssured.basePath+ "/");
+		// TODO: Service.starteLoginServer(RestAssured.baseURI + ":" +
+		// RestAssured.basePath + "/");
+		Main.starteChatServer(RestAssured.baseURI + ":" + RestAssured.basePath + "/");
 	}
 
 	@After
 	public void tearDown() {
-		// LoginServer.stopGrizzly();
+		Main.stopChatServer();
 	}
 
 	/**
@@ -112,32 +116,28 @@ public class TestChatServer {
 	public void testMessages() {
 		Response resp = expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
 				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
+				.body(("{'user': 'tom@web.de', 'password': 'HalloIchbinTom', 'pseudonym': 'tom'}".replace('\'', '"')))
+				.when().post("/login");
+		String tokenTom = resp.path("token").toString();
+
+		// testing a correct message request
+		expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("messages", notNullValue())
+				.header("Authenticatin", tokenTom).when().put("/messages/tom/0");
+
+		Response resp2 = expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
+				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
 				.body(("{'user': 'bob@web.de', 'password': 'HalloIchbinBob', 'pseudonym': 'bob'}".replace('\'', '"')))
 				.when().post("/login");
-		String token = resp.path("token").toString();
+		String tokenBob = resp2.path("token").toString();
 
-		JSONObject json = new JSONObject();
-		json.put("token", token);
-		json.put("pseudonym", "bob");
+		// testing a correct message request when no messages were sent
+		expect().statusCode(204).header("Authenticatin", tokenBob).when().put("/messages/bob/0");
 
-		expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue())
-				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
-				.body(json.toString()).when().post("/auth");
+		// testing an invalid user
+		expect().statusCode(204).header("Authenticatin", tokenBob).when().put("/messages/peter/0");
 
-		json.put("token", token);
-		json.put("pseudonym", "bobX");
-
-		expect().statusCode(403).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue())
-				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
-				.body(json.toString()).when().post("/auth");
-
-		json.put("token", token + "X");
-		json.put("pseudonym", "bob");
-
-		expect().statusCode(403).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue())
-				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
-				.body(json.toString()).when().post("/auth");
-
+		// testing a invalid token
+		expect().statusCode(204).header("Authenticatin", tokenTom).when().put("/messages/bob/0");
 	}
 
 }
