@@ -48,7 +48,7 @@ class StorageProviderMongoDB {
 		MongoCollection<Document> collection = database.getCollection("token");
 
 		// add user to database
-		Document doc = new Document("token", token).append("expire-date", expirationDate).append("pseudonym",
+		Document doc = new Document("token", ""+token+"").append("expire-date", expirationDate).append("pseudonym",
 				pseudonym);
 
 		if (collection.find(eq("pseudonym", pseudonym)).first() != null) {
@@ -81,7 +81,6 @@ class StorageProviderMongoDB {
 	 * @see var.chat.server.persistence.StorageProvider#clearForTest()
 	 */
 	public void clearForTest() {
-		database.getCollection("messages").drop();
-		database.getCollection("sequences").drop();
+		
 	}
 }

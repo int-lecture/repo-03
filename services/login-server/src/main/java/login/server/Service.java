@@ -117,7 +117,7 @@ public class Service {
 				Calendar expireDate = user.GetTokenExpireDate();
 				sdf.setTimeZone(expireDate.getTimeZone());
 				obj.put("expire-date", sdf.format(expireDate.getTime()));
-				obj.put("token", user.GetToken());
+				obj.put("token", user.GetToken().toString());
 			} catch (JSONException e) {
 				System.out.println("Problem beim jasonobjekt f�llen");
 				e.printStackTrace();
