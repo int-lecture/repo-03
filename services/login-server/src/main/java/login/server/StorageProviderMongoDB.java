@@ -22,7 +22,7 @@ class StorageProviderMongoDB {
 	private static MongoClient mongoClient = new MongoClient(connectionString);
 
 	/** Mongo database. */
-	private static MongoDatabase database = mongoClient.getDatabase("users");
+	private static MongoDatabase database = mongoClient.getDatabase("benutzer");
 
 	/**
 	 * @see var.chat.server.persistence.StorageProvider#retrieveMessages(java.lang.String,
@@ -31,13 +31,12 @@ class StorageProviderMongoDB {
 	public synchronized User retrieveUser(String username) {
 
 		MongoCollection<Document> collection = database.getCollection("account");
-
 		// Retreive the hashed password
-		Document doc = collection.find(eq("username", username)).first();
+		Document doc = collection.find(eq("user", username)).first();
 		if (doc == null) {
 			return null;
 		}
-		User user = new User(username, doc.getString("password"), doc.getString("pseudonym"));
+		User user = new User(username, doc.getString("password"), doc.getString("pseudonym"), true);
 		return user;
 	}
 
@@ -49,7 +48,7 @@ class StorageProviderMongoDB {
 		MongoCollection<Document> collection = database.getCollection("token");
 
 		// add user to database
-		Document doc = new Document("token", token).append("expirationDate", expirationDate).append("pseudonym",
+		Document doc = new Document("token", token).append("expire-date", expirationDate).append("pseudonym",
 				pseudonym);
 
 		if (collection.find(eq("pseudonym", pseudonym)).first() != null) {
@@ -67,7 +66,7 @@ class StorageProviderMongoDB {
 		if (doc == null) {
 			return null;
 		}
-		return doc.getString("expirationDate");
+		return doc.getString("expire-date");
 	}
 
 	/**

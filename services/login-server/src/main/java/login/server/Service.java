@@ -23,6 +23,9 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 @Path("/")
 public class Service {
+	
+	private static SelectorThread threadSelector = null;
+	
 	/** String for date parsing in ISO 8601 format. */
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
@@ -35,7 +38,6 @@ public class Service {
 
 		initParams.put("com.sun.jersey.config.property.packages", paket);
 		System.out.println("Starte grizzly...");
-		SelectorThread threadSelector = null;
 		try {
 			threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
 		} catch (IllegalArgumentException e) {
@@ -64,7 +66,6 @@ public class Service {
 
 		initParams.put("com.sun.jersey.config.property.packages", paket);
 		System.out.println("Starte grizzly...");
-		SelectorThread threadSelector = null;
 		try {
 			threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
 		} catch (IllegalArgumentException e) {
@@ -78,7 +79,8 @@ public class Service {
 
 	}
 	public static void stopLoginServer(){
-		System.exit(0);
+		//System.exit(0);
+		threadSelector.stopEndpoint();
 	}
 
 	/**
@@ -103,7 +105,6 @@ public class Service {
 			System.out.println("user: " + userName);
 
 		} catch (JSONException e) {
-			e.printStackTrace();
 			System.out.println("Problem beim jsonString extrahieren");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
@@ -168,7 +169,7 @@ public class Service {
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			}
 			Calendar cal = Calendar.getInstance();
-			if (cal.before(date)) {
+			if (cal.getTime().before(date)) {
 				JSONObject obj = new JSONObject();
 				try {
 					sdf = new SimpleDateFormat(Service.ISO8601);

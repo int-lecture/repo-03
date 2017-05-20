@@ -42,11 +42,11 @@ public class TestLoginServer {
 		expect().statusCode(400).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
 				.body(("{ 'password': 'HalloIchbinBob', 'pseudonym': 'bob'}".replace('\'', '"'))).when().post("/login");
 
-		expect().statusCode(400).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
+		expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
 				.body(("{ 'user': 'bob@web.de', 'password': 'HalloIchbinBob'}".replace('\'', '"'))).when()
 				.post("/login");
 
-		expect().statusCode(403).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
+		expect().statusCode(401).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
 				.body(("{'user': 'bob@web.de', 'password': 'HalloIfsegbinBob', 'pseudonym': 'bob'}".replace('\'', '"')))
 				.when().post("/login");
 	}
@@ -74,15 +74,13 @@ public class TestLoginServer {
 		json.put("token", token);
 		json.put("pseudonym", "bobX");
 
-		expect().statusCode(403).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue())
-				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
+		expect().statusCode(401).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
 				.body(json.toString()).when().post("/auth");
 
 		json.put("token", token + "X");
 		json.put("pseudonym", "bob");
 
-		expect().statusCode(403).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue())
-				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
+		expect().statusCode(401).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
 				.body(json.toString()).when().post("/auth");
 
 	}
