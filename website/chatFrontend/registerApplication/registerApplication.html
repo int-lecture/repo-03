@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/registerApplication.js"></script>
+    <title>Registrieren</title>
+	 <link href="css/registerApplication.css" rel="stylesheet">
+  </head>
+  <body>
+   <!--
+    you can substitue the span of reauth email for a input with the email
+    -->
+    <div class="container">
+        <div class="card card-container">
+            <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+            <img id="profile-img" class="profile-img-card" src="img/logo.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin" onsubmit='return checkPw();'>
+                <span id="reauth-email" class="reauth-email"></span>
+                <input type="email" id="inputEmail" class="form-control" placeholder="Email Adresse" required autofocus>
+                <input type="text" id="inputPseudonym" class="form-control" placeholder="Pseudonym" required>
+		<input type="password" id="pw1" class="form-control" placeholder="Passwort" required>
+		<input type="password" id="pw2" class="form-control" placeholder="Passwort bestätigen" required>
+		<p id="error"></p>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" id = "registerButton">Registrieren</button>
+            </form><!-- /form -->
+        </div><!-- /card-container -->
+    </div><!-- /container -->
+  </body>
+</html>
