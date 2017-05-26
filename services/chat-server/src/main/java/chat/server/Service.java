@@ -61,6 +61,7 @@ public class Service {
 				}
 				if (!users.containsKey(msg.from)) {
 					thisUser = new User(msg.from);
+				users.put(msg.from, thisUser);
 				} else {
 					thisUser = users.get(msg.from);
 				}
@@ -117,6 +118,7 @@ public class Service {
 	public Response getMessages(@PathParam("userid") String userID, @PathParam("sequenceNumber") int sequenceNumber,
 			@Context HttpHeaders header) {
 		MultivaluedMap<String, String> map = header.getRequestHeaders();
+		System.out.println(users);
 		if (Service.users.containsKey(userID)) {
 			JSONArray jsonMsgs = new JSONArray();
 			User user = Service.users.get(userID);
@@ -124,14 +126,14 @@ public class Service {
 			if (user.authenticateUser(map.get("Authorization").get(0))) {
 				List<Message> newMsgs = user.receiveMessages(sequenceNumber);
 				if (newMsgs.isEmpty()) {
-					return Response.status(Response.Status.NO_CONTENT).entity("No new messages").build();
+					return Response.status(Response.Status.NO_CONTENT).build();
 				} else {
 					for (Message msg : newMsgs) {
 						try {
 							jsonMsgs.put(msg.toJson(false));
 						} catch (JSONException e) {
 							e.printStackTrace();
-							System.out.println("Json füllen fehlgeschlagen");
+							System.out.println("Json fï¿½llen fehlgeschlagen");
 							return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 						}
 					}
@@ -144,10 +146,10 @@ public class Service {
 					}
 				}
 			} else {
-				return Response.status(Response.Status.BAD_REQUEST).entity("User not found.").build();
+				return Response.status(Response.Status.UNAUTHORIZED).build(); 
 			}
 		} else {
-			return Response.status(Response.Status.UNAUTHORIZED).build();
+		 return Response.status(Response.Status.BAD_REQUEST).entity("User not found.").build();
 		}
 	}
 }

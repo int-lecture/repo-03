@@ -39,7 +39,7 @@ public class User {
 	private Queue<Message> messages = new ArrayDeque<Message>();
 
 	/**
-	 * The user´s token.
+	 * The userï¿½s token.
 	 */
 	private String token;
 
@@ -74,7 +74,7 @@ public class User {
 	}
 
 	/**
-	 * Gets all received message with a sequence number lower than the
+	 * Gets all received message with a sequence number higher than the
 	 * parameter. Returned messages are deleted.
 	 *
 	 * @param sequenceNumber
