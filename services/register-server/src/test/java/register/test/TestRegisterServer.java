@@ -20,6 +20,7 @@ import register.server.StorageProviderMongoDB;
 public class TestRegisterServer {
 	SelectorThread threadSelector;
 	String tokenBob;
+	private static String mongoURL = "mongodb://141.19.142.57:27017";
 
 	@Before
 	public void setUp() {
@@ -27,7 +28,9 @@ public class TestRegisterServer {
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
 		RestAssured.port = 5006;
-		Service.storageProvider = new StorageProviderMongoDB();
+		StorageProviderMongoDB sp = new StorageProviderMongoDB();
+		StorageProviderMongoDB.Init(mongoURL);
+		Service.storageProvider = sp;
 		threadSelector = Service.startRegistrationServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
 	}
 
