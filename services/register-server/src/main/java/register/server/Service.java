@@ -27,7 +27,7 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 public class Service {
 
 	public static IStorageProvider storageProvider;
-	public static String LoginServerURL = "http://localhost:5001";
+	public static String LoginServerURL = "http://localhost:5001/";
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 	private static final String mongoURL = "mongodb://141.19.142.57:27017";
 
