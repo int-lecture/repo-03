@@ -1,6 +1,9 @@
 package register.server;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.sun.grizzly.http.SelectorThread;
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 @Path("/")
@@ -24,6 +28,7 @@ public class Service {
 
 	public static IStorageProvider storageProvider;
 	public static String LoginServerURL = "http://localhost:5001";
+	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -122,6 +127,45 @@ public class Service {
 	}
 
 	private boolean VerifyToken(String pseudonym,String token) {
-		return true;
+		try
+		{
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("token", token);
+			obj.put("pseudonym", pseudonym);
+			System.out.println("Authentifiziere "+pseudonym+"  "+ token);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		// TODO : Maybe use one static client?
+		Client webClient = new Client();
+		String response = webClient.resource(LoginServerURL + "/auth")
+		.accept(MediaType.APPLICATION_JSON)
+		.type(MediaType.APPLICATION_JSON)
+		.post(String.class, obj.toString());
+		webClient.destroy();
+
+		SimpleDateFormat sdf = new SimpleDateFormat(ISO8601);
+			JSONObject jo = new JSONObject(response);
+			if (jo.getString("success").equals("true")) {
+				try {
+					Date expireDate = sdf.parse(jo.getString("expire-date"));
+					if(expireDate.before(new Date()))
+					{
+						return true;
+					}
+				} catch (JSONException | ParseException e) {
+					System.out.printf("Could not verify user %s. Failed to parse auth json. \n",pseudonym);
+					return false;
+				}
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+
+		return false;
 	}
 }
