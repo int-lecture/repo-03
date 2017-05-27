@@ -57,6 +57,10 @@ public class User {
 		return contacts;
 	}
 
+	public String getHashedPassword() {
+		return securePassword;
+	}
+
 	/**
 	 * Adds a new contact to the users contact list and returns the users new profile.
 	 * @param contact The contact to add to the contact list.

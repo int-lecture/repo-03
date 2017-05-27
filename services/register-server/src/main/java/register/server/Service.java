@@ -29,10 +29,13 @@ public class Service {
 	public static IStorageProvider storageProvider;
 	public static String LoginServerURL = "http://localhost:5001";
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+	private static final String mongoURL = "mongodb://141.19.142.57:27017";
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		StorageProviderMongoDB sp = new StorageProviderMongoDB();
+		StorageProviderMongoDB.Init(mongoURL);
+		storageProvider = sp;
+		startRegistrationServer(LoginServerURL);
 	}
 
 	public static SelectorThread startRegistrationServer(String uri) {
