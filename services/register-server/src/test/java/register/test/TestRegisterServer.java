@@ -15,6 +15,7 @@ import com.sun.grizzly.http.SelectorThread;
 import register.test.TestLoginServer;
 import io.restassured.RestAssured;
 import register.server.Service;
+import register.server.StorageProviderMongoDB;
 
 public class TestRegisterServer {
 	SelectorThread threadSelector;
@@ -23,10 +24,10 @@ public class TestRegisterServer {
 	@Before
 	public void setUp() {
 		TestLoginServer.start();
-		tokenBob = TestLoginServer.login("bob", "HalloIchbinBob").path("token").toString();
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
 		RestAssured.port = 5006;
+		Service.storageProvider = new StorageProviderMongoDB();
 		threadSelector = Service.startRegistrationServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
 	}
 
