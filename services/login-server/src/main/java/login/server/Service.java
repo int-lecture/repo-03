@@ -33,7 +33,7 @@ public class Service {
 
 	public static void main(String[] args) {
 		final String baseUri = "http://localhost:5001/";
-		final String paket = "register.server";
+		final String paket = "login.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
 
 		initParams.put("com.sun.jersey.config.property.packages", paket);

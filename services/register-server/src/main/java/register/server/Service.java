@@ -40,7 +40,7 @@ public class Service {
 
 	public static SelectorThread startRegistrationServer(String uri) {
 		final String baseUri = uri;
-		final String paket = "login.server";
+		final String paket = "register.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
 		SelectorThread threadSelector = null;
 
