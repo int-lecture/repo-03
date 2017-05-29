@@ -33,7 +33,7 @@ function loadContacts(){
             	success: function(result) {
 		contacts=result.contacts;
 		alert(contacts);
-                alert("success?");
+                alert("success?");},
 		error: function(xhr, a, b){
 		alert(" error");}
   	});
