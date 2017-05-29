@@ -1,7 +1,7 @@
 $( document ).ready(function() {   
 	var URL = "http://141.19.142.57:5002/register";
 	var dataObject = { 'pseudonym': "Hallo", 'user': "hallo@web.de", 'password': "1234" };
-$.ajax({	
+	$.ajax({	
 	     	url: URL,
             	type: 'PUT',
 		contentType: "application/json",    
@@ -26,21 +26,20 @@ function checkPw(){
 		return false;}
 	
 	var URL = "http://141.19.142.57:5002/register/";
-
-        var dataObject = { 'pseudonym': $("#inputPseudonym").val(), 'user': $("#inputEmail").val(), 'password': pw1 };
+	var dataObject = { 'pseudonym': $("#inputPseudonym").val(), 'user': $("#inputEmail").val(), 'password': pw1 };
 
         alert(JSON.stringify(dataObject));
 
         $.ajax({
-            url: URL,
-            type: 'PUT',    
-            data: JSON.stringify(dataObject),
-            dataType: 'json',
-            success: function(result) {
+            	url: URL,
+           	type: 'PUT',    
+            	data: JSON.stringify(dataObject),
+            	dataType: 'json',
+            	success: function(result) {
                 alert("success?")}
-        }).error(function() {
-    alert( "Handler for .error() called." )
-  });;
+        	}).error(function() {
+    		alert( "Handler for .error() called." )
+  	});;
 	return true;
 
 }
