@@ -11,7 +11,8 @@ function loadContacts(){
 		if(value.substring(0,6)=="token="){
 			token=value.substring(6);
 			alert(token);		
-		}else if(value.substring(0,10)=="pseudonym="){
+		}
+		if(value.substring(0,10)=="pseudonym="){
 			pseudonym=value.substring(10);
 			alert(pseudonym);
 		}	
