@@ -4,7 +4,7 @@ $( document ).ready(function() {
 
 function checkPw(){
 	var URL = "http://141.19.142.57:5002/register/";
-	var dataObject = {'user': $("#inputEmail").val(), 'password': $("#pw1").val(); };
+	var dataObject = {'user': $("#inputEmail").val(), 'password': $("#pw1").val()};
 
         alert(JSON.stringify(dataObject));
 
