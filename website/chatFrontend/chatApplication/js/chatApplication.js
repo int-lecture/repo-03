@@ -32,8 +32,8 @@ function loadContacts(){
             	dataType: 'json',
             	success: function(result) {
 		contacts=result.contacts;
+		alert(contacts);
                 alert("success?");
-		window.location.href = "http://141.19.142.57/chatFrontend/chatApplication/chatApplication.html";},
 		error: function(xhr, a, b){
 		alert(" error");}
   	});
