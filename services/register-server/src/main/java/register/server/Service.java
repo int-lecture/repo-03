@@ -27,7 +27,7 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 public class Service {
 
 	public static IStorageProvider storageProvider;
-	public static String LoginServerURL = "http://localhost:5001/";
+	public static String RegisterServerURL = "http://localhost:5002/";
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 	private static final String mongoURL = "mongodb://141.19.142.57:27017";
 
@@ -35,7 +35,7 @@ public class Service {
 		StorageProviderMongoDB sp = new StorageProviderMongoDB();
 		StorageProviderMongoDB.Init(mongoURL);
 		storageProvider = sp;
-		startRegistrationServer(LoginServerURL);
+		startRegistrationServer(RegisterServerURL);
 	}
 
 	public static SelectorThread startRegistrationServer(String uri) {
@@ -143,7 +143,7 @@ public class Service {
 
 		// TODO : Maybe use one static client?
 		Client webClient = new Client();
-		String response = webClient.resource(LoginServerURL + "/auth")
+		String response = webClient.resource(RegisterServerURL + "/auth")
 		.accept(MediaType.APPLICATION_JSON)
 		.type(MediaType.APPLICATION_JSON)
 		.post(String.class, obj.toString());
