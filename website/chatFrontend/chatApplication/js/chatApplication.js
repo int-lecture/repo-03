@@ -45,10 +45,10 @@ function send(){
 		contentType: "application/json; charset=utf-8",
             	dataType: 'json',
             	success: function(result) {
-		//TODO: sequenceNumbers von dem to
+		//Not Tested TODO: sequenceNumbers von dem to
 		sequenceNumbers[pseudonym]=result.sequence;
 		date=result.date;
-		alert(sequence);
+		alert(sequenceNumbers[pseudonym]);
                 alert("success?");},
 		error: function(xhr, a, b){
 		alert(" error");}
@@ -59,15 +59,18 @@ function send(){
 var messages;
 function getMessages(){
 	readCookie();
-	//TODO: seuqencenumber vom to anfügen
-	var URL = "http://141.19.142.57:5000/messages/"+pseudonym;
-	//TODO: Authorization Header anfügen
+	//Not Tested TODO: seuqencenumber vom to anfügen
+	var URL = "http://141.19.142.57:5000/messages/"+pseudonym+"/"+sequenceNumbers[pseudonym];
+	//Not Tested TODO: Authorization Header anfügen
 	$.ajax({
-            	url: URL,
-           	type: 'GET',    
+		headers: {
+        "Authorization":token
+    	}
+        url: URL,
+        type: 'GET',    
 		contentType: "application/json; charset=utf-8",
-            	dataType: 'json',
-            	success: function(result) {
+        dataType: 'json',
+        success: function(result) {
 		//TODO:append messages
 		messages=result;
 		alert(messages);
