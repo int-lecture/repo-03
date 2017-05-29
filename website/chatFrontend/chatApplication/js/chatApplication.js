@@ -1,6 +1,7 @@
 $( document ).ready(function() {  
 	//loadContacts();
 	send();
+	getMessages();
 });
 var token;
 var pseudonym;
