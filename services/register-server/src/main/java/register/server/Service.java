@@ -92,7 +92,7 @@ public class Service {
 			JSONObject obj = new JSONObject();
 			obj.append("success", "true");
 			System.out.printf("(/register) Added new user %s. \n", email);
-			return Response.status(Response.Status.OK).entity(obj.toString()).build();
+			return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
 		} else {
 			System.out.println("(/register) Registration failed.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
