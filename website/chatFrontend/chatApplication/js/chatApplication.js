@@ -12,8 +12,8 @@ function loadContacts(){
 			token=value.substring(6);
 			alert(token);		
 		}
-		if(value.substring(0,10)=="pseudonym="){
-			pseudonym=value.substring(10);
+		if(value.substring(0, "pseudonym=".length)=="pseudonym="){
+			pseudonym=value.substring("pseudonym=".length);
 			alert(pseudonym);
 		}	
 	});	
