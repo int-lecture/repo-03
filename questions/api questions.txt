@@ -1,1 +1,2 @@
 Login application erfährt nie pseudonym des users.
+Man kann keine Kontakte hinzufügen.
