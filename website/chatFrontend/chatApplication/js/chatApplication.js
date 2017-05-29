@@ -39,5 +39,41 @@ function loadContacts(){
   	});
 	
 }
+var sequence;
+var date;
+function send(){
+	var decodedCookie = decodeURIComponent(document.cookie);
+    	var ca = decodedCookie.split(';');
+	$.each(ca, function(index, value){
+		value = value.trim();
+		if(value.substring(0,6)=="token="){
+			token=value.substring(6);
+			alert(token);		
+		}
+		if(value.substring(0, "pseudonym=".length)=="pseudonym="){
+			pseudonym=value.substring("pseudonym=".length);
+			alert(pseudonym);
+		}	
+	});	
+	var URL = "http://141.19.142.57:5000/send/";
+	var dataObject = {'from': pseudonym, 'to': 'bob', 'date':'2017-03-30T17:00:00Z', 'text': 'Test', 'token': token};
+
+        alert(JSON.stringify(dataObject));
+
+        $.ajax({
+            	url: URL,
+           	type: 'PUT',    
+            	data: JSON.stringify(dataObject),
+		contentType: "application/json; charset=utf-8",
+            	dataType: 'json',
+            	success: function(result) {
+		sequence=result.sequence;
+		date=result.date;
+		alert(sequence);
+                alert("success?");},
+		error: function(xhr, a, b){
+		alert(" error");}
+  	});
+}
 
     
