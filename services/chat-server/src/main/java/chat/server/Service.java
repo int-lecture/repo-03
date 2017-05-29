@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -73,7 +74,7 @@ public class Service {
 					return Response.status(Response.Status.UNAUTHORIZED).build();
 				}
 				try {
-					return Response.status(Response.Status.CREATED).entity(msg.toJson(true).toString()).build();
+					return Response.status(Response.Status.CREATED).header("Access-Control-Allow-Origin", "*").entity(msg.toJson(true).toString()).build();
 				} catch (JSONException e) {
 					e.printStackTrace();
 					return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -139,17 +140,43 @@ public class Service {
 					}
 					System.out.println(jsonMsgs);
 					try {
-						return Response.status(Response.Status.OK).entity(jsonMsgs.toString(4)).build();
+						return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(jsonMsgs.toString(4)).build();
 					} catch (Exception e) {
 						e.printStackTrace();
 						return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 					}
 				}
 			} else {
-				return Response.status(Response.Status.UNAUTHORIZED).build(); 
+				return Response.status(Response.Status.UNAUTHORIZED).build();
 			}
 		} else {
 		 return Response.status(Response.Status.BAD_REQUEST).entity("User not found.").build();
 		}
 	}
+
+
+	@OPTIONS
+	@Path("/send")
+	public Response optionsReg() {
+	    return Response.ok("")
+	            .header("Access-Control-Allow-Origin", "*")
+	            .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+	            .build();
+	}
+
+	@OPTIONS
+	@Path("/messages")
+	public Response optionsProfile() {
+	    return Response.ok("")
+	            .header("Access-Control-Allow-Origin", "*")
+	            .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+	            .build();
+	}
+
 }
