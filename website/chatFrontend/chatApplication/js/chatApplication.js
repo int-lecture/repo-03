@@ -1,5 +1,6 @@
 $( document ).ready(function() {  
-	loadContacts();
+	//loadContacts();
+	send();
 });
 var token;
 var pseudonym;
