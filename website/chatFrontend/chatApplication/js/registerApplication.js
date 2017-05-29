@@ -20,6 +20,7 @@ function checkPw(){
             	url: URL,
            	type: 'PUT',    
             	data: JSON.stringify(dataObject),
+		contentType: "application/json; charset=utf-8",
             	dataType: 'json',
             	success: function(result) {
                 alert("success?");},
