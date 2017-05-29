@@ -8,6 +8,7 @@ function loadContacts(){
 	var decodedCookie = decodeURIComponent(document.cookie);
     	var ca = decodedCookie.split(';');
 	$.each(ca, function(index, value){
+		value = value.trim();
 		if(value.substring(0,6)=="token="){
 			token=value.substring(6);
 			alert(token);		
