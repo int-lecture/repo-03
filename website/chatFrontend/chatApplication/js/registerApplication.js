@@ -1,5 +1,5 @@
-$( document ).ready(function() {   
-	var URL = "http://141.19.142.57:5002/register";
+﻿$( document ).ready(function() {   
+	var URL = "http://localhost:5002/register";
 	var dataObject = { 'pseudonym': "Hallo", 'user': "hallo@web.de", 'password': "1234" };
 	$.ajax({	
 	     	url: URL,
