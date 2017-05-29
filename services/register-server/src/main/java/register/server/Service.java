@@ -28,7 +28,7 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 public class Service {
 
 	public static IStorageProvider storageProvider;
-	public static String RegisterServerURL = "http://localhost:5002/";
+	public static String RegisterServerURL = "http://0.0.0.0:5002/";
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 	private static final String mongoURL = "mongodb://141.19.142.57:27017";
 
@@ -44,7 +44,7 @@ public class Service {
 		final String paket = "register.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
 		SelectorThread threadSelector = null;
-
+		System.out.println("TEST");
 		initParams.put("com.sun.jersey.config.property.packages", paket);
 		System.out.println("Starte grizzly...");
 		try {
