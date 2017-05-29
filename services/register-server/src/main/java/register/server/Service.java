@@ -124,7 +124,7 @@ public class Service {
 			JSONArray contacts = new JSONArray(user.getContacts());
 			obj.append("contact", contacts);
 
-			return Response.status(Response.Status.OK).entity(obj.toString()).build();
+			return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
