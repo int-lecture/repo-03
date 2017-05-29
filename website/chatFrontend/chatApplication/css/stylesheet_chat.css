@@ -1,3 +1,13 @@
+.scroll {
+    max-height: 937px;
+    overflow-y: scroll;
+}
+
+.scroll2 {
+    max-height: 821px;
+    overflow-y: scroll;
+}
+
 .container {
     width: 100%;
     padding-top: 35px;
