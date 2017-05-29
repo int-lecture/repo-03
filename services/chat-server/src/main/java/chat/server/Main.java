@@ -8,11 +8,11 @@ import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 public class Main {
-	
+
 	private static SelectorThread threadSelector = null;
-	
+
 	public static void main(String[] args) {
-		final String baseUri = "http://localhost:5000/";
+		final String baseUri = "http://0.0.0.0:5000/";
 		final String paket = "chat.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
 

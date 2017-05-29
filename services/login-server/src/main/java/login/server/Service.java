@@ -32,7 +32,7 @@ public class Service {
 	private StorageProviderMongoDB spMDB = new StorageProviderMongoDB();
 
 	public static void main(String[] args) {
-		final String baseUri = "http://localhost:5001/";
+		final String baseUri = "http://0.0.0.0:5001/";
 		final String paket = "login.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
 
