@@ -101,6 +101,11 @@ function readCookie(){
 			pseudonym=value.substring("pseudonym=".length);
 			alert(pseudonym);
 		}
+		if(value.substring(0, "ip=".length)=="ip="){
+			ip=value.substring("ip=".length);
+			alert(ip);
+		}
+
 	
 	});	
 }
