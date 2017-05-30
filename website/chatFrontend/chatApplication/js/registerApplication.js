@@ -1,7 +1,7 @@
 $( document ).ready(function() {  
 	
 });
-
+var ip=141.19.142.57;
 function checkPw(){
 	var a= $("#pw1");
 	var pw1= $("#pw1").val();
@@ -11,7 +11,7 @@ function checkPw(){
 		$("#error").html("Du böser bube die Passwörter sind nicht Identisch!");
 		return false;}
 	
-	var URL = "http://141.19.142.57:5002/register";
+	var URL = "http://"+ip+":5002/register";
 	var dataObject = { 'pseudonym': $("#inputPseudonym").val(), 'user': $("#inputEmail").val(), 'password': pw1 };
 
         alert(JSON.stringify(dataObject));

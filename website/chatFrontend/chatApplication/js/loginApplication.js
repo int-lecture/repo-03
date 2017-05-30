@@ -1,9 +1,9 @@
 $( document ).ready(function() {  
 	
 });
-
+var ip=141.19.142.57;
 function checkPw(){
-	var URL = "http://141.19.142.57:5001/login/";
+	var URL = "http://"+ip+":5001/login/";
 	var dataObject = {'user': $("#inputEmail").val(), 'password': $("#inputPassword").val()};
 
         alert(JSON.stringify(dataObject));

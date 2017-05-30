@@ -7,10 +7,11 @@ var token;
 var pseudonym;
 var contacts;
 var sequenceNumbers;
+var ip=141.19.142.57;
 function loadContacts(){
 	readCookie();	
 	
-	var URL = "http://141.19.142.57:5002/profile/";
+	var URL = "http://"+ip+":5002/profile/";
 	var dataObject = {'token': token, 'getownprofile': pseudonym};
 
         alert(JSON.stringify(dataObject));
@@ -33,7 +34,7 @@ function loadContacts(){
 var date;
 function send(){
 	readCookie();
-	var URL = "http://141.19.142.57:5000/send/";
+	var URL = "http://"+ip+":5000/send/";
 	var dataObject = {'from': pseudonym, 'to': 'bob', 'date':'2017-03-30T17:00:00Z', 'text': 'Test', 'token': token};
 
         alert(JSON.stringify(dataObject));
@@ -60,7 +61,7 @@ var messages;
 function getMessages(){
 	readCookie();
 	//Not Tested TODO: seuqencenumber vom to anfügen
-	var URL = "http://141.19.142.57:5000/messages/"+pseudonym+"/"+sequenceNumbers[pseudonym];
+	var URL = "http://"+ip+":5000/messages/"+pseudonym+"/"+sequenceNumbers[pseudonym];
 	//Not Tested TODO: Authorization Header anfügen
 	$.ajax({
 		headers: {
