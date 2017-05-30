@@ -1,7 +1,7 @@
 $( document ).ready(function() {  
 	
 });
-var ip=141.19.142.57;
+var ip="141.19.142.57";
 function checkPw(){
 	var a= $("#pw1");
 	var pw1= $("#pw1").val();

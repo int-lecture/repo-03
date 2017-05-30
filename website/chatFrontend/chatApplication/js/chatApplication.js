@@ -7,7 +7,7 @@ var token;
 var pseudonym;
 var contacts;
 var sequenceNumbers;
-var ip=141.19.142.57;
+var ip="141.19.142.57";
 function loadContacts(){
 	readCookie();	
 	
