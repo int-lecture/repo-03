@@ -18,11 +18,15 @@ function checkPw(){
 		document.cookie = "token="+result.token;
 		document.cookie="pseudonym="+result.pseudonym+";expires="+result["expire-date"];
                 alert("success?");
-		window.location.href = "http://141.19.142.57/chatFrontend/chatApplication/chatApplication.html";},
+		window.location.href = "chatApplication.html";},
 		error: function(xhr, a, b){
 		alert(" error");}
   	});
 	alert("Erfolgreich eingelogt");
 	return false;
 
+}
+
+function backToRegister(){
+    window.location.href = "registerApplication.html";
 }

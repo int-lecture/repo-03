@@ -23,7 +23,8 @@ function checkPw(){
 		contentType: "application/json; charset=utf-8",
             	dataType: 'json',
             	success: function(result) {
-                alert("success?");},
+                alert("success?");,
+                window.location.href = "loginApplication.html";},
 		error: function(xhr, ajaxOptions, thrownError){
 		alert("Error!§§!");}
   	});
