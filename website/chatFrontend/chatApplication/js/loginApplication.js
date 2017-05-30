@@ -29,6 +29,3 @@ function checkPw(){
 
 }
 
-function backToRegister(){
-    window.location.href = "http://141.19.142.57/chatFrontend/chatApplication/registerApplication.html";
-}

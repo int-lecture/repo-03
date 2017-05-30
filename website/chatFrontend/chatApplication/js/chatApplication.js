@@ -1,20 +1,50 @@
 $( document ).ready(function() {  
-	//loadContacts();
+	//TODO: delete bob before releasing
+	setTests();
+	loadContacts();
 	send();
 	getMessages();
 });
 var token;
 var pseudonym;
 var contacts;
-var sequenceNumbers;
+var sequenceNumbers=[];
 var ip="141.19.142.57";
+
+function setTests(){
+	pseudonym="bob";
+	sequenceNumbers["bob"]=0;
+	ip="141.19.142.57";
+	var URL = "http://"+ip+":5001/login/";
+	var dataObject = {'user': "bob@web.de", 'password': "HalloIchbinBob"};
+
+        //alert(JSON.stringify(dataObject));
+
+        $.ajax({
+			url: URL,
+			type: 'POST',    
+			data: JSON.stringify(dataObject),
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			success: function(result) {
+				token = result.token;
+				//alert("success?");
+				window.location.href = "chatApplication.html";
+			},
+			error: function(xhr, a, b){
+				//alert(" error");
+			}
+  	});
+}
+
+
 function loadContacts(){
 	readCookie();	
 	
 	var URL = "http://"+ip+":5002/profile/";
 	var dataObject = {'token': token, 'getownprofile': pseudonym};
 
-        alert(JSON.stringify(dataObject));
+        //alert(JSON.stringify(dataObject));
 
         $.ajax({
 			url: URL,
@@ -24,11 +54,14 @@ function loadContacts(){
 			dataType: 'json',
 			success: function(result) {
 				contacts=result.contacts;
-				alert(contacts);
-				alert("success?");
+				alert("Kontakt wird unter Bob eingefügt");
+				$("#contacts").append("<p>testContacts</p>");
+				//alert(contacts);
+				
 			},
 			error: function(xhr, a, b){
-				alert(" error");
+				alert("Kontakt wird unter Bob eingefügt");
+				$("#contacts").append("<p>testContacts</p>");
 			}
   	});
 	
@@ -39,7 +72,7 @@ function send(){
 	var URL = "http://"+ip+":5000/send/";
 	var dataObject = {'from': pseudonym, 'to': 'bob', 'date':'2017-03-30T17:00:00Z', 'text': 'Test', 'token': token};
 
-        alert(JSON.stringify(dataObject));
+        //alert(JSON.stringify(dataObject));
 
         $.ajax({
 			url: URL,
@@ -49,13 +82,17 @@ function send(){
 			dataType: 'json',
 			success: function(result) {
 				//Not Tested TODO: sequenceNumbers von dem to
+				alert("test Nachricht wird in der Chatblase von Bob eingefügt");
+				$("#send").append("<p>test</p>");
 				sequenceNumbers[pseudonym]=result.sequence;
 				date=result.date;
-				alert(sequenceNumbers[pseudonym]);
-				alert("success?");
+				//alert(sequenceNumbers[pseudonym]);
+				//alert("success?");
 			},
 			error: function(xhr, a, b){
-				alert(" error");
+				alert("test Nachricht wird in der Chatblase von Bob eingefügt");
+				//alert(" error");
+				$("#send").append("<p>test</p>");
 			}
   	});
 }
@@ -77,12 +114,16 @@ function getMessages(){
         dataType: 'json',
         success: function(result) {
 			//TODO:append messages
+			alert("test Nachricht wird in der Chatblase vom Partner eingefügt");
+			$("#messages").append("<p>testMessages</p>");
 			messages=result;
-			alert(messages);
-			alert("success?");
+			//alert(messages);
+			//alert("success?");
 		},
 		error: function(xhr, a, b){
-			alert(" error");
+			//alert(" error");
+			alert("test Nachricht wird in der Chatblase vom Partner eingefügt");
+			$("#messages").append("<p>testMessages</p>");
 		}
   	});
 
@@ -95,15 +136,15 @@ function readCookie(){
 		value = value.trim();
 		if(value.substring(0,6)=="token="){
 			token=value.substring(6);
-			alert(token);		
+			//alert(token);		
 		}
 		if(value.substring(0, "pseudonym=".length)=="pseudonym="){
 			pseudonym=value.substring("pseudonym=".length);
-			alert(pseudonym);
+			//alert(pseudonym);
 		}
 		if(value.substring(0, "ip=".length)=="ip="){
 			ip=value.substring("ip=".length);
-			alert(ip);
+			//alert(ip);
 		}
 
 	
