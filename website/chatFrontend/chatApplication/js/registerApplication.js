@@ -17,16 +17,18 @@ function checkPw(){
         alert(JSON.stringify(dataObject));
 
         $.ajax({
-            	url: URL,
-           	type: 'PUT',    
-            	data: JSON.stringify(dataObject),
-		contentType: "application/json; charset=utf-8",
-            	dataType: 'json',
-            	success: function(result) {
-                alert("success?");,
-                window.location.href = "loginApplication.html";},
-		error: function(xhr, ajaxOptions, thrownError){
-		alert("Error!§§!");}
+			url: URL,
+			type: 'PUT',    
+			data: JSON.stringify(dataObject),
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			success: function(result) {
+				alert("success?");
+				window.location.href = "loginApplication.html";
+			},
+			error: function(xhr, ajaxOptions, thrownError){
+			alert("Error!§§!");
+		}
   	});
 	alert("Erfolgreich registriert");
 	return true;

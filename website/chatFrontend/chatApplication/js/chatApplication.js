@@ -17,17 +17,19 @@ function loadContacts(){
         alert(JSON.stringify(dataObject));
 
         $.ajax({
-            	url: URL,
-           	type: 'POST',    
-            	data: JSON.stringify(dataObject),
-		contentType: "application/json; charset=utf-8",
-            	dataType: 'json',
-            	success: function(result) {
-		contacts=result.contacts;
-		alert(contacts);
-                alert("success?");},
-		error: function(xhr, a, b){
-		alert(" error");}
+			url: URL,
+			type: 'POST',    
+			data: JSON.stringify(dataObject),
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			success: function(result) {
+				contacts=result.contacts;
+				alert(contacts);
+				alert("success?");
+			},
+			error: function(xhr, a, b){
+				alert(" error");
+			}
   	});
 	
 }
@@ -40,19 +42,21 @@ function send(){
         alert(JSON.stringify(dataObject));
 
         $.ajax({
-            	url: URL,
-           	type: 'PUT',    
-            	data: JSON.stringify(dataObject),
-		contentType: "application/json; charset=utf-8",
-            	dataType: 'json',
-            	success: function(result) {
-		//Not Tested TODO: sequenceNumbers von dem to
-		sequenceNumbers[pseudonym]=result.sequence;
-		date=result.date;
-		alert(sequenceNumbers[pseudonym]);
-                alert("success?");},
-		error: function(xhr, a, b){
-		alert(" error");}
+			url: URL,
+			type: 'PUT',    
+			data: JSON.stringify(dataObject),
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			success: function(result) {
+				//Not Tested TODO: sequenceNumbers von dem to
+				sequenceNumbers[pseudonym]=result.sequence;
+				date=result.date;
+				alert(sequenceNumbers[pseudonym]);
+				alert("success?");
+			},
+			error: function(xhr, a, b){
+				alert(" error");
+			}
   	});
 }
 
@@ -65,19 +69,21 @@ function getMessages(){
 	//Not Tested TODO: Authorization Header anfügen
 	$.ajax({
 		headers: {
-        "Authorization":token
-    	}
+        	"Authorization":token
+    	},
         url: URL,
         type: 'GET',    
 		contentType: "application/json; charset=utf-8",
         dataType: 'json',
         success: function(result) {
-		//TODO:append messages
-		messages=result;
-		alert(messages);
-                alert("success?");},
+			//TODO:append messages
+			messages=result;
+			alert(messages);
+			alert("success?");
+		},
 		error: function(xhr, a, b){
-		alert(" error");}
+			alert(" error");
+		}
   	});
 
 }
