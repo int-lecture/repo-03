@@ -13,14 +13,14 @@ public class TestLoginServer {
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
 		RestAssured.port=5001;
-		Service.starteLoginServer(RestAssured.baseURI + ":" +
+		Service.startLoginServer(RestAssured.baseURI + ":" +
 		RestAssured.port+ "/");
 	}
 
 	public static void stop() {
 		Service.stopLoginServer();
 	}
-	
+
 	public static Response login(String name, String password){
 		Response resp = expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
 				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)

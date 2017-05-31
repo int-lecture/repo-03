@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.sun.grizzly.http.SelectorThread;
 
-import register.test.TestLoginServer;
 import io.restassured.RestAssured;
 import register.server.Service;
 import register.server.StorageProviderMongoDB;
@@ -37,7 +36,7 @@ public class TestRegisterServer {
 	@After
 	public void tearDown() {
 		TestLoginServer.stop();
-		Service.stopLoginServer(threadSelector);
+		Service.stopRegisterServer(threadSelector);
 	}
 
 	/**

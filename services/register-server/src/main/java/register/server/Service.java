@@ -28,23 +28,27 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 public class Service {
 
 	public static IStorageProvider storageProvider;
-	public static String RegisterServerURL = "http://0.0.0.0:5002/";
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
-	private static final String mongoURL = "mongodb://141.19.142.57:27017";
 
 	public static void main(String[] args) {
+		try {
+			Config.init(args);
+		} catch (Exception e) {
+			System.out.println("Invalid launch arguments!");
+			System.exit(-1);
+		}
+
 		StorageProviderMongoDB sp = new StorageProviderMongoDB();
-		StorageProviderMongoDB.Init(mongoURL);
+		StorageProviderMongoDB.Init();
 		storageProvider = sp;
-		startRegistrationServer(RegisterServerURL);
+		startRegistrationServer(Config.getSettingValue(Config.baseURI));
 	}
 
 	public static SelectorThread startRegistrationServer(String uri) {
 		final String baseUri = uri;
 		final String paket = "register.server";
-		final Map<String, String> initParams = new HashMap<String, String>();
+		final Map<String, String> initParams = new HashMap<>();
 		SelectorThread threadSelector = null;
-		System.out.println("TEST");
 		initParams.put("com.sun.jersey.config.property.packages", paket);
 		System.out.println("Starte grizzly...");
 		try {
@@ -56,11 +60,11 @@ public class Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.printf("Grizzly(registerServer) runnig at %s%n", baseUri);
+		System.out.printf("Grizzly(registerServer) running at %s%n", baseUri);
 		return threadSelector;
 	}
 
-	public static void stopLoginServer(SelectorThread threadSelector){
+	public static void stopRegisterServer(SelectorThread threadSelector){
 		threadSelector.stopEndpoint();
 	}
 
@@ -69,9 +73,9 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response RegisterNewUser(String jsonString) {
-		String pseudonym = "";
-		String email = "";
-		String password = "";
+		String pseudonym;
+		String email;
+		String password;
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			password = obj.getString("password");
@@ -79,7 +83,12 @@ public class Service {
 			pseudonym = obj.getString("pseudonym");
 
 		} catch (JSONException e) {
-			System.out.println("(/register) User send invalid json data.");
+			System.out.println("[/register] User send invalid json data.");
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+
+		if(!isValidEmail(email) || !isValidPassword(password) || !isValidPseudonym(email)){
+			System.out.println("[/register] A registration value was invalid.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 
@@ -91,10 +100,10 @@ public class Service {
 		if(storageProvider.createNewUser(user)) {
 			JSONObject obj = new JSONObject();
 			obj.append("success", "true");
-			System.out.printf("(/register) Added new user %s. \n", email);
+			System.out.printf("[/register] Added new user %s. \n", email);
 			return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
 		} else {
-			System.out.println("(/register) Registration failed.");
+			System.out.println("[/register] Registration failed.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}
@@ -104,19 +113,19 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getUserProfile(String jsonString) {
-		String token = "";
-		String pseudonym = "";
+		String token;
+		String pseudonym;
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			token = obj.getString("token");
 			pseudonym = obj.getString("getownprofile");
 
 		} catch (JSONException e) {
-			System.out.println("(/profile) User send invalid json data.");
+			System.out.println("[/profile] User send invalid json data.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 
-		if(VerifyToken( pseudonym,  token)){
+		if(verifyToken( pseudonym,  token)){
 			User user = storageProvider.getUserProfile(pseudonym);
 			JSONObject obj = new JSONObject();
 			obj.append("name", user.getPseudonym());
@@ -126,6 +135,7 @@ public class Service {
 
 			return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
 		} else {
+			System.out.println("[/profile] User failed to authenticate.");
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
@@ -154,21 +164,21 @@ public class Service {
 	            .build();
 	}
 
-	private boolean VerifyToken(String pseudonym,String token) {
+	private static boolean verifyToken(String pseudonym,String token) {
 		try
 		{
 		JSONObject obj = new JSONObject();
 		try {
 			obj.put("token", token);
 			obj.put("pseudonym", pseudonym);
-			System.out.println("Authentifiziere "+pseudonym+"  "+ token);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			System.out.println("Failed to build authorization request json.");
+			return false;
 		}
 
 		// TODO : Maybe use one static client?
 		Client webClient = new Client();
-		String response = webClient.resource(RegisterServerURL + "/auth")
+		String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "/auth")
 		.accept(MediaType.APPLICATION_JSON)
 		.type(MediaType.APPLICATION_JSON)
 		.post(String.class, obj.toString());
@@ -182,6 +192,9 @@ public class Service {
 					if(expireDate.before(new Date()))
 					{
 						return true;
+					} else {
+						System.out.printf("Could not verify user %s. Token expired. \n",pseudonym);
+						return false;
 					}
 				} catch (JSONException | ParseException e) {
 					System.out.printf("Could not verify user %s. Failed to parse auth json. \n",pseudonym);
@@ -190,10 +203,26 @@ public class Service {
 			}
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			System.out.printf("Uncaught exception occurred during user authentication %s  \n", e.getMessage());
 			return false;
 		}
 
 		return false;
 	}
+
+	private static boolean isValidEmail(String email) {
+		// TODO : Use actual verification
+		return email.length() > 3;
+	}
+
+	private static boolean isValidPseudonym(String pseudonym) {
+		// TODO : Use actual verification
+		return pseudonym.length() > 4;
+	}
+
+	private static boolean isValidPassword(String password) {
+		// TODO : Use actual verification
+		return true;
+	}
+
 }
