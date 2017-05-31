@@ -24,7 +24,6 @@ function checkPw(){
 				alert(" error");
 			}
   	});
-	alert("Erfolgreich eingelogt");
 	return false;
 
 }

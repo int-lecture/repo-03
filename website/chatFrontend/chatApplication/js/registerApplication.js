@@ -30,7 +30,6 @@ function checkPw(){
 			alert("Error!§§!");
 		}
   	});
-	alert("Erfolgreich registriert");
 	return true;
 
 }
