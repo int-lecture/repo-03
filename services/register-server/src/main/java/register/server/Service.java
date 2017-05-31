@@ -94,6 +94,7 @@ public class Service {
 
 		User user = new User(pseudonym, password, email);
 		if(storageProvider.userExists(pseudonym, email)) {
+			System.out.printf("[/register] User %s was already registered and is potentially a teapot.\n", email);
 			return Response.status(418).build();
 		}
 
@@ -178,7 +179,7 @@ public class Service {
 
 		// TODO : Maybe use one static client?
 		Client webClient = new Client();
-		String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "/auth")
+		String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "auth")
 		.accept(MediaType.APPLICATION_JSON)
 		.type(MediaType.APPLICATION_JSON)
 		.post(String.class, obj.toString());
@@ -189,7 +190,7 @@ public class Service {
 			if (jo.getString("success").equals("true")) {
 				try {
 					Date expireDate = sdf.parse(jo.getString("expire-date"));
-					if(expireDate.before(new Date()))
+					if(expireDate.after(new Date()))
 					{
 						return true;
 					} else {

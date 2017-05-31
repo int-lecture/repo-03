@@ -2,6 +2,7 @@ package login.server;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.ne;
 
 import org.bson.Document;
 
@@ -18,30 +19,20 @@ import java.util.Date;
 /**
  * Storage provider for a MongoDB.
  */
-class StorageProviderMongoDB {
-
-    /**
-     * Client to be used.
-     */
+public class StorageProviderMongoDB {
     private static MongoClient mongoClient;
-
-    /**
-     * Mongo database.
-     */
     private static MongoDatabase database;
-
-
     private static StorageProviderMongoDB sp;
 
     private StorageProviderMongoDB() {
 
     }
 
-    public static synchronized StorageProviderMongoDB Init() {
+    public static synchronized void init() {
         sp = new StorageProviderMongoDB();
         mongoClient = new MongoClient(
                 new MongoClientURI(Config.getSettingValue(Config.mongoURI)));
-        database = mongoClient.getDatabase("benutzer");
+        database = mongoClient.getDatabase(Config.getSettingValue(Config.dbName));
         // Used to check for valid connection!
         try {
             mongoClient.getDatabaseNames();
@@ -50,6 +41,9 @@ class StorageProviderMongoDB {
             System.exit(-1);
         }
         System.out.println("MongoDB storage provider initialized.");
+    }
+
+    public static StorageProviderMongoDB getStorageProvider(){
         return sp;
     }
 
@@ -62,7 +56,7 @@ class StorageProviderMongoDB {
      */
     public User retrieveUser(String username, String pseudonym) {
 
-        MongoCollection<Document> collection = database.getCollection("account");
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
         Document doc = null;
         // Retrieve the hashed password
         if (pseudonym == null && Config.getSettingValue(Config.allowEmailLogin) == "true") {
@@ -84,7 +78,7 @@ class StorageProviderMongoDB {
      */
     public void saveToken(String token, String expirationDate, String pseudonym) {
 
-        MongoCollection<Document> collection = database.getCollection("token");
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
 
         // add user to database
         Document doc = new Document("token", "" + token + "").append("expire-date", expirationDate).append("pseudonym",
@@ -105,7 +99,7 @@ class StorageProviderMongoDB {
      * @return The token's expiration date or null if the token was not found or is expired.
      */
     public Date retrieveToken(String pseudonym, String token) {
-        MongoCollection<Document> collection = database.getCollection("token");
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
         // Retreive the tokeninformation
         Document doc = collection.find(and(eq("pseudonym", pseudonym), eq("token", token))).first();
         if (doc == null) {
@@ -117,9 +111,9 @@ class StorageProviderMongoDB {
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-        Date expireDate = null;
+        Date expireDate;
         try {
-            sdf.parse(expDateString);
+            expireDate = sdf.parse(expDateString);
         } catch (ParseException e) {
             // The token seems to be corrupted.
             collection.deleteOne(and(eq("pseudonym", pseudonym), eq("token", token)));
@@ -136,11 +130,25 @@ class StorageProviderMongoDB {
      *
      */
     public void deleteToken(String token) {
-        MongoCollection<Document> collection = database.getCollection("token");
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
         collection.deleteOne(eq("token", token));
     }
 
-    public void clearForTest() {
+    public void clearForTest(User[] newUsers) {
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
+        // Deletes all items in the collection
+        collection.deleteMany(ne("remove","all"));
+        MongoCollection<Document> tokenCollection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
+        // Deletes all items in the collection
+        tokenCollection.deleteMany(ne("remove","all"));
 
+        for (User u :
+                newUsers) {
+            Document doc = new Document();
+            doc.append("user",u.email);
+            doc.append("pseudonym",u.pseudonym);
+            doc.append("password", u.getSecurePassword());
+            collection.insertOne(doc);
+        }
     }
 }

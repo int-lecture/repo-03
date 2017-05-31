@@ -2,27 +2,39 @@ package login.test;
 
 import javax.ws.rs.core.MediaType;
 
-import static io.restassured.RestAssured.config;
 import static io.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.notNullValue;
 
+import io.restassured.RestAssured;
 import login.server.Config;
+import login.server.User;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import login.server.Service;
+import login.server.StorageProviderMongoDB;
 
 public class TestLoginServer {
     @Before
     public void setUp() throws Exception {
+        // Setup dependencies
+        Config.init(new String[]{
+                "-mongoURI", "mongodb://testmongodb:27017/",
+                "-dbName", "regTest"});
+        StorageProviderMongoDB.init();
+        StorageProviderMongoDB sp = StorageProviderMongoDB.getStorageProvider();
+        //Fill db
+        sp.clearForTest(new User[]{
+                new User("bob@web.de", "HalloIchbinBob", "bob")
+        });
+
         RestAssured.baseURI = "http://localhost";
         RestAssured.basePath = "/";
-        RestAssured.port = 5006;
-        Config.init(new String[0]);
+        RestAssured.port = 5001;
+
         Service.startLoginServer(Config.getSettingValue(Config.baseURI));
     }
 

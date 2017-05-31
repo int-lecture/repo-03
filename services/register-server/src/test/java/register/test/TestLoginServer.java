@@ -10,7 +10,11 @@ import javax.ws.rs.core.MediaType;
 public class TestLoginServer {
 
 	public static void start() throws Exception {
-		login.server.Config.init(new String[0]);
+		login.server.Config.init(new String[]{
+				"-mongoURI", "mongodb://testmongodb:27017/",
+				"-dbName", "regTest"
+		});
+		login.server.StorageProviderMongoDB.init();
 		Service.startLoginServer(Config.getSettingValue(Config.loginURI));
 	}
 
@@ -24,7 +28,6 @@ public class TestLoginServer {
 		obj.put("password", password);
 
 
-		// TODO : Maybe use one static client?
 		Client webClient = new Client();
 		String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "login")
 				.accept(MediaType.APPLICATION_JSON)

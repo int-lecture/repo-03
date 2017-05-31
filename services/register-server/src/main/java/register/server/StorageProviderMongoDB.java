@@ -13,10 +13,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 public class StorageProviderMongoDB implements IStorageProvider {
-	/** Client to be used. */
 	private static MongoClient mongoClient;
-
-	/** Mongo database. */
 	private static MongoDatabase database;
 
 	public static void Init() {

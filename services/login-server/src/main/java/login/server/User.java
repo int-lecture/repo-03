@@ -115,6 +115,10 @@ public class User {
 		return token.equals(this.currentToken) && currentTime.before(date);
 	}
 
+	public String getSecurePassword(){
+		return passwordHash;
+	}
+
 	/**
 	 * Hashes and salts a password.
 	 *

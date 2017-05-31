@@ -14,6 +14,9 @@ import java.util.Map;
 public enum Config {
     baseURI("http://0.0.0.0:5001/"),
     mongoURI("mongodb://141.19.142.57:27017"),
+    dbName("benutzer"),
+    dbAccountCollection("account"),
+    dbTokenCollection("token"),
     allowEmailLogin("true");
 
     private static Map<String, List<String>> settings = new HashMap<>();

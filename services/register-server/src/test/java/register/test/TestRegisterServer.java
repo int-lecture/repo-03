@@ -89,7 +89,7 @@ public class TestRegisterServer {
                 .body(("{'pseudonym': 'tom','password': 'tom', 'user': 'tom@web.de'}").replace('\'', '"'))
                 .when().put("/register");
         // Login the new user
-        String token = TestLoginServer.LoginUser("tom","tom");
+        String token = TestLoginServer.LoginUser("tom@web.de","tom");
 
         JSONObject json = new JSONObject();
         json.put("token", token);
@@ -100,7 +100,7 @@ public class TestRegisterServer {
         json = new JSONObject();
         json.put("token", "hallo");
         json.put("getownprofile", "susi");
-        expect().statusCode(400).given().contentType(MediaType.APPLICATION_JSON).body(json.toString()).when()
+        expect().statusCode(403).given().contentType(MediaType.APPLICATION_JSON).body(json.toString()).when()
                 .post("/profile");
 
     }

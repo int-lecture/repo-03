@@ -25,8 +25,6 @@ public class Service {
 	/** String for date parsing in ISO 8601 format. */
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-	private static StorageProviderMongoDB spMDB;
-
 	public static void main(String[] args) {
 		try {
 			Config.init(args);
@@ -35,7 +33,7 @@ public class Service {
 			System.exit(-1);
 		}
 
-		spMDB = StorageProviderMongoDB.Init();
+		StorageProviderMongoDB.init();
 		startLoginServer(Config.getSettingValue(Config.baseURI));
 	}
 
@@ -76,6 +74,7 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response LoginUser(String jsonString) {
+		StorageProviderMongoDB spMDB = StorageProviderMongoDB.getStorageProvider();
 		String userName, password, pseudonym;
 		boolean allowEmailLogin = Config.getSettingValue(Config.allowEmailLogin) == "true";
 		try {
@@ -83,6 +82,7 @@ public class Service {
 			password = obj.getString("password");
 			userName = obj.getString("user");
 			pseudonym = obj.optString("pseudonym");
+			if(pseudonym == "") pseudonym = null;
 			System.out.println("user: " + userName);
 
 		} catch (JSONException e) {
@@ -133,6 +133,7 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response ValidateToken(String jsonString) {
+		StorageProviderMongoDB spMDB = StorageProviderMongoDB.getStorageProvider();
 		String token;
 		String pseudonym;
 		try {
@@ -149,8 +150,9 @@ public class Service {
 			if (cal.getTime().before(expireDate)) {
 				JSONObject obj = new JSONObject();
 				try {
+					SimpleDateFormat sdf = new SimpleDateFormat(ISO8601);
 					obj.put("success", "true");
-					obj.put("expire-date", expireDate);
+					obj.put("expire-date", sdf.format(expireDate));
 					return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
 
 				} catch (JSONException e) {

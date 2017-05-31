@@ -42,6 +42,7 @@ public class User {
 		this.pseudonym = pseudonym;
 		this.securePassword = securePassword;
 		this.email = email;
+		this.contacts = new ArrayList<>();
 		this.contacts.addAll(contacts);
 	}
 
