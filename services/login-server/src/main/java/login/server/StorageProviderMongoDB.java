@@ -31,10 +31,26 @@ class StorageProviderMongoDB {
     private static MongoDatabase database;
 
 
-    public StorageProviderMongoDB() {
+    private static StorageProviderMongoDB sp;
+
+    private StorageProviderMongoDB() {
+
+    }
+
+    public static synchronized StorageProviderMongoDB Init() {
+        sp = new StorageProviderMongoDB();
         mongoClient = new MongoClient(
                 new MongoClientURI(Config.getSettingValue(Config.mongoURI)));
         database = mongoClient.getDatabase("benutzer");
+        // Used to check for valid connection!
+        try {
+            mongoClient.getDatabaseNames();
+        } catch (Exception e) {
+            System.out.printf("Could not connect to mongodb at %s because of %s \n",Config.getSettingValue(Config.mongoURI),e.getMessage());
+            System.exit(-1);
+        }
+        System.out.println("MongoDB storage provider initialized.");
+        return sp;
     }
 
     /**
@@ -44,7 +60,7 @@ class StorageProviderMongoDB {
      * @param pseudonym The user's pseudonym.
      * @return
      */
-    public synchronized User retrieveUser(String username, String pseudonym) {
+    public User retrieveUser(String username, String pseudonym) {
 
         MongoCollection<Document> collection = database.getCollection("account");
         Document doc = null;
@@ -66,7 +82,7 @@ class StorageProviderMongoDB {
     /**
      *
      */
-    public synchronized void saveToken(String token, String expirationDate, String pseudonym) {
+    public void saveToken(String token, String expirationDate, String pseudonym) {
 
         MongoCollection<Document> collection = database.getCollection("token");
 
@@ -88,7 +104,7 @@ class StorageProviderMongoDB {
      * @param token     The user's current token.
      * @return The token's expiration date or null if the token was not found or is expired.
      */
-    public synchronized Date retrieveToken(String pseudonym, String token) {
+    public Date retrieveToken(String pseudonym, String token) {
         MongoCollection<Document> collection = database.getCollection("token");
         // Retreive the tokeninformation
         Document doc = collection.find(and(eq("pseudonym", pseudonym), eq("token", token))).first();
@@ -119,14 +135,11 @@ class StorageProviderMongoDB {
     /**
      *
      */
-    public synchronized void deleteToken(String token) {
+    public void deleteToken(String token) {
         MongoCollection<Document> collection = database.getCollection("token");
         collection.deleteOne(eq("token", token));
     }
 
-    /**
-     * @see var.chat.server.persistence.StorageProvider#clearForTest()
-     */
     public void clearForTest() {
 
     }

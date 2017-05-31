@@ -25,7 +25,7 @@ public class Service {
 	/** String for date parsing in ISO 8601 format. */
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-	private StorageProviderMongoDB spMDB = new StorageProviderMongoDB();
+	private static StorageProviderMongoDB spMDB;
 
 	public static void main(String[] args) {
 		try {
@@ -34,6 +34,8 @@ public class Service {
 			System.out.println("Invalid launch arguments!");
 			System.exit(-1);
 		}
+
+		spMDB = StorageProviderMongoDB.Init();
 		startLoginServer(Config.getSettingValue(Config.baseURI));
 	}
 
@@ -102,7 +104,7 @@ public class Service {
 				Calendar expireDate = user.GetTokenExpireDate();
 				sdf.setTimeZone(expireDate.getTimeZone());
 				obj.put("expire-date", sdf.format(expireDate.getTime()));
-				obj.put("token", user.GetToken().toString());
+				obj.put("token", user.GetToken());
 				obj.put("pseudonym", user.pseudonym);
 			} catch (JSONException e) {
 				System.out.println("[/login] Error when building json response.");

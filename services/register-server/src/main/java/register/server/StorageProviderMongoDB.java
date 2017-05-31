@@ -1,7 +1,6 @@
 package register.server;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.or;
+import static com.mongodb.client.model.Filters.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +13,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 public class StorageProviderMongoDB implements IStorageProvider {
-
-	private static final String userDB = "benutzer";
-	private static final String accountCollection = "account";
-
 	/** Client to be used. */
 	private static MongoClient mongoClient;
 
@@ -26,7 +21,7 @@ public class StorageProviderMongoDB implements IStorageProvider {
 
 	public static void Init() {
 		mongoClient = new MongoClient(new MongoClientURI(Config.getSettingValue(Config.mongoURI)));
-		database = mongoClient.getDatabase(userDB);
+		database = mongoClient.getDatabase(Config.getSettingValue(Config.dbName));
 		// Used to check for valid connection!
 		try {
 			mongoClient.getDatabaseNames();
@@ -43,7 +38,7 @@ public class StorageProviderMongoDB implements IStorageProvider {
 			return false;
 		}
 
-		MongoCollection<Document> collection = database.getCollection(accountCollection);
+		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
 		Document doc = new Document("user", user.getEmail()).append("password", user.getHashedPassword())
 				.append("user", user.getEmail()).append("pseudonym", user.getPseudonym());
 		collection.insertOne(doc);
@@ -52,7 +47,7 @@ public class StorageProviderMongoDB implements IStorageProvider {
 
 	@Override
 	public User getUserProfile(String name) {
-		MongoCollection<Document> collection = database.getCollection(accountCollection);
+		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
 		Document doc = collection.find(eq("pseudonym", name)).first();
 		if(doc == null) {
 			return null;
@@ -74,9 +69,15 @@ public class StorageProviderMongoDB implements IStorageProvider {
 
 	@Override
 	public boolean userExists(String name, String email) {
-		MongoCollection<Document> collection = database.getCollection(accountCollection);
+		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
 		Document doc = collection.find(or(eq("pseudonym", name),eq("user",email))).first();
 		return doc != null;
+	}
+
+	public void clearForTest()	{
+		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
+		// Deletes all items in the collection
+		collection.deleteMany(ne("remove","all"));
 	}
 
 }
