@@ -12,6 +12,21 @@ $(document).ready(function () {
 	//loadContacts();
 	//send();
 	//getMessages();
+   $(".heading-compose").click(function() {
+      $(".side-two").css({
+        "left": "0"
+      });
+    })
+
+    $(".newMessage-back").click(function() {
+      $(".side-two").css({
+        "left": "-100%"
+      });
+    })
+    $(".sideBar").click(function() {
+        window.scrollTo(0, document.body.scrollHeight);
+    })
+
 });
 var token;
 var pseudonym;
@@ -23,7 +38,16 @@ var ipRegister = ip;
 var ipChat = ip;
 
 
+
+$("#sideBar-body").click(function() {
+    alert("scroll down");
+  $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+
+})
+
 function testContactDiv() {
+    $(".compose-sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='http://shurl.esy.es/y'></div></div><div class='col-sm-9 col-xs-9 sideBar-main'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>Test123</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
+                         
     $(".sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='http://shurl.esy.es/y'></div></div><div class='col-sm-9 col-xs-9 sideBar-main'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>Test123</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
 }
 
