@@ -162,7 +162,7 @@ public class Service {
 			if (user.authenticateUser(map.get("Authorization").get(0))) {
 				List<Message> newMsgs = user.receiveMessages(sequenceNumber);
 				if (newMsgs.isEmpty()) {
-					return Response.status(Response.Status.NO_CONTENT).build();
+					return Response.status(Response.Status.NO_CONTENT).header("Access-Control-Allow-Origin", "*").build();
 				} else {
 					for (Message msg : newMsgs) {
 						try {

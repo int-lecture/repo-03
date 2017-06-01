@@ -15,25 +15,24 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="TestChatServer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TestChatServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chat-server/src/test/java/chat/test/TestChatServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="507">
-              <caret line="64" column="37" lean-forward="true" selection-start-line="64" selection-start-column="37" selection-end-line="64" selection-end-column="37" />
+            <state relative-caret-position="180">
+              <caret line="100" column="0" lean-forward="false" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
               <folding>
                 <element signature="docComment;method#testSend#0;class#TestChatServer#0" expanded="false" />
                 <element signature="docComment;method#testMessages#0;class#TestChatServer#0" expanded="false" />
-                <element signature="method#testMessages#0;class#TestChatServer#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Service.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Service.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chat-server/src/main/java/chat/server/Service.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="279">
-              <caret line="216" column="12" lean-forward="true" selection-start-line="216" selection-start-column="12" selection-end-line="216" selection-end-column="12" />
+            <state relative-caret-position="313">
+              <caret line="170" column="48" lean-forward="true" selection-start-line="170" selection-start-column="48" selection-end-line="170" selection-end-column="48" />
               <folding>
                 <element signature="method#main#0;class#Service#0" expanded="false" />
                 <element signature="method#starteChatServer#0;class#Service#0" expanded="false" />
@@ -63,8 +62,8 @@
         <option value="$PROJECT_DIR$/chat-server/dependency-reduced-pom.xml" />
         <option value="$PROJECT_DIR$/chat-server/src/main/java/chat/server/Config.java" />
         <option value="$PROJECT_DIR$/chat-server/src/test/java/chat/test/TestLoginServer.java" />
-        <option value="$PROJECT_DIR$/chat-server/src/main/java/chat/server/Service.java" />
         <option value="$PROJECT_DIR$/chat-server/src/test/java/chat/test/TestChatServer.java" />
+        <option value="$PROJECT_DIR$/chat-server/src/main/java/chat/server/Service.java" />
       </list>
     </option>
   </component>
@@ -283,7 +282,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.TestChatServer.testCORSOptions">
+  <component name="RunManager" selected="JUnit.Whole project">
     <configuration default="false" name="All in register-server" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="register-server" />
@@ -590,9 +589,9 @@
     </list>
     <recent_temporary>
       <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.TestChatServer.testCORSOptions" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.TestChatServer" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.Whole project" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.Whole project" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.TestChatServer.testCORSOptions" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.TestChatServer" />
         <item index="3" class="java.lang.String" itemvalue="JUnit.All in register-server" />
       </list>
     </recent_temporary>
@@ -611,18 +610,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="TestChatServer - 2017.06.01 at 15h 58m 15s.xml">
-      <configuration name="TestChatServer" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="TestChatServer - 2017.06.01 at 15h 59m 23s.xml">
-      <configuration name="TestChatServer" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="TestChatServer - 2017.06.01 at 15h 59m 39s.xml">
-      <configuration name="TestChatServer" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="TestChatServer - 2017.06.01 at 16h 02m 09s.xml">
-      <configuration name="TestChatServer" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="TestChatServer - 2017.06.01 at 16h 02m 22s.xml">
       <configuration name="TestChatServer" configurationId="JUnit" />
     </history-entry>
@@ -641,6 +628,18 @@
     <history-entry file="TestChatServer_testCORSOptions - 2017.06.01 at 16h 08m 55s.xml">
       <configuration name="TestChatServer.testCORSOptions" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="Whole_project - 2017.06.01 at 16h 14m 41s.xml">
+      <configuration name="Whole project" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="Whole_project - 2017.06.01 at 16h 15m 35s.xml">
+      <configuration name="Whole project" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="Whole_project - 2017.06.01 at 16h 15m 42s.xml">
+      <configuration name="Whole project" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="Whole_project - 2017.06.01 at 16h 16m 22s.xml">
+      <configuration name="Whole project" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -656,7 +655,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -803,25 +802,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chat-server/src/main/java/chat/server/Service.java">
+    <entry file="file://$PROJECT_DIR$/chat-server/src/test/java/chat/test/TestChatServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="216" column="12" lean-forward="true" selection-start-line="216" selection-start-column="12" selection-end-line="216" selection-end-column="12" />
+        <state relative-caret-position="180">
+          <caret line="100" column="0" lean-forward="false" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
           <folding>
-            <element signature="method#main#0;class#Service#0" expanded="false" />
-            <element signature="method#starteChatServer#0;class#Service#0" expanded="false" />
+            <element signature="docComment;method#testSend#0;class#TestChatServer#0" expanded="false" />
+            <element signature="docComment;method#testMessages#0;class#TestChatServer#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chat-server/src/test/java/chat/test/TestChatServer.java">
+    <entry file="file://$PROJECT_DIR$/chat-server/src/main/java/chat/server/Service.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="64" column="37" lean-forward="true" selection-start-line="64" selection-start-column="37" selection-end-line="64" selection-end-column="37" />
+        <state relative-caret-position="313">
+          <caret line="170" column="48" lean-forward="true" selection-start-line="170" selection-start-column="48" selection-end-line="170" selection-end-column="48" />
           <folding>
-            <element signature="docComment;method#testSend#0;class#TestChatServer#0" expanded="false" />
-            <element signature="docComment;method#testMessages#0;class#TestChatServer#0" expanded="false" />
-            <element signature="method#testMessages#0;class#TestChatServer#0" expanded="false" />
+            <element signature="method#main#0;class#Service#0" expanded="false" />
+            <element signature="method#starteChatServer#0;class#Service#0" expanded="false" />
           </folding>
         </state>
       </provider>
