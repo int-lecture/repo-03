@@ -5,6 +5,9 @@ git pull
 (cd register-server/; mvn clean compile test assembly:single)
 echo "Binaries finished building."
 echo "Deploying."
+rm login-server*.jar
+rm chat-server*.jar
+rm register-server*.jar
 cp login-server/target/login-server*.jar .
 cp chat-server/target/chat-server*.jar .
 cp register-server/target/register-server*.jar .
