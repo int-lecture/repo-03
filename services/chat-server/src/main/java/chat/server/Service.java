@@ -34,8 +34,9 @@ public class Service {
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 	private static SelectorThread threadSelector = null;
 
-	public static void main(String[] args) {
-		starteChatServer("http://0.0.0.0:5000/");
+	public static void main(String[] args) throws Exception {
+		Config.init(args);
+		starteChatServer(Config.getSettingValue(Config.baseURI));
 	}
 
 	public static void starteChatServer(String uri){
@@ -44,7 +45,7 @@ public class Service {
 		final Map<String, String> initParams = new HashMap<String, String>();
 
 		initParams.put("com.sun.jersey.config.property.packages", paket);
-		System.out.println("Starte grizzly...");
+		System.out.println("Starting grizzly...");
 		try {
 			threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
 		} catch (IllegalArgumentException e) {
@@ -54,7 +55,7 @@ public class Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.printf("Grizzly l�uft unter %s%n", baseUri);
+		System.out.printf("Grizzly running at %s\n", baseUri);
 
 	}
 	public static void stopChatServer(){

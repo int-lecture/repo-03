@@ -1,28 +1,49 @@
 package chat.test;
 
 import javax.ws.rs.core.MediaType;
-import static io.restassured.RestAssured.expect;
-import static org.hamcrest.Matchers.notNullValue;
 
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
+import chat.server.Config;
+import com.sun.jersey.api.client.Client;
+import login.server.Service;
+
+import login.server.StorageProviderMongoDB;
+import login.server.User;
+import org.json.JSONObject;
 
 public class TestLoginServer {
 
-	public static void start() {
-		RestAssured.baseURI = "http://localhost";
-		RestAssured.basePath = "/";
-		RestAssured.port=5001;
+	public static void start() throws Exception {
+		login.server.Config.init(new String[]{
+				"-mongoURI", "mongodb://testmongodb:27017/",
+				"-dbName", "regTest"
+		});
+
+		StorageProviderMongoDB.init();
+		StorageProviderMongoDB.getStorageProvider().clearForTest(
+				new User[]{
+						new User("bob@web.de","HalloIchbinBob","bob"),
+						new User("tom@web.de","HalloIchbinTom","tom")
+				}
+		);
+		Service.startLoginServer(Config.getSettingValue(Config.loginURI));
 	}
 
 	public static void stop() {
+		Service.stopLoginServer();
 	}
-	
-	public static Response login(String name, String password){
-		Response resp = expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
-				.body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
-				.body(("{'user': '"+name+"@web.de', 'password':"+password+", 'pseudonym': "+name+"}".replace('\'', '"')))
-				.when().post("/login");
-		return resp;
+
+	public static String LoginUser(String username, String password) {
+		JSONObject obj = new JSONObject();
+		obj.put("user", username);
+		obj.put("password", password);
+
+		Client webClient = new Client();
+		String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "login")
+				.accept(MediaType.APPLICATION_JSON)
+				.type(MediaType.APPLICATION_JSON)
+				.post(String.class, obj.toString());
+		webClient.destroy();
+		JSONObject jo = new JSONObject(response);
+		return jo.getString("token");
 	}
 }
