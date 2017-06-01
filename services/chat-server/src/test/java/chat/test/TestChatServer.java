@@ -4,11 +4,11 @@ import javax.ws.rs.core.MediaType;
 import static io.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.notNullValue;
 
+import chat.server.Service;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import chat.server.Main;
 import io.restassured.RestAssured;
 
 public class TestChatServer {
@@ -22,13 +22,13 @@ public class TestChatServer {
 		RestAssured.port = 5000;
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
-		Main.starteChatServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
+		Service.starteChatServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
 		
 	}
 
 	@After
 	public void tearDown() {
-		Main.stopChatServer();
+		Service.stopChatServer();
 		TestLoginServer.stop();
 	}
 

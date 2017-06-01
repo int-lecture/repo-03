@@ -106,7 +106,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>chat.server.Main</mainClass>
+              <mainClass>chat.server.Service</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
