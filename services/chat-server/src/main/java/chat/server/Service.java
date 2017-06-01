@@ -203,8 +203,8 @@ public class Service {
 	}
 
 	@OPTIONS
-	@Path("/messages")
-	public Response optionsProfile() {
+	@Path("/messages/{userid}/{sequenceNumber}")
+	public Response optionsProfileWithSeqNumber() {
 	    return Response.ok("")
 	            .header("Access-Control-Allow-Origin", "*")
 	            .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
@@ -214,4 +214,15 @@ public class Service {
 	            .build();
 	}
 
+	@OPTIONS
+	@Path("/messages/{userid}")
+	public Response optionsProfile() {
+		return Response.ok("")
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+				.header("Access-Control-Max-Age", "1209600")
+				.build();
+	}
 }
