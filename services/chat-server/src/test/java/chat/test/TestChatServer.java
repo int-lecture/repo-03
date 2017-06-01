@@ -44,12 +44,12 @@ public class TestChatServer {
 		String tokenTom=TestLoginServer.LoginUser("tom@web.de", "HalloIchbinTom");
 		// testing a valid message
 		System.out.println(RestAssured.port);
-		expect().statusCode(201).given().contentType(MediaType.APPLICATION_JSON)
+		expect().statusCode(201).header("Access-Control-Allow-Origin", "*").given().contentType(MediaType.APPLICATION_JSON)
 				.body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'"+tokenBob+"'"
 						+ "}".replace('\'', '"')))
 				.when().put("/send");
 		
-		expect().statusCode(201).given().contentType(MediaType.APPLICATION_JSON)
+		expect().statusCode(201).header("Access-Control-Allow-Origin", "*").given().contentType(MediaType.APPLICATION_JSON)
 		.body(("{'to':'bob','from':'tom','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'"+tokenTom+"'"
 				+ "}".replace('\'', '"')))
 		.when().put("/send");
@@ -94,11 +94,11 @@ public class TestChatServer {
 		String tokenTom=TestLoginServer.LoginUser("tom@web.de", "HalloIchbinTom");
 		String tokenBob=TestLoginServer.LoginUser("bob@web.de", "HalloIchbinBob");
 		// testing a correct message request
-		expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("messages", notNullValue())
+		expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*").body("messages", notNullValue())
 		.given().header("Authorization", tokenTom).when().get("/messages/tom/0");
 
 		// testing a correct message request when no messages were sent
-		expect().statusCode(204).given().header("Authorization", tokenBob).when().get("/messages/bob/8");
+		expect().statusCode(204).header("Access-Control-Allow-Origin", "*").given().header("Authorization", tokenBob).when().get("/messages/bob/8");
 
 		// testing an invalid user
 		expect().statusCode(400).given().header("Authorization", tokenBob).when().get("/messages/peter/0");
