@@ -5,13 +5,15 @@ $(document).ready(function () {
     testContactDiv();
     testContactDiv();
     testContactDiv();
-    testUserMessage();
-    testPartnerMessage();
-    testUserMessage();
-    testPartnerMessage();
+    //send("bob", "Hallo");
+    openChat("tom", "bob");
+    //testUserMessage();
+    //testPartnerMessage();
+    //testUserMessage();
+    //testPartnerMessage();
 	//loadContacts();
 	//send();
-	//getMessages();
+	//getMessages("Bob");
 });
 var token;
 var pseudonym;
@@ -21,6 +23,7 @@ var ip = "141.19.142.57";
 var ipLogin = ip;
 var ipRegister = ip;
 var ipChat = ip;
+var messages = [];
 
 
 function testContactDiv() {
@@ -32,6 +35,31 @@ function testUserMessage(){
 }
 function testPartnerMessage(){
     $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>PartnerTestMessage</div><span class='message-time pull-right'>Sun</span></div></div></div></div>");
+}
+
+function openChat(pseudonym, partner){
+    readCookie();
+    var chatMessages = ['{"to":"bob", "from": "tom", "text": "Ich bin Tom", "date": "123"}', '{"to":"tom", "from": "bob", "text": "Ich bin Bob", "date": "23"}'];
+    //getMessages(pseudonym);
+    //getMessages(partner);
+    //chatMessages.concat(messages[pseudonym]).concat(messages[partner]);
+    //TODO: comparator for the sort function needs to get finished.
+    chatMessages=chatMessages.sort(function(a, b){return JSON.parse(a).date >= JSON.parse(b).date});
+    $("#conversation").empty();
+    $("").append("<a class='heading-name-meta'>" + pseudonym +"</a>");
+    alert("Öffne Chat zwischen Bob und Tom")                             
+    $.each(chatMessages, function (index, value) {
+        //alert(value);
+        var object = JSON.parse(value);
+        
+        //alert(object.from+object.to+object.date);
+        if(object.to==pseudonym && object.from==partner){
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>"+object.text+"</div><span class='message-time pull-right'>"+object.date+"</span></div></div></div></div>");
+        }
+        if(object.to==partner && object.from==pseudonym){
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-sender'><div class='sender'><div class='message-text' id='messages'>"+object.text+"</div><span class='message-time pull-right'>"+object.date+"</span></div></div></div></div>");
+        }
+    })
 }
 
 
@@ -91,10 +119,11 @@ function loadContacts() {
 
 }
 var date;
-function send() {
+function send(partner, text) {
 	readCookie();
+    ip="141.19.142.57";
 	var URL = "http://" + ip + ":5000/send/";
-	var dataObject = {'from': pseudonym, 'to': 'bob', 'date': '2017-03-30T17:00:00Z', 'text': 'Test', 'token': token};
+	var dataObject = {'from': pseudonym, 'to': partner, 'date': '2017-03-30T17:00:00Z', 'text': text, 'token': token};
 
     //alert(JSON.stringify(dataObject));
 
@@ -106,27 +135,25 @@ function send() {
         dataType: 'json',
         success: function (result) {
             //Not Tested TODO: sequenceNumbers von dem to
-            alert("test Nachricht wird in der Chatblase von Bob eingefügt");
-            $("#send").append("<p>test</p>");
+            alert(text+" wurde an "+partner+" erfolgreich gesendet");
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-sender'><div class='sender'><div class='message-text' id='messages'>"+text+"</div><span class='message-time pull-right'>Sun</span></div></div></div></div>");
             sequenceNumbers[pseudonym] = result.sequence;
             date = result.date;
             //alert(sequenceNumbers[pseudonym]);
             //alert("success?");
         },
         error: function (xhr, a, b) {
-            alert("test Nachricht wird in der Chatblase von Bob eingefügt");
+            alert(text+ " wurde nicht erfolgreich an "+ partner+ " gesendet");
             //alert(" error");
-            $("#send").append("<p>test</p>");
         }
     });
 }
 
-
-var messages;
-function getMessages() {
+function getMessages(empfänger) {
 	readCookie();
 	//Not Tested TODO: seuqencenumber vom to anfügen
-	var URL = "http://" + ip + ":5000/messages/" + pseudonym + "/" + sequenceNumbers[pseudonym];
+	var URL = "http://" + ip + ":5000/messages/" + empfänger + "/" ;
+    //+ sequenceNumbers[pseudonym];
 	//Not Tested TODO: Authorization Header anfügen
 	$.ajax({
 		headers: {
@@ -138,19 +165,22 @@ function getMessages() {
         dataType: 'json',
         success: function (result) {
 			//TODO:append messages
-			alert("test Nachricht wird in der Chatblase vom Partner eingefügt");
-			$("#messages").append("<p>testMessages</p>");
-			messages = result;
+			alert("getMessages von "+empfänger+ " erfolgreich erhalten");
+            alert(result);
+			messages[empfänger] = result;
 			//alert(messages);
 			//alert("success?");
 		},
 		error: function (xhr, a, b) {
 			//alert(" error");
-			alert("test Nachricht wird in der Chatblase vom Partner eingefügt");
-			$("#messages").append("<p>testMessages</p>");
+			alert("getMessages von "+empfänger+ " fehlgeschlagen");
 		}
     });
 
+}
+    
+function saveSettings(){
+    document.cookie = "ipLogin="+$("#inputIpLogin").val();
 }
 
 function readCookie() {
