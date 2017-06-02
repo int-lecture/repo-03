@@ -4,31 +4,32 @@ import javax.ws.rs.core.MediaType;
 import static io.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.notNullValue;
 
+import chat.server.Service;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import chat.server.Main;
 import io.restassured.RestAssured;
 
 public class TestChatServer {
-	String tokenBob;
-	String tokenTom;
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
+		chat.server.Config.init(new String[]{
+				"-mongoURI", "mongodb://testmongodb:27017/",
+				"-dbName", "regTest",
+				"-loginURI","http://localhost:5001/"
+		});
+
 		TestLoginServer.start();
-		tokenBob=TestLoginServer.login("bob", "HalloIchbinBob").path("token").toString();
-		tokenTom=TestLoginServer.login("tom", "HalloIchbinTom").path("token").toString();
 		RestAssured.port = 5000;
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
-		Main.starteChatServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
-		
+		Service.starteChatServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
 	}
 
 	@After
 	public void tearDown() {
-		Main.stopChatServer();
+		Service.stopChatServer();
 		TestLoginServer.stop();
 	}
 
@@ -39,17 +40,19 @@ public class TestChatServer {
 	 */
 	@Test
 	public void testSend() {
+		String tokenBob=TestLoginServer.LoginUser("bob@web.de", "HalloIchbinBob");
+		String tokenTom=TestLoginServer.LoginUser("tom@web.de", "HalloIchbinTom");
 		// testing a valid message
 		System.out.println(RestAssured.port);
-		expect().statusCode(201).given().contentType(MediaType.APPLICATION_JSON)
+		expect().statusCode(201).header("Access-Control-Allow-Origin", "*").given().contentType(MediaType.APPLICATION_JSON)
 				.body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'"+tokenBob+"'"
 						+ "}".replace('\'', '"')))
 				.when().put("/send");
 		
-//		expect().statusCode(201).given().contentType(MediaType.APPLICATION_JSON)
-//		.body(("{'to':'bob','from':'tom','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'"+tokenTom+"'"
-//				+ "}".replace('\'', '"')))
-//		.when().put("/send");
+		expect().statusCode(201).header("Access-Control-Allow-Origin", "*").given().contentType(MediaType.APPLICATION_JSON)
+		.body(("{'to':'bob','from':'tom','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'"+tokenTom+"'"
+				+ "}".replace('\'', '"')))
+		.when().put("/send");
 		// testing a wrong password
 		expect().statusCode(401).given().contentType(MediaType.APPLICATION_JSON)
 				.body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token': 'YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlkaGFleiA'}"
@@ -88,13 +91,14 @@ public class TestChatServer {
 	 */
 	@Test
 	public void testMessages() {
-
+		String tokenTom=TestLoginServer.LoginUser("tom@web.de", "HalloIchbinTom");
+		String tokenBob=TestLoginServer.LoginUser("bob@web.de", "HalloIchbinBob");
 		// testing a correct message request
-		expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("messages", notNullValue())
+		expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*").body("messages", notNullValue())
 		.given().header("Authorization", tokenTom).when().get("/messages/tom/0");
 
 		// testing a correct message request when no messages were sent
-		expect().statusCode(204).given().header("Authorization", tokenBob).when().get("/messages/bob/8");
+		expect().statusCode(204).header("Access-Control-Allow-Origin", "*").given().header("Authorization", tokenBob).when().get("/messages/bob/8");
 
 		// testing an invalid user
 		expect().statusCode(400).given().header("Authorization", tokenBob).when().get("/messages/peter/0");
@@ -103,4 +107,24 @@ public class TestChatServer {
 		expect().statusCode(401).given().header("Authorization", tokenTom).when().get("/messages/bob/0");
 	}
 
+	@Test
+	public void testCORSOptions() {
+		expect().statusCode(200).header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+				.header("Access-Control-Max-Age", "1209600").when().options("/send");
+
+		expect().statusCode(200).header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+				.header("Access-Control-Max-Age", "1209600").when().options("/messages/bob");
+
+		expect().statusCode(200).header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+				.header("Access-Control-Max-Age", "1209600").when().options("/messages/bob/12");
+	}
 }

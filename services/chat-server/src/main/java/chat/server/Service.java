@@ -1,8 +1,10 @@
 package chat.server;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -17,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import com.sun.grizzly.http.SelectorThread;
+import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -28,6 +32,37 @@ public class Service {
 
 	/** String for date parsing in ISO 8601 format. */
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+	private static SelectorThread threadSelector = null;
+
+	public static void main(String[] args) throws Exception {
+		Config.init(args);
+		starteChatServer(Config.getSettingValue(Config.baseURI));
+	}
+
+	public static void starteChatServer(String uri){
+		final String baseUri = uri;
+		final String paket = "chat.server";
+		final Map<String, String> initParams = new HashMap<String, String>();
+
+		initParams.put("com.sun.jersey.config.property.packages", paket);
+		System.out.println("Starting grizzly...");
+		try {
+			threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.printf("Grizzly running at %s\n", baseUri);
+
+	}
+	public static void stopChatServer(){
+		//System.exit(0);
+		threadSelector.stopEndpoint();
+	}
+
 	/**
 	 * The user base.
 	 */
@@ -127,7 +162,7 @@ public class Service {
 			if (user.authenticateUser(map.get("Authorization").get(0))) {
 				List<Message> newMsgs = user.receiveMessages(sequenceNumber);
 				if (newMsgs.isEmpty()) {
-					return Response.status(Response.Status.NO_CONTENT).build();
+					return Response.status(Response.Status.NO_CONTENT).header("Access-Control-Allow-Origin", "*").build();
 				} else {
 					for (Message msg : newMsgs) {
 						try {
@@ -168,8 +203,8 @@ public class Service {
 	}
 
 	@OPTIONS
-	@Path("/messages")
-	public Response optionsProfile() {
+	@Path("/messages/{userid}/{sequenceNumber}")
+	public Response optionsProfileWithSeqNumber() {
 	    return Response.ok("")
 	            .header("Access-Control-Allow-Origin", "*")
 	            .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
@@ -179,4 +214,15 @@ public class Service {
 	            .build();
 	}
 
+	@OPTIONS
+	@Path("/messages/{userid}")
+	public Response optionsProfile() {
+		return Response.ok("")
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+				.header("Access-Control-Max-Age", "1209600")
+				.build();
+	}
 }
