@@ -20,7 +20,7 @@ function checkPw(){
 				alert("success?");
 				window.location.href = "chatApplication.html";
 			},
-			error: function(xhr, a, b){
+			error: function(xhr, ajaxOptions, thrownError){
 				alert(" error");
 			}
   	});

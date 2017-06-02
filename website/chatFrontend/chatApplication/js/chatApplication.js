@@ -14,6 +14,22 @@ $(document).ready(function () {
 	//loadContacts();
 	//send();
 	//getMessages("Bob");
+	//getMessages();
+   $(".heading-compose").click(function() {
+      $(".side-two").css({
+        "left": "0"
+      });
+    })
+
+    $(".newMessage-back").click(function() {
+      $(".side-two").css({
+        "left": "-100%"
+      });
+    })
+    $(".sideBar").click(function() {
+        window.scrollTo(0, document.body.scrollHeight);
+    })
+
 });
 var token;
 var pseudonym;
@@ -26,7 +42,16 @@ var ipChat = ip;
 var messages = [];
 
 
+
+$("#sideBar-body").click(function() {
+    alert("scroll down");
+  $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+
+})
+
 function testContactDiv() {
+    $(".compose-sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='http://shurl.esy.es/y'></div></div><div class='col-sm-9 col-xs-9 sideBar-main'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>Test123</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
+                         
     $(".sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='http://shurl.esy.es/y'></div></div><div class='col-sm-9 col-xs-9 sideBar-main'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>Test123</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
 }
 
@@ -90,34 +115,7 @@ function setTests() {
 }
 
 
-function loadContacts() {
-	readCookie();
-	
-	var URL = "http://" + ip + ":5002/profile/";
-	var dataObject = {'token': token, 'getownprofile': pseudonym};
 
-        //alert(JSON.stringify(dataObject));
-
-    $.ajax({
-        url: URL,
-        type: 'POST',
-        data: JSON.stringify(dataObject),
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json',
-        success: function (result) {
-            contacts = result.contacts;
-            alert("Kontakt wird unter Bob eingefügt");
-            $("#contacts").append("<p>testContacts</p>");
-            //alert(contacts);
-
-        },
-        error: function (xhr, a, b) {
-            alert("Kontakt wird unter Bob eingefügt");
-            $("#contacts").append("<p>testContacts</p>");
-        }
-    });
-
-}
 var date;
 function send(partner, text) {
 	readCookie();

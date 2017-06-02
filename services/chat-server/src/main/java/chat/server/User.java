@@ -39,7 +39,7 @@ public class User {
 	private Queue<Message> messages = new ArrayDeque<Message>();
 
 	/**
-	 * The user�s token.
+	 * The user's token.
 	 */
 	private String token;
 

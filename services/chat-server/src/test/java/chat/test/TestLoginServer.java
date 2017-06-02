@@ -6,19 +6,16 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import login.server.Service;
+
 public class TestLoginServer {
 
 	public static void start() {
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
 		RestAssured.port=5001;
-		Service.starteLoginServer(RestAssured.baseURI + ":" +
-		RestAssured.port+ "/");
 	}
 
 	public static void stop() {
-		Service.stopLoginServer();
 	}
 	
 	public static Response login(String name, String password){

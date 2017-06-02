@@ -1,6 +1,5 @@
 package login.server;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -114,6 +113,10 @@ public class User {
 		Calendar currentTime = Calendar.getInstance();
 		Date date = sdf.parse(expireDate);
 		return token.equals(this.currentToken) && currentTime.before(date);
+	}
+
+	public String getSecurePassword(){
+		return passwordHash;
 	}
 
 	/**

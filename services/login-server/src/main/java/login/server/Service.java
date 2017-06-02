@@ -1,12 +1,8 @@
 package login.server;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.OPTIONS;
@@ -24,43 +20,24 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 @Path("/")
 public class Service {
-
 	private static SelectorThread threadSelector = null;
 
 	/** String for date parsing in ISO 8601 format. */
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-	private StorageProviderMongoDB spMDB = new StorageProviderMongoDB();
-
 	public static void main(String[] args) {
-		final String baseUri = "http://0.0.0.0:5001/";
-		final String paket = "login.server";
-		final Map<String, String> initParams = new HashMap<String, String>();
-
-		initParams.put("com.sun.jersey.config.property.packages", paket);
-		System.out.println("Starte grizzly...");
 		try {
-			threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.printf("Grizzly(loginServer) l�uft unter %s%n", baseUri);
-		// Wait forever
-		try {
-			Thread.currentThread().join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Config.init(args);
+		} catch (Exception e) {
+			System.out.println("Invalid launch arguments!");
+			System.exit(-1);
 		}
 
-		System.out.println("Grizzly wurde beendet");
-		System.exit(0);
+		StorageProviderMongoDB.init();
+		startLoginServer(Config.getSettingValue(Config.baseURI));
 	}
 
-	public static void starteLoginServer(String uri){
+	public static void startLoginServer(String uri){
 		final String baseUri = uri;
 		final String paket = "login.server";
 		final Map<String, String> initParams = new HashMap<String, String>();
@@ -76,7 +53,7 @@ public class Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.printf("Grizzly(loginServer) l�uft unter %s%n", baseUri);
+		System.out.printf("Grizzly(loginServer) running at %s%n", baseUri);
 
 	}
 	public static void stopLoginServer(){
@@ -97,19 +74,28 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response LoginUser(String jsonString) {
-		String userName = "";
-		String password = "";
+		StorageProviderMongoDB spMDB = StorageProviderMongoDB.getStorageProvider();
+		String userName, password, pseudonym;
+		boolean allowEmailLogin = Config.getSettingValue(Config.allowEmailLogin) == "true";
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			password = obj.getString("password");
 			userName = obj.getString("user");
+			pseudonym = obj.optString("pseudonym");
+			if(pseudonym == "") pseudonym = null;
 			System.out.println("user: " + userName);
 
 		} catch (JSONException e) {
-			System.out.println("Problem beim jsonString extrahieren");
+			System.out.println("[/login] Failed to parse json request.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		User user = spMDB.retrieveUser(userName);
+
+		// Check in settings if a login with partial login data is allow.
+		if (pseudonym == null && !allowEmailLogin) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+
+		User user = spMDB.retrieveUser(userName, pseudonym);
 		if (user != null && user.VerifyPassword(password)) {
 			JSONObject obj = new JSONObject();
 			user.GenerateToken();
@@ -118,11 +104,10 @@ public class Service {
 				Calendar expireDate = user.GetTokenExpireDate();
 				sdf.setTimeZone(expireDate.getTimeZone());
 				obj.put("expire-date", sdf.format(expireDate.getTime()));
-				obj.put("token", user.GetToken().toString());
+				obj.put("token", user.GetToken());
 				obj.put("pseudonym", user.pseudonym);
 			} catch (JSONException e) {
-				System.out.println("Problem beim jasonobjekt f�llen");
-				e.printStackTrace();
+				System.out.println("[/login] Error when building json response.");
 				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
 			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
@@ -148,40 +133,31 @@ public class Service {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response ValidateToken(String jsonString) {
-		String token = "";
-		String pseudonym = "";
+		StorageProviderMongoDB spMDB = StorageProviderMongoDB.getStorageProvider();
+		String token;
+		String pseudonym;
 		try {
 			JSONObject obj = new JSONObject(jsonString);
 			token = obj.getString("token");
 			pseudonym = obj.getString("pseudonym");
-			System.out.println(token);
-			System.out.println(pseudonym);
 		} catch (JSONException e) {
-			System.out.println("Fehler beim extrahieren des jsonObject");
+			System.out.println("[/auth] Failed to parse json request.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		String expireDate= spMDB.retrieveToken(pseudonym, token);
-		if (expireDate!=null) {
-			SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-			Date date;
-			try {
-				date = sdf.parse(expireDate);
-			} catch (ParseException e1) {
-				System.out.println("invalid Date");
-				return Response.status(Response.Status.BAD_REQUEST).build();
-			}
+		Date expireDate = spMDB.retrieveToken(pseudonym, token);
+		if (expireDate != null) {
 			Calendar cal = Calendar.getInstance();
-			if (cal.getTime().before(date)) {
+			if (cal.getTime().before(expireDate)) {
 				JSONObject obj = new JSONObject();
 				try {
-					sdf = new SimpleDateFormat(Service.ISO8601);
+					SimpleDateFormat sdf = new SimpleDateFormat(ISO8601);
 					obj.put("success", "true");
-					obj.put("expire-date", expireDate);
+					obj.put("expire-date", sdf.format(expireDate));
 					return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
 
 				} catch (JSONException e) {
-					System.out.println("Fehler beim jsonObject f�llen");
-					return Response.status(Response.Status.UNAUTHORIZED).build();
+					System.out.println("[/auth] Error when building json response.");
+					return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 				}
 			} else {
 				// Token has expired
