@@ -11,11 +11,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="js/handymode.js"></script>
   <script src="js/chatApplication.js"></script>
 </head>
 
-<body>
+<body id="body">
 
   <div class="container app">
     <div class="row app-one">
@@ -26,7 +25,7 @@
           <div class="row heading">
             <div class="col-sm-3 col-xs-3 heading-avatar">
               <div class="heading-avatar-icon">
-                <img src="http://shurl.esy.es/y">
+                <img src="css/profilePic.png">
               </div>
             </div>
             <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
@@ -51,9 +50,9 @@
           <!-- Search Box End -->
           <!-- sideBar -->
           <div class="row sideBar">
-            
-            <!-- JavaScripts appends contacts here --> 
-            
+
+            <!-- JavaScripts appends contacts here -->
+
           </div>
           <!-- Sidebar End -->
         </div>
@@ -85,9 +84,9 @@
 
           <!-- sideBar -->
           <div class="row compose-sideBar">
-            
+
           </div>
-        <!-- Sidebar End -->
+          <!-- Sidebar End -->
         </div>
       </div>
 
@@ -100,12 +99,11 @@
         <div class="row heading">
           <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
             <div class="heading-avatar-icon">
-              <img src="http://shurl.esy.es/y">
+              <img src="css/profilePic.png">
             </div>
           </div>
           <div class="col-sm-8 col-xs-7 heading-name">
-            <a class="heading-name-meta">Bob
-            </a>
+            <a class="heading-name-meta" id="partner">Secure Messenger</a>
             <span class="heading-online">Online</span>
           </div>
           <div class="col-sm-1 col-xs-1  heading-dot pull-right">
@@ -113,17 +111,9 @@
           </div>
         </div>
         <!-- Heading End -->
-
         <!-- Message Box -->
         <div class="row message" id="conversation">
 
-          <div class="row message-previous">
-            <div class="col-sm-12 previous">
-              <a onclick="previous(this)" id="ankitjain28" name="20">
-              Show Previous Message!
-              </a>
-            </div>
-          </div>
 
           <!-- JavaScript appends Messages here -->
         </div>

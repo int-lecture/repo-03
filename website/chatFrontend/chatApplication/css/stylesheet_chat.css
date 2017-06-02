@@ -164,7 +164,7 @@ body {
   padding: 0 !important;
   margin: 0 !important;
   background-color: #fff;
-  overflow-y: auto;
+  overflow: auto
   border: 1px solid #f7f7f7;
   height: calc(100% - 120px);
 }

@@ -3,6 +3,7 @@ $( document ).ready(function() {
 });
 var ip="141.19.142.57";
 function checkPw(){
+    ip="141.19.142.57";
 	var URL = "http://"+ip+":5001/login/";
 	var dataObject = {'user': $("#inputEmail").val(), 'password': $("#inputPassword").val()};
 
