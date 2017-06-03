@@ -19,6 +19,18 @@ body {
   font-size: 1.5em;
 }
 
+#buttonForNewChat{
+    border: 2px solid #189d0e;
+    border-radius: 32px;
+    color: #189d0e !important;
+    display: inline-block;
+    margin: 10px 0 0;
+    padding: 9px 16px;
+    text-decoration: none !important;
+    text-transform: uppercase;
+}
+
+
 .app {
   position: relative;
   overflow: hidden;

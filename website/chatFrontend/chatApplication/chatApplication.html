@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/stylesheet_chat.css">
+  <link href="css/chatApplication.css" rel="stylesheet">
+
   <!-- Font Awesome File -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -81,6 +83,17 @@
             </div>
           </div>
           <!-- ComposeBox End -->
+          <!-- Start new Chat -->
+          <div class="row composeBox">
+            <div class="col-sm-12 composeBox-inner">
+              <div class="form-group has-feedback">
+                <input id="newFriendsName" type="text" class="form-control" name="friendsName" placeholder="Enter Friends Name">
+                <span class="glyphicon glyphicon-search form-control-feedback" id="startChatWithFriend"></span>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-lg btn-primary btn-block btn-signin" onclick="openNewChat()">los chatten</button>
+          <!-- End new Chat -->
 
           <!-- sideBar -->
           <div class="row compose-sideBar">
