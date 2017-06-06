@@ -72,7 +72,7 @@ function loadConfig() {
             ipChat = ips[1].substring("ipChat:".length + 1);
             ipRegister = ips[2].substring("ipRegister:".length + 1);
         }
-    }
+    });
 }
 
 function openChat(partner) {
