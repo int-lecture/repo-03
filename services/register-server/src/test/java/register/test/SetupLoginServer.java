@@ -2,6 +2,7 @@ package register.test;
 
 import com.sun.jersey.api.client.Client;
 import login.server.Service;
+import login.server.StorageProviderMongoDB;
 import org.json.JSONObject;
 import register.server.Config;
 
@@ -14,7 +15,12 @@ public class SetupLoginServer {
 				"-mongoURI", "mongodb://testmongodb:27017/",
 				"-dbName", "regTest"
 		});
-		login.server.StorageProviderMongoDB.init();
+
+		try {
+			StorageProviderMongoDB.init();
+		} catch (Exception e) {
+			System.out.println("Storage provider already initiliazed");
+		}
 		Service.startLoginServer(Config.getSettingValue(Config.loginURI));
 	}
 

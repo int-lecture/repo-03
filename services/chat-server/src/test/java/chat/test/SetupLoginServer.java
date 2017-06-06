@@ -18,8 +18,12 @@ public class SetupLoginServer {
 				"-dbName", "regTest"
 		});
 
-		StorageProviderMongoDB.init();
-		StorageProviderMongoDB.getStorageProvider().clearForTest(
+		try {
+			StorageProviderMongoDB.init();
+		} catch (Exception e) {
+			System.out.println("Storage provider already initiliazed");
+		}
+		StorageProviderMongoDB.clearForTest(
 				new User[]{
 						new User("bob@web.de","HalloIchbinBob","bob"),
 						new User("tom@web.de","HalloIchbinTom","tom")

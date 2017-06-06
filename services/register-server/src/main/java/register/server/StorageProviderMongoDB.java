@@ -1,80 +1,67 @@
 package register.server;
 
-import static com.mongodb.client.model.Filters.*;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
+import services.common.StorageProviderCoreMongoDB;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bson.Document;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
+    private StorageProviderMongoDB() throws Exception {
+        super();
+    }
 
-public class StorageProviderMongoDB implements IStorageProvider {
-	private static MongoClient mongoClient;
-	private static MongoDatabase database;
+    public static synchronized void init() throws Exception {
+        StorageProviderCoreMongoDB.init(
+                Config.getSettingValue(Config.mongoURI),
+                Config.getSettingValue(Config.dbName));
+    }
 
-	public static void Init() {
-		mongoClient = new MongoClient(new MongoClientURI(Config.getSettingValue(Config.mongoURI)));
-		database = mongoClient.getDatabase(Config.getSettingValue(Config.dbName));
-		// Used to check for valid connection!
-		try {
-			mongoClient.getDatabaseNames();
-		} catch (Exception e) {
-			System.out.printf("Could not connect to mongodb at %s because of %s \n",Config.getSettingValue(Config.mongoURI),e.getMessage());
-			System.exit(-1);
-		}
-		System.out.println("MongoDB storage provider initialized.");
-	}
+    static boolean createNewUser(User user) {
+        if (userExists(user.getPseudonym(), user.getEmail())) {
+            return false;
+        }
 
-	@Override
-	public boolean createNewUser(User user) {
-		if (userExists(user.getPseudonym(), user.getEmail())) {
-			return false;
-		}
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
+        Document doc = new Document("user", user.getEmail()).append("password", user.getHashedPassword())
+                .append("user", user.getEmail()).append("pseudonym", user.getPseudonym());
+        collection.insertOne(doc);
+        return true;
+    }
 
-		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
-		Document doc = new Document("user", user.getEmail()).append("password", user.getHashedPassword())
-				.append("user", user.getEmail()).append("pseudonym", user.getPseudonym());
-		collection.insertOne(doc);
-		return true;
-	}
+    static User getUserProfile(String name) {
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
+        Document doc = collection.find(eq("pseudonym", name)).first();
+        if (doc == null) {
+            return null;
+        }
 
-	@Override
-	public User getUserProfile(String name) {
-		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
-		Document doc = collection.find(eq("pseudonym", name)).first();
-		if(doc == null) {
-			return null;
-		}
+        String email = doc.getString("user");
+        String hashedPW = doc.getString("password");
+        @SuppressWarnings("rawtypes")
+        List dbContacts = doc.get("contacts", List.class);
+        List<String> contacts = new ArrayList<>();
+        if (dbContacts != null) {
+            for (Object contact : dbContacts) {
+                contacts.add(contact.toString());
+            }
+        }
 
-		String email = doc.getString("user");
-		String hashedPW = doc.getString("password");
-		@SuppressWarnings("rawtypes")
-		List dbContacts = doc.get("contacts",List.class);
-		List<String> contacts = new ArrayList<>();
-		if (dbContacts != null) {
-			for (Object contact : dbContacts) {
-				contacts.add(contact.toString());
-			}
-		}
+        return new User(name, hashedPW, email, contacts);
+    }
 
-		return new User(name, hashedPW, email, contacts);
-	}
+    static boolean userExists(String name, String email) {
+        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
+        Document doc = collection.find(or(eq("pseudonym", name), eq("user", email))).first();
+        return doc != null;
+    }
 
-	@Override
-	public boolean userExists(String name, String email) {
-		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
-		Document doc = collection.find(or(eq("pseudonym", name),eq("user",email))).first();
-		return doc != null;
-	}
-
-	public void clearForTest()	{
-		MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
-		// Deletes all items in the collection
-		collection.deleteMany(ne("remove","all"));
-	}
+    public static void clearForTest() {
+        DeleteCollection(Config.getSettingValue(Config.dbAccountCollection));
+    }
 
 }

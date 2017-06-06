@@ -1,50 +1,31 @@
 package login.server;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.ne;
-
-import org.bson.Document;
-
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import services.common.StorageProviderCoreMongoDB;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
+
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Storage provider for a MongoDB.
  */
-public class StorageProviderMongoDB {
-    private static MongoClient mongoClient;
-    private static MongoDatabase database;
-    private static StorageProviderMongoDB sp;
+public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
 
-    private StorageProviderMongoDB() {
-
+    private StorageProviderMongoDB() throws Exception {
+        super();
     }
 
-    public static synchronized void init() {
-        sp = new StorageProviderMongoDB();
-        mongoClient = new MongoClient(
-                new MongoClientURI(Config.getSettingValue(Config.mongoURI)));
-        database = mongoClient.getDatabase(Config.getSettingValue(Config.dbName));
-        // Used to check for valid connection!
-        try {
-            mongoClient.getDatabaseNames();
-        } catch (Exception e) {
-            System.out.printf("Could not connect to mongodb at %s because of %s \n",Config.getSettingValue(Config.mongoURI),e.getMessage());
-            System.exit(-1);
-        }
-        System.out.println("MongoDB storage provider initialized.");
-    }
-
-    public static StorageProviderMongoDB getStorageProvider(){
-        return sp;
+    public static synchronized void init() throws Exception {
+        StorageProviderCoreMongoDB.init(
+                Config.getSettingValue(Config.mongoURI),
+                Config.getSettingValue(Config.dbName));
     }
 
     /**
@@ -52,14 +33,14 @@ public class StorageProviderMongoDB {
      *
      * @param username  The user's email.
      * @param pseudonym The user's pseudonym.
-     * @return
+     * @return Returns the user's data or null if the user wasn't found.
      */
-    public User retrieveUser(String username, String pseudonym) {
+    static User retrieveUser(String username, String pseudonym) {
 
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
-        Document doc = null;
+        Document doc;
         // Retrieve the hashed password
-        if (pseudonym == null && Config.getSettingValue(Config.allowEmailLogin) == "true") {
+        if (pseudonym == null && Objects.equals(Config.getSettingValue(Config.allowEmailLogin), "true")) {
             doc = collection.find(eq("user", username)).first();
         } else {
             doc = collection.find(and(eq("user", username), eq("pseudonym", pseudonym))).first();
@@ -69,14 +50,13 @@ public class StorageProviderMongoDB {
             return null;
         }
 
-        User user = new User(username, doc.getString("password"), doc.getString("pseudonym"), true);
-        return user;
+        return new User(username, doc.getString("password"), doc.getString("pseudonym"), true);
     }
 
     /**
      *
      */
-    public void saveToken(String token, String expirationDate, String pseudonym) {
+    static void saveToken(String token, String expirationDate, String pseudonym) {
 
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
 
@@ -98,7 +78,7 @@ public class StorageProviderMongoDB {
      * @param token     The user's current token.
      * @return The token's expiration date or null if the token was not found or is expired.
      */
-    public Date retrieveToken(String pseudonym, String token) {
+    static Date retrieveToken(String pseudonym, String token) {
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
         // Retreive the tokeninformation
         Document doc = collection.find(and(eq("pseudonym", pseudonym), eq("token", token))).first();
@@ -129,24 +109,20 @@ public class StorageProviderMongoDB {
     /**
      *
      */
-    public void deleteToken(String token) {
+    static void deleteToken(String token) {
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
         collection.deleteOne(eq("token", token));
     }
 
-    public void clearForTest(User[] newUsers) {
-        MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
-        // Deletes all items in the collection
-        collection.deleteMany(ne("remove","all"));
-        MongoCollection<Document> tokenCollection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
-        // Deletes all items in the collection
-        tokenCollection.deleteMany(ne("remove","all"));
+    public static void clearForTest(User[] newUsers) {
+        MongoCollection<Document> collection = DeleteCollection(Config.getSettingValue(Config.dbAccountCollection));
+        DeleteCollection(Config.getSettingValue(Config.dbTokenCollection));
 
         for (User u :
                 newUsers) {
             Document doc = new Document();
-            doc.append("user",u.email);
-            doc.append("pseudonym",u.pseudonym);
+            doc.append("user", u.email);
+            doc.append("pseudonym", u.pseudonym);
             doc.append("password", u.getSecurePassword());
             collection.insertOne(doc);
         }

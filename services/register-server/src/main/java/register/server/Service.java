@@ -26,11 +26,9 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 @Path("/")
 public class Service {
-
-    public static IStorageProvider storageProvider;
     public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         try {
             Config.init(args);
         } catch (Exception e) {
@@ -38,9 +36,7 @@ public class Service {
             System.exit(-1);
         }
 
-        StorageProviderMongoDB sp = new StorageProviderMongoDB();
-        StorageProviderMongoDB.Init();
-        storageProvider = sp;
+        StorageProviderMongoDB.init();
         startRegistrationServer(Config.getSettingValue(Config.baseURI));
     }
 
@@ -98,7 +94,7 @@ public class Service {
         }
 
         User user = new User(pseudonym, password, email);
-        if (storageProvider.userExists(pseudonym, email)) {
+        if (StorageProviderMongoDB.userExists(pseudonym, email)) {
             System.out.printf("[/register] User %s was already registered and is potentially a teapot.\n", email);
             return Response
                     .status(418)
@@ -106,7 +102,7 @@ public class Service {
                     .build();
         }
 
-        if (storageProvider.createNewUser(user)) {
+        if (StorageProviderMongoDB.createNewUser(user)) {
             JSONObject obj = new JSONObject();
             obj.append("success", "true");
             System.out.printf("[/register] Added new user %s. \n", email);
@@ -143,7 +139,7 @@ public class Service {
         }
 
         if (verifyToken(pseudonym, token)) {
-            User user = storageProvider.getUserProfile(pseudonym);
+            User user = StorageProviderMongoDB.getUserProfile(pseudonym);
             JSONObject obj = new JSONObject();
             obj.append("name", user.getPseudonym());
             obj.append("email", user.getEmail());

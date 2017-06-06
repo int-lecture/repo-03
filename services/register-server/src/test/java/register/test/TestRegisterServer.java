@@ -34,16 +34,18 @@ public class TestRegisterServer {
                 "-loginURI", "http://localhost:5001/"});
         expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
 
-        StorageProviderMongoDB sp = new StorageProviderMongoDB();
-        StorageProviderMongoDB.Init();
-        sp.clearForTest();
+        try {
+            StorageProviderMongoDB.init();
+        } catch (Exception e) {
+            System.out.println("Storage provider already initiliazed");
+        }
+        StorageProviderMongoDB.clearForTest();
         SetupLoginServer.start();
 
         // Setup RestAssured
         RestAssured.baseURI = "http://localhost";
         RestAssured.basePath = "/";
         RestAssured.port = 5002;
-        Service.storageProvider = sp;
         threadSelector = Service.startRegistrationServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
     }
 

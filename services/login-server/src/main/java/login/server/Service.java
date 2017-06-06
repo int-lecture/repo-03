@@ -25,9 +25,9 @@ public class Service {
     /**
      * String for date parsing in ISO 8601 format.
      */
-    public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+    static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         try {
             Config.init(args);
         } catch (Exception e) {
@@ -40,22 +40,18 @@ public class Service {
     }
 
     public static void startLoginServer(String uri) {
-        final String baseUri = uri;
         final String paket = "login.server";
-        final Map<String, String> initParams = new HashMap<String, String>();
+        final Map<String, String> initParams = new HashMap<>();
 
         initParams.put("com.sun.jersey.config.property.packages", paket);
-        System.out.println("Starte grizzly...");
+        System.out.println("Starting grizzly...");
         try {
-            threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            threadSelector = GrizzlyWebContainerFactory.create(uri, initParams);
+        } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
         }
-        System.out.printf("Grizzly(loginServer) running at %s%n", baseUri);
+
+        System.out.printf("Grizzly(loginServer) running at %s%n", uri);
 
     }
 
@@ -77,15 +73,14 @@ public class Service {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response LoginUser(String jsonString) {
         String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
-        StorageProviderMongoDB spMDB = StorageProviderMongoDB.getStorageProvider();
         String userName, password, pseudonym;
-        boolean allowEmailLogin = Config.getSettingValue(Config.allowEmailLogin) == "true";
+        boolean allowEmailLogin = Objects.equals(Config.getSettingValue(Config.allowEmailLogin), "true");
         try {
             JSONObject obj = new JSONObject(jsonString);
             password = obj.getString("password");
             userName = obj.getString("user");
             pseudonym = obj.optString("pseudonym");
-            if (pseudonym == "") pseudonym = null;
+            if (Objects.equals(pseudonym, "")) pseudonym = null;
             System.out.println("user: " + userName);
 
         } catch (JSONException e) {
@@ -104,7 +99,7 @@ public class Service {
                     .build();
         }
 
-        User user = spMDB.retrieveUser(userName, pseudonym);
+        User user = StorageProviderMongoDB.retrieveUser(userName, pseudonym);
         if (user != null && user.VerifyPassword(password)) {
             JSONObject obj = new JSONObject();
             user.GenerateToken();
@@ -125,7 +120,7 @@ public class Service {
             SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
             Calendar expireDate = user.GetTokenExpireDate();
             sdf.setTimeZone(expireDate.getTimeZone());
-            spMDB.saveToken(user.GetToken(), sdf.format(expireDate.getTime()), user.pseudonym);
+            StorageProviderMongoDB.saveToken(user.GetToken(), sdf.format(expireDate.getTime()), user.pseudonym);
             return Response
                     .status(Response.Status.OK)
                     .header("Access-Control-Allow-Origin", corsOrigin)
@@ -150,7 +145,6 @@ public class Service {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response ValidateToken(String jsonString) {
-        StorageProviderMongoDB spMDB = StorageProviderMongoDB.getStorageProvider();
         String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
         String token, pseudonym;
         try {
@@ -164,7 +158,7 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
-        Date expireDate = spMDB.retrieveToken(pseudonym, token);
+        Date expireDate = StorageProviderMongoDB.retrieveToken(pseudonym, token);
         if (expireDate != null) {
             Calendar cal = Calendar.getInstance();
             if (cal.getTime().before(expireDate)) {
@@ -187,7 +181,7 @@ public class Service {
                 }
             } else {
                 // Token has expired
-                spMDB.deleteToken(token);
+                StorageProviderMongoDB.deleteToken(token);
             }
         }
 

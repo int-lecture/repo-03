@@ -32,10 +32,13 @@ public class TestLoginServer {
                 "-dbName", "regTest"});
         expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
 
-        StorageProviderMongoDB.init();
-        StorageProviderMongoDB sp = StorageProviderMongoDB.getStorageProvider();
+        try {
+            StorageProviderMongoDB.init();
+        } catch (Exception e) {
+            System.out.println("Storage provider already initiliazed");
+        }
         //Fill db
-        sp.clearForTest(new User[]{
+        StorageProviderMongoDB.clearForTest(new User[]{
                 new User("bob@web.de", "HalloIchbinBob", "bob")
         });
 
