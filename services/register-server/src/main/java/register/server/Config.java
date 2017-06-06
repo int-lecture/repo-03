@@ -1,11 +1,7 @@
 package register.server;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import services.common.ConfigHelper;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,27 +34,7 @@ public enum Config {
     }
 
     public static void init(String[] args) throws Exception {
-        String currentKey = null;
-        ArrayList<String> values = new ArrayList<>();
-
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("-")) {
-                currentKey = arg.substring(1);
-            } else {
-                if (currentKey == null && i == args.length - 1) {
-                    insertNewSettings(loadConfigFile(arg),false);
-                } else if (currentKey == null) {
-                    throw new Exception("Found value without defined key!");
-                }
-                else {
-                    values.add(arg);
-                    settings.put(currentKey, values);
-                    values = new ArrayList<>();
-                    currentKey = null;
-                }
-            }
-        }
+        Config.settings = ConfigHelper.settingsFromCommandLine(args);
 
         for (Config defaultVal :
                 Config.values()) {
@@ -74,41 +50,5 @@ public enum Config {
 
     public static List<String> getSettingValues(Config key) {
         return new ArrayList<>(settings.get(key.name()));
-    }
-
-    private static Map<String, List<String>> loadConfigFile(String configJson) {
-        String jsonStr = "";
-        try {
-            jsonStr = new String(Files.readAllBytes(Paths.get(configJson)));
-        } catch (IOException e) {
-            System.out.printf("Could not open config file %s. Caused by %s\n", configJson, e.getMessage());
-        }
-
-        JSONObject json = new JSONObject(jsonStr);
-        Map<String, List<String>> settings = new HashMap<>();
-        for (String key :
-                json.keySet()) {
-            List<String> values = new ArrayList<>();
-            JSONArray valArray = json.optJSONArray(key);
-            String valString = json.optString(key);
-            if (valArray != null) {
-                valArray.forEach((o -> values.add((String) o)));
-            } else if (valString != null) {
-                values.add(valString);
-            }
-
-            settings.put(key, values);
-        }
-
-        return settings;
-    }
-
-    private static void insertNewSettings(Map<String, List<String>> settings, boolean overrideExisting) {
-        for (String key :
-                settings.keySet()) {
-            if (!Config.settings.containsKey(key) || overrideExisting) {
-                Config.settings.put(key, settings.get(key));
-            }
-        }
     }
 }
