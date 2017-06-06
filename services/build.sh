@@ -10,9 +10,9 @@ rm register-server/target/register-server*.jar
 
 echo "Binaries finished building."
 echo "Deploying."
-mv login-server/target/login-server*.jar login-server.jar
-mv chat-server/target/chat-server*.jar chat-server.jar
-mv register-server/target/register-server*.jar register-server.jar
+mv login-server/target/login-server*-with-dependencies.jar login-server.jar
+mv chat-server/target/chat-server*-with-dependencies.jar chat-server.jar
+mv register-server/target/register-server*-with-dependencies.jar register-server.jar
 
 scp *.jar docker-03:/usr/local/source/repo-03/services/
 scp *.service docker-03:/usr/local/source/repo-03/services/
