@@ -1,5 +1,7 @@
 package login.server;
 
+import services.common.SecurityHelper;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;

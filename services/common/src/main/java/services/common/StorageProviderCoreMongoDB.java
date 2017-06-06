@@ -20,6 +20,7 @@ public class StorageProviderCoreMongoDB {
 
     }
 
+    @SuppressWarnings("deprecation")
     protected static synchronized void init(String mongoURI, String dbName) throws Exception {
         if (sp == null) {
             sp = new StorageProviderCoreMongoDB(true);
@@ -28,7 +29,6 @@ public class StorageProviderCoreMongoDB {
             database = mongoClient.getDatabase(dbName);
             // Used to check for valid connection!
             try {
-                //noinspection deprecation
                 mongoClient.getDatabaseNames();
             } catch (Exception e) {
                 System.out.printf("Could not connect to mongodb at %s because of %s \n", mongoURI, e.getMessage());

@@ -1,5 +1,7 @@
 package register.server;
 
+import services.common.SecurityHelper;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
