@@ -17,13 +17,21 @@ import io.restassured.response.Response;
 import login.server.Service;
 import login.server.StorageProviderMongoDB;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TestLoginServer {
+
+    private static Map<String,String> expectedCORSHeaders = new HashMap<>();
+
     @Before
     public void setUp() throws Exception {
         // Setup dependencies
         Config.init(new String[]{
                 "-mongoURI", "mongodb://testmongodb:27017/",
                 "-dbName", "regTest"});
+        expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
+
         StorageProviderMongoDB.init();
         StorageProviderMongoDB sp = StorageProviderMongoDB.getStorageProvider();
         //Fill db
@@ -50,19 +58,19 @@ public class TestLoginServer {
      */
     @Test
     public void testLogin() {
-        expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
                 .body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{'user': 'bob@web.de', 'password': 'HalloIchbinBob', 'pseudonym': 'bob'}".replace('\'', '"')))
                 .when().post("/login");
 
-        expect().statusCode(400).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(400).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{ 'password': 'HalloIchbinBob', 'pseudonym': 'bob'}".replace('\'', '"'))).when().post("/login");
 
-        expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{ 'user': 'bob@web.de', 'password': 'HalloIchbinBob'}".replace('\'', '"'))).when()
                 .post("/login");
 
-        expect().statusCode(401).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(401).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{'user': 'bob@web.de', 'password': 'HalloIfsegbinBob', 'pseudonym': 'bob'}".replace('\'', '"')))
                 .when().post("/login");
     }
@@ -73,7 +81,7 @@ public class TestLoginServer {
      */
     @Test
     public void testValidate() {
-        Response resp = expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
+        Response resp = expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("token", notNullValue())
                 .body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{'user': 'bob@web.de', 'password': 'HalloIchbinBob', 'pseudonym': 'bob'}".replace('\'', '"')))
                 .when().post("/login");
@@ -83,20 +91,20 @@ public class TestLoginServer {
         json.put("token", token);
         json.put("pseudonym", "bob");
 
-        expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue())
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue())
                 .body("expire-date", notNullValue()).given().contentType(MediaType.APPLICATION_JSON)
                 .body(json.toString()).when().post("/auth");
 
         json.put("token", token);
         json.put("pseudonym", "bobX");
 
-        expect().statusCode(401).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(401).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
                 .body(json.toString()).when().post("/auth");
 
         json.put("token", token + "X");
         json.put("pseudonym", "bob");
 
-        expect().statusCode(401).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(401).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
                 .body(json.toString()).when().post("/auth");
 
     }

@@ -5,11 +5,6 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import javax.ws.rs.core.MediaType;
 
-import com.sun.jersey.api.client.Client;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -22,8 +17,13 @@ import register.server.Config;
 import register.server.Service;
 import register.server.StorageProviderMongoDB;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TestRegisterServer {
+
     SelectorThread threadSelector;
+    private static Map<String, String> expectedCORSHeaders = new HashMap<>();
 
     @Before
     public void setUp() throws Exception {
@@ -31,12 +31,13 @@ public class TestRegisterServer {
         Config.init(new String[]{
                 "-mongoURI", "mongodb://testmongodb:27017/",
                 "-dbName", "regTest",
-                "-loginURI","http://localhost:5001/"});
+                "-loginURI", "http://localhost:5001/"});
+        expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
 
         StorageProviderMongoDB sp = new StorageProviderMongoDB();
         StorageProviderMongoDB.Init();
         sp.clearForTest();
-        TestLoginServer.start();
+        SetupLoginServer.start();
 
         // Setup RestAssured
         RestAssured.baseURI = "http://localhost";
@@ -48,7 +49,7 @@ public class TestRegisterServer {
 
     @After
     public void tearDown() {
-        TestLoginServer.stop();
+        SetupLoginServer.stop();
         Service.stopRegisterServer(threadSelector);
     }
 
@@ -58,22 +59,22 @@ public class TestRegisterServer {
      */
     @Test
     public void testRegistration() {
-        expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue()).given()
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue()).given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(("{'pseudonym': 'bob','password': 'halloIchbinBob', 'user': 'bob@web.de'}").replace('\'', '"'))
                 .when().put("/register");
-        expect().statusCode(418).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(418).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{'pseudonym': 'bob','password': 'halloIchbinBob', 'user': 'bob@web.de'}").replace('\'', '"'))
                 .when().put("/register");
 
-        expect().statusCode(400).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{'password': 'halloIchbinBob', 'user': 'bob@web.de'}").replace('\'', '"')).when()
                 .put("/register");
 
-        expect().statusCode(400).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{'pseudonym': 'bob', 'user': 'bob@web.de'}").replace('\'', '"')).when().put("/register");
 
-        expect().statusCode(400).given().contentType(MediaType.APPLICATION_JSON)
+        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
                 .body(("{'pseudonym': 'bob','password': 'halloIchbinBob'}").replace('\'', '"')).when().put("/register");
     }
 
@@ -84,23 +85,23 @@ public class TestRegisterServer {
     @Test
     public void testProfile() {
         // Register new user
-        expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue()).given()
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue()).given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(("{'pseudonym': 'tom','password': 'tom', 'user': 'tom@web.de'}").replace('\'', '"'))
                 .when().put("/register");
         // Login the new user
-        String token = TestLoginServer.LoginUser("tom@web.de","tom");
+        String token = SetupLoginServer.LoginUser("tom@web.de", "tom");
 
         JSONObject json = new JSONObject();
         json.put("token", token);
         json.put("getownprofile", "tom");
-        expect().statusCode(200).contentType(MediaType.APPLICATION_JSON).body("name", notNullValue())
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("name", notNullValue())
                 .body("email", notNullValue()).body("contact", notNullValue()).given()
                 .contentType(MediaType.APPLICATION_JSON).body(json.toString()).when().post("/profile");
         json = new JSONObject();
         json.put("token", "hallo");
         json.put("getownprofile", "susi");
-        expect().statusCode(403).given().contentType(MediaType.APPLICATION_JSON).body(json.toString()).when()
+        expect().statusCode(403).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON).body(json.toString()).when()
                 .post("/profile");
 
     }

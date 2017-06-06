@@ -7,7 +7,7 @@ import register.server.Config;
 
 import javax.ws.rs.core.MediaType;
 
-public class TestLoginServer {
+public class SetupLoginServer {
 
 	public static void start() throws Exception {
 		login.server.Config.init(new String[]{
