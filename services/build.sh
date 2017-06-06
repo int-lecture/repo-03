@@ -1,8 +1,10 @@
 #!/bin/bash
 git pull
-(cd chat-server/; mvn clean compile test assembly:single)
-(cd login-server/; mvn clean compile test assembly:single)
-(cd register-server/; mvn clean compile test assembly:single)
+(cd common/; mvn clean compile install)
+(cd login-server/; mvn clean compile test install assembly:single)
+(cd chat-server/; mvn clean compile test install assembly:single)
+(cd register-server/; mvn clean compile install test assembly:single)
+
 echo "Binaries finished building."
 echo "Deploying."
 rm login-server*.jar
