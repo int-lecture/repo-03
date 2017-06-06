@@ -53,9 +53,10 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
         MongoCollection<Document> sequences = database.getCollection(Config.getSettingValue(Config.dbSequenceCollection));
         if (user.getName() == null || user.getName().equals("")) return null;
 
-        Document sequence = sequences.find(eq("user", user.getName())).first();
-        if (sequence == null || sequence.getInteger("sequence") < sequenceBegin) return null;
         List<Message> newMessages = new ArrayList<>();
+        Document sequence = sequences.find(eq("user", user.getName())).first();
+        if (sequence == null) return newMessages;
+        if (sequence.getInteger("sequence") < sequenceBegin) return null;
         FindIterable<Document> docs;
 
         // Get all if sequenceBegin is zero

@@ -2,8 +2,9 @@ package chat.test;
 
 import javax.ws.rs.core.MediaType;
 
-import static io.restassured.RestAssured.expect;
-import static org.hamcrest.Matchers.notNullValue;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 import chat.server.Config;
 import chat.server.Service;
@@ -59,45 +60,118 @@ public class TestChatServer {
     public void testSend() {
         String tokenBob = SetupLoginServer.LoginUser("bob@web.de", "HalloIchbinBob");
         String tokenTom = SetupLoginServer.LoginUser("tom@web.de", "HalloIchbinTom");
+
         // testing a valid message
-        expect().statusCode(201).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'"
-                        + "}".replace('\'', '"')))
-                .when().put("/send");
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'" + "}")
 
-        expect().statusCode(201).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'bob','from':'tom','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenTom + "'"
-                        + "}".replace('\'', '"')))
-                .when().put("/send");
-        // testing a wrong password
-        expect().statusCode(401).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token': 'YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlkaGFleiA'}"
-                        .replace('\'', '"')))
-                .when().put("/send");
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(201)
+                .body("sequence", equalTo(0))
+                .body("date", equalTo("2017-04-26T11:30:30+0200"))
+                .headers(expectedCORSHeaders);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(201)
+                .body("sequence", equalTo(1))
+                .body("date", equalTo("2017-04-26T11:30:30+0200"))
+                .headers(expectedCORSHeaders);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'bob','from':'tom','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenTom + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(201)
+                .body("sequence", equalTo(0))
+                .body("date", equalTo("2017-04-26T11:30:30+0200"))
+                .headers(expectedCORSHeaders);
+        // testing a wrong token
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'nothing'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(401)
+                .body(equalTo("Invalid Token"))
+                .headers(expectedCORSHeaders);
         // testing all missing fields which are possible
-        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','text':'Test1','token': 'YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlkaGFleiA'}"
-                        .replace('\'', '"')))
-                .when().put("/send");
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1'}")
 
-        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','date':'2017-04-26T11:30:30+0200','text':'Test1','token': 'YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlkaGFleiA'}"
-                        .replace('\'', '"')))
-                .when().put("/send");
+                .when()
+                .put("/send")
 
-        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token': 'YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlkaGFleiA'}"
-                        .replace('\'', '"')))
-                .when().put("/send");
+                .then()
+                .statusCode(400)
+                .body(equalTo("Message was incomplete"))
+                .headers(expectedCORSHeaders);
 
-        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','token': 'YXNkaCBhc2R6YWllIHVqa2RzaCBzYWlkaGFleiA'}"
-                        .replace('\'', '"')))
-                .when().put("/send");
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','token':" + "'" + tokenBob + "'" + "}")
 
-        expect().statusCode(400).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1'}".replace('\'', '"')))
-                .when().put("/send");
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(400)
+                .body(equalTo("Message was incomplete"))
+                .headers(expectedCORSHeaders);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','text':'Test1','token':" + "'" + tokenBob + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(400)
+                .body(equalTo("Message was incomplete"))
+                .headers(expectedCORSHeaders);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(400)
+                .body(equalTo("Message was incomplete"))
+                .headers(expectedCORSHeaders);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(400)
+                .body(equalTo("Message was incomplete"))
+                .headers(expectedCORSHeaders);
 
     }
 
@@ -109,34 +183,133 @@ public class TestChatServer {
     public void testMessages() {
         String tokenTom = SetupLoginServer.LoginUser("tom@web.de", "HalloIchbinTom");
         String tokenBob = SetupLoginServer.LoginUser("bob@web.de", "HalloIchbinBob");
-        //TODO : Verify response bodies!
-        expect().statusCode(201).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'"
-                        + "}".replace('\'', '"')))
-                .when().put("/send");
-        expect().statusCode(201).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'"
-                        + "}".replace('\'', '"')))
-                .when().put("/send");
-        expect().statusCode(201).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
-                .body(("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'"
-                        + "}".replace('\'', '"')))
-                .when().put("/send");
+        String tokenHans = SetupLoginServer.LoginUser("hans@web.de", "HalloIchbinHans");
+
+        // Test user with no message received and no prior interaction at all
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenBob)
+
+                .when()
+                .get("/messages/bob/0")
+
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenHans)
+
+                .when()
+                .get("/messages/hans/0")
+
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test1','token':" + "'" + tokenBob + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(201)
+                .body("sequence", equalTo(0))
+                .body("date", equalTo("2017-04-26T11:30:30+0200"))
+                .headers(expectedCORSHeaders);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'hans','date':'2017-04-26T11:30:30+0200','text':'Test2','token':" + "'" + tokenHans + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(201)
+                .body("sequence", equalTo(1))
+                .body("date", equalTo("2017-04-26T11:30:30+0200"))
+                .headers(expectedCORSHeaders);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'to':'tom','from':'bob','date':'2017-04-26T11:30:30+0200','text':'Test3','token':" + "'" + tokenBob + "'" + "}")
+
+                .when()
+                .put("/send")
+
+                .then()
+                .statusCode(201)
+                .body("sequence", equalTo(2))
+                .body("date", equalTo("2017-04-26T11:30:30+0200"))
+                .headers(expectedCORSHeaders);
 
         // testing a correct message request
-        expect().headers(expectedCORSHeaders).statusCode(200).contentType(MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*").body("messages", notNullValue())
-                .given().header("Authorization", tokenTom).when().get("/messages/tom/0");
+        for (int i = 0; i < 3; i++) {
+            given()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", tokenTom)
 
+                    .when()
+                    .get("/messages/tom/0")
 
-        expect().statusCode(200).headers(expectedCORSHeaders).given().header("Authorization", tokenTom).when().get("/messages/tom/1");
-        // testing a correct message request when no messages were sent
-        expect().statusCode(204).headers(expectedCORSHeaders).given().header("Authorization", tokenTom).when().get("/messages/tom/2");
-        expect().statusCode(204).headers(expectedCORSHeaders).given().header("Authorization", tokenTom).when().get("/messages/tom/1");
-        // testing an invalid user
-        expect().statusCode(400).headers(expectedCORSHeaders).given().header("Authorization", tokenBob).when().get("/messages/peter/0");
+                    .then()
+                    .statusCode(200)
+                    .body("size()", is(3))
+                    .headers(expectedCORSHeaders);
+        }
 
-        // testing a invalid token
-        expect().statusCode(401).headers(expectedCORSHeaders).given().header("Authorization", tokenTom).when().get("/messages/bob/0");
+        // testing a retrieving a single a message and message removal
+        for (int i = 0; i < 3; i++) {
+            given()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", tokenTom)
+
+                    .when()
+                    .get("/messages/tom/1")
+
+                    .then()
+                    .statusCode(200)
+                    .body("size()", is(1))
+                    .body("[0].to", is("tom"))
+                    .body("[0].from", is("bob"))
+                    .body("[0].text", is("Test3"))
+                    .body("[0].sequence", is(2))
+                    .body("[0].date", is("2017-04-26T11:30:30+0200"))
+                    .headers(expectedCORSHeaders);
+
+        }
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenTom)
+
+                .when()
+                .get("/messages/tom/2")
+
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenTom)
+
+                .when()
+                .get("/messages/tom/1")
+
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenTom)
+
+                .when()
+                .get("/messages/tom/0")
+
+                .then()
+                .statusCode(204);
     }
 
     @Test

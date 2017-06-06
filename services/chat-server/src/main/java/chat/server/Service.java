@@ -67,10 +67,6 @@ public class Service {
         threadSelector.stopEndpoint();
     }
 
-    /**
-     * The user base.
-     */
-    private static HashMap<String, User> users = new HashMap<>();
 
     /**
      * Receives new message from the user.
@@ -85,56 +81,51 @@ public class Service {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response send(String json) {
         String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+        Message msg = null;
         try {
-            Message msg = Message.fromJson(json);
-            if (msg.to != null && msg.from != null && msg.date != null && msg.text != null && msg.token != null) {
-                User user;
-                User thisUser;
-                if (!users.containsKey(msg.to)) {
-                    user = new User(msg.to);
-                    users.put(msg.to, user);
-                } else {
-                    user = users.get(msg.to);
-                }
-                if (!users.containsKey(msg.from)) {
-                    thisUser = new User(msg.from);
-                    users.put(msg.from, thisUser);
-                } else {
-                    thisUser = users.get(msg.from);
-                }
-
-                if (thisUser.authenticateUser(msg.token)) {
-                    if(user.sendMessage(msg) == null) {
-                        return Response.status(Response.Status.BAD_REQUEST)
-                                .header("Access-Control-Allow-Origin", corsOrigin)
-                                .entity("Message was not correctly formatted").build();
-                    }
-                } else {
-                    System.out.printf("Could not authenticate user %s with token %s", user.getName(), msg.token);
-                    return Response.status(Response.Status.UNAUTHORIZED)
-                            .header("Access-Control-Allow-Origin", corsOrigin).build();
-                }
-                try {
-                    return Response.status(Response.Status.CREATED)
-                            .header("Access-Control-Allow-Origin", corsOrigin)
-                            .entity(msg.toJson(true).toString()).build();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return Response
-                            .status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .header("Access-Control-Allow-Origin", corsOrigin).build();
-                }
-            }
-            else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .header("Access-Control-Allow-Origin", corsOrigin)
-                        .entity("Message was not correctly formatted").build();
-            }
+            msg = Message.fromJson(json);
         } catch (ParseException e) {
+            System.out.println("[/send] Message was badly formatted");
             return Response.status(Response.Status.BAD_REQUEST)
                     .header("Access-Control-Allow-Origin", corsOrigin)
-                    .entity("Message was not correctly formatted").build();
+                    .entity("Message was incomplete").build();
         }
+
+        if (msg != null && msg.to != null && msg.from != null &&
+                msg.date != null && msg.text != null && msg.token != null) {
+            User sender = new User(msg.from);
+            User receiver = new User(msg.to);
+            if (sender.authenticateUser(msg.token)) {
+                if (receiver.sendMessage(msg) == null) {
+                    System.out.println("[/send] DB refused message.");
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .header("Access-Control-Allow-Origin", corsOrigin)
+                            .entity("Message was not correctly formatted").build();
+                }
+            } else {
+                System.out.printf("[/send] Could not authenticate user %s with token %s\n", sender.getName(), msg.token);
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("Invalid Token")
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+            try {
+                return Response.status(Response.Status.CREATED)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .entity(msg.toJson(true).toString()).build();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return Response
+                        .status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .header("Access-Control-Allow-Origin", corsOrigin).build();
+            }
+        } else {
+            System.out.println("[/send] Message was incomplete");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .entity("Message was incomplete").build();
+        }
+
     }
 
     /**
@@ -167,52 +158,44 @@ public class Service {
                                 @Context HttpHeaders header) {
         MultivaluedMap<String, String> map = header.getRequestHeaders();
         String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
-        if (Service.users.containsKey(userID)) {
-            JSONArray jsonMsgs = new JSONArray();
-            User user = Service.users.get(userID);
-            if (user.authenticateUser(map.get("Authorization").get(0))) {
-                List<Message> newMsgs = user.receiveMessages(sequenceNumber);
-                if(newMsgs == null) {
-                    return Response
-                            .status(Response.Status.BAD_REQUEST)
-                            .header("Access-Control-Allow-Origin", corsOrigin)
-                            .entity("User not found.").build();
-                }
-                else if (newMsgs.isEmpty()) {
-                    return Response.status(Response.Status.NO_CONTENT)
-                            .header("Access-Control-Allow-Origin", corsOrigin).build();
-                } else {
-                    for (Message msg : newMsgs) {
-                        try {
-                            jsonMsgs.put(msg.toJson(false));
-                        } catch (JSONException e) {
-                            System.out.println("Failed to build json response.");
-                            return Response
-                                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                                    .header("Access-Control-Allow-Origin", corsOrigin)
-                                    .build();
-                        }
-                    }
-                    try {
-                        return Response.status(Response.Status.OK)
-                                .header("Access-Control-Allow-Origin", corsOrigin)
-                                .entity(jsonMsgs.toString(4)).build();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-                    }
-                }
-            } else {
+        JSONArray jsonMsgs = new JSONArray();
+        User receiver = new User(userID);
+        if (receiver.authenticateUser(map.get("Authorization").get(0))) {
+            List<Message> newMsgs = receiver.receiveMessages(sequenceNumber);
+            if (newMsgs == null) {
                 return Response
-                        .status(Response.Status.UNAUTHORIZED)
+                        .status(Response.Status.BAD_REQUEST)
                         .header("Access-Control-Allow-Origin", corsOrigin)
-                        .build();
+                        .entity("User not found.").build();
+            } else if (newMsgs.isEmpty()) {
+                return Response.status(Response.Status.NO_CONTENT)
+                        .header("Access-Control-Allow-Origin", corsOrigin).build();
+            } else {
+                for (Message msg : newMsgs) {
+                    try {
+                        jsonMsgs.put(msg.toJson(false));
+                    } catch (JSONException e) {
+                        System.out.println("Failed to build json response.");
+                        return Response
+                                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .header("Access-Control-Allow-Origin", corsOrigin)
+                                .build();
+                    }
+                }
+                try {
+                    return Response.status(Response.Status.OK)
+                            .header("Access-Control-Allow-Origin", corsOrigin)
+                            .entity(jsonMsgs.toString(4)).build();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                }
             }
         } else {
             return Response
-                    .status(Response.Status.BAD_REQUEST)
+                    .status(Response.Status.UNAUTHORIZED)
                     .header("Access-Control-Allow-Origin", corsOrigin)
-                    .entity("User not found.").build();
+                    .build();
         }
     }
 
