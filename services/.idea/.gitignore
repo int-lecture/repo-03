@@ -1,2 +1,6 @@
 #Library files
 /libraries/
+# Local only files
+workspace.xml
+tasks.xml
+uiDesigner.xml

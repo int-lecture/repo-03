@@ -17,7 +17,8 @@ public enum Config {
     mongoURI("mongodb://141.19.142.57:27017"),
     dbName("benutzer"),
     dbAccountCollection("chats"),
-    loginURI("http://141.19.142.57:5001");
+    loginURI("http://141.19.142.57:5001"),
+    corsAllowOrigin("*");
 
     private static Map<String, List<String>> settings = new HashMap<>();
 

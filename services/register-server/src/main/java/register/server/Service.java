@@ -27,203 +27,222 @@ import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 @Path("/")
 public class Service {
 
-	public static IStorageProvider storageProvider;
-	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+    public static IStorageProvider storageProvider;
+    public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-	public static void main(String[] args) {
-		try {
-			Config.init(args);
-		} catch (Exception e) {
-			System.out.println("Invalid launch arguments!");
-			System.exit(-1);
-		}
+    public static void main(String[] args) {
+        try {
+            Config.init(args);
+        } catch (Exception e) {
+            System.out.println("Invalid launch arguments!");
+            System.exit(-1);
+        }
 
-		StorageProviderMongoDB sp = new StorageProviderMongoDB();
-		StorageProviderMongoDB.Init();
-		storageProvider = sp;
-		startRegistrationServer(Config.getSettingValue(Config.baseURI));
-	}
+        StorageProviderMongoDB sp = new StorageProviderMongoDB();
+        StorageProviderMongoDB.Init();
+        storageProvider = sp;
+        startRegistrationServer(Config.getSettingValue(Config.baseURI));
+    }
 
-	public static SelectorThread startRegistrationServer(String uri) {
-		final String baseUri = uri;
-		final String paket = "register.server";
-		final Map<String, String> initParams = new HashMap<>();
-		SelectorThread threadSelector = null;
-		initParams.put("com.sun.jersey.config.property.packages", paket);
-		System.out.println("Starte grizzly...");
-		try {
-			threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.printf("Grizzly(registerServer) running at %s%n", baseUri);
-		return threadSelector;
-	}
+    public static SelectorThread startRegistrationServer(String uri) {
+        final String baseUri = uri;
+        final String paket = "register.server";
+        final Map<String, String> initParams = new HashMap<>();
+        SelectorThread threadSelector = null;
+        initParams.put("com.sun.jersey.config.property.packages", paket);
+        System.out.println("Starte grizzly...");
+        try {
+            threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.printf("Grizzly(registerServer) running at %s%n", baseUri);
+        return threadSelector;
+    }
 
-	public static void stopRegisterServer(SelectorThread threadSelector){
-		threadSelector.stopEndpoint();
-	}
+    public static void stopRegisterServer(SelectorThread threadSelector) {
+        threadSelector.stopEndpoint();
+    }
 
-	@PUT
-	@Path("/register")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response RegisterNewUser(String jsonString) {
-		String pseudonym;
-		String email;
-		String password;
-		try {
-			JSONObject obj = new JSONObject(jsonString);
-			password = obj.getString("password");
-			email = obj.getString("user");
-			pseudonym = obj.getString("pseudonym");
+    @PUT
+    @Path("/register")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response RegisterNewUser(String jsonString) {
+        String pseudonym, email, password;
+        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            password = obj.getString("password");
+            email = obj.getString("user");
+            pseudonym = obj.getString("pseudonym");
 
-		} catch (JSONException e) {
-			System.out.println("[/register] User send invalid json data.");
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
+        } catch (JSONException e) {
+            System.out.println("[/register] User send invalid json data.");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
 
-		if(!isValidEmail(email) || !isValidPassword(password) || !isValidPseudonym(email)){
-			System.out.println("[/register] A registration value was invalid.");
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
+        if (!isValidEmail(email) || !isValidPassword(password) || !isValidPseudonym(email)) {
+            System.out.println("[/register] A registration value was invalid.");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
 
-		User user = new User(pseudonym, password, email);
-		if(storageProvider.userExists(pseudonym, email)) {
-			System.out.printf("[/register] User %s was already registered and is potentially a teapot.\n", email);
-			return Response.status(418).build();
-		}
+        User user = new User(pseudonym, password, email);
+        if (storageProvider.userExists(pseudonym, email)) {
+            System.out.printf("[/register] User %s was already registered and is potentially a teapot.\n", email);
+            return Response
+                    .status(418)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
 
-		if(storageProvider.createNewUser(user)) {
-			JSONObject obj = new JSONObject();
-			obj.append("success", "true");
-			System.out.printf("[/register] Added new user %s. \n", email);
-			return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
-		} else {
-			System.out.println("[/register] Registration failed.");
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
-	}
+        if (storageProvider.createNewUser(user)) {
+            JSONObject obj = new JSONObject();
+            obj.append("success", "true");
+            System.out.printf("[/register] Added new user %s. \n", email);
+            return Response
+                    .status(Response.Status.OK)
+                    .header("Access-Control-Allow-Origin", corsOrigin).entity(obj.toString()).build();
+        } else {
+            System.out.println("[/register] Registration failed.");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+    }
 
-	@POST
-	@Path("/profile")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getUserProfile(String jsonString) {
-		String token;
-		String pseudonym;
-		try {
-			JSONObject obj = new JSONObject(jsonString);
-			token = obj.getString("token");
-			pseudonym = obj.getString("getownprofile");
+    @POST
+    @Path("/profile")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getUserProfile(String jsonString) {
+        String token, pseudonym;
+        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            token = obj.getString("token");
+            pseudonym = obj.getString("getownprofile");
 
-		} catch (JSONException e) {
-			System.out.println("[/profile] User send invalid json data.");
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
+        } catch (JSONException e) {
+            System.out.println("[/profile] User send invalid json data.");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
 
-		if(verifyToken( pseudonym,  token)){
-			User user = storageProvider.getUserProfile(pseudonym);
-			JSONObject obj = new JSONObject();
-			obj.append("name", user.getPseudonym());
-			obj.append("email", user.getEmail());
-			JSONArray contacts = new JSONArray(user.getContacts());
-			obj.append("contact", contacts);
+        if (verifyToken(pseudonym, token)) {
+            User user = storageProvider.getUserProfile(pseudonym);
+            JSONObject obj = new JSONObject();
+            obj.append("name", user.getPseudonym());
+            obj.append("email", user.getEmail());
+            JSONArray contacts = new JSONArray(user.getContacts());
+            obj.append("contact", contacts);
 
-			return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(obj.toString()).build();
-		} else {
-			System.out.println("[/profile] User failed to authenticate.");
-			return Response.status(Response.Status.FORBIDDEN).build();
-		}
-	}
+            return Response
+                    .status(Response.Status.OK)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .entity(obj.toString()).build();
+        } else {
+            System.out.println("[/profile] User failed to authenticate.");
+            return Response
+                    .status(Response.Status.FORBIDDEN)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+    }
 
-	@OPTIONS
-	@Path("/register")
-	public Response optionsReg() {
-	    return Response.ok("")
-	            .header("Access-Control-Allow-Origin", "*")
-	            .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
-	            .header("Access-Control-Allow-Credentials", "true")
-	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-	            .header("Access-Control-Max-Age", "1209600")
-	            .build();
-	}
+    @OPTIONS
+    @Path("/register")
+    public Response optionsReg() {
+        return Response.ok("")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .header("Access-Control-Max-Age", "1209600")
+                .build();
+    }
 
-	@OPTIONS
-	@Path("/profile")
-	public Response optionsProfile() {
-	    return Response.ok("")
-	            .header("Access-Control-Allow-Origin", "*")
-	            .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
-	            .header("Access-Control-Allow-Credentials", "true")
-	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-	            .header("Access-Control-Max-Age", "1209600")
-	            .build();
-	}
+    @OPTIONS
+    @Path("/profile")
+    public Response optionsProfile() {
+        return Response.ok("")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .header("Access-Control-Max-Age", "1209600")
+                .build();
+    }
 
-	private static boolean verifyToken(String pseudonym,String token) {
-		try
-		{
-		JSONObject obj = new JSONObject();
-		try {
-			obj.put("token", token);
-			obj.put("pseudonym", pseudonym);
-		} catch (JSONException e) {
-			System.out.println("Failed to build authorization request json.");
-			return false;
-		}
+    private static boolean verifyToken(String pseudonym, String token) {
+        try {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("token", token);
+                obj.put("pseudonym", pseudonym);
+            } catch (JSONException e) {
+                System.out.println("Failed to build authorization request json.");
+                return false;
+            }
 
-		// TODO : Maybe use one static client?
-		Client webClient = new Client();
-		String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "auth")
-		.accept(MediaType.APPLICATION_JSON)
-		.type(MediaType.APPLICATION_JSON)
-		.post(String.class, obj.toString());
-		webClient.destroy();
+            // TODO : Maybe use one static client?
+            Client webClient = new Client();
+            String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "auth")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .type(MediaType.APPLICATION_JSON)
+                    .post(String.class, obj.toString());
+            webClient.destroy();
 
-		SimpleDateFormat sdf = new SimpleDateFormat(ISO8601);
-			JSONObject jo = new JSONObject(response);
-			if (jo.getString("success").equals("true")) {
-				try {
-					Date expireDate = sdf.parse(jo.getString("expire-date"));
-					if(expireDate.after(new Date()))
-					{
-						return true;
-					} else {
-						System.out.printf("Could not verify user %s. Token expired. \n",pseudonym);
-						return false;
-					}
-				} catch (JSONException | ParseException e) {
-					System.out.printf("Could not verify user %s. Failed to parse auth json. \n",pseudonym);
-					return false;
-				}
-			}
-		}
-		catch(Exception e){
-			System.out.printf("Uncaught exception occurred during user authentication %s  \n", e.getMessage());
-			return false;
-		}
+            SimpleDateFormat sdf = new SimpleDateFormat(ISO8601);
+            JSONObject jo = new JSONObject(response);
+            if (jo.getString("success").equals("true")) {
+                try {
+                    Date expireDate = sdf.parse(jo.getString("expire-date"));
+                    if (expireDate.after(new Date())) {
+                        return true;
+                    } else {
+                        System.out.printf("Could not verify user %s. Token expired. \n", pseudonym);
+                        return false;
+                    }
+                } catch (JSONException | ParseException e) {
+                    System.out.printf("Could not verify user %s. Failed to parse auth json. \n", pseudonym);
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            System.out.printf("Uncaught exception occurred during user authentication %s  \n", e.getMessage());
+            return false;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private static boolean isValidEmail(String email) {
-		// TODO : Use actual verification
-		return email.length() > 3;
-	}
+    private static boolean isValidEmail(String email) {
+        // TODO : Use actual verification
+        return email.length() > 3;
+    }
 
-	private static boolean isValidPseudonym(String pseudonym) {
-		// TODO : Use actual verification
-		return pseudonym.length() > 4;
-	}
+    private static boolean isValidPseudonym(String pseudonym) {
+        // TODO : Use actual verification
+        return pseudonym.length() > 4;
+    }
 
-	private static boolean isValidPassword(String password) {
-		// TODO : Use actual verification
-		return true;
-	}
+    private static boolean isValidPassword(String password) {
+        // TODO : Use actual verification
+        return true;
+    }
 
 }

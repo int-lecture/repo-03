@@ -30,7 +30,7 @@ public class TestChatServer {
 		RestAssured.port = 5000;
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.basePath = "/";
-		Service.starteChatServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
+		Service.startChatServer(RestAssured.baseURI + ":" + RestAssured.port + "/");
 	}
 
 	@After

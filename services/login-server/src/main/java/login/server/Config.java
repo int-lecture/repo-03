@@ -17,7 +17,8 @@ public enum Config {
     dbName("benutzer"),
     dbAccountCollection("account"),
     dbTokenCollection("token"),
-    allowEmailLogin("true");
+    allowEmailLogin("true"),
+    corsAllowOrigin("*");
 
     private static Map<String, List<String>> settings = new HashMap<>();
 
