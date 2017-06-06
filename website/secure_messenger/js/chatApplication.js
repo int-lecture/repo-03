@@ -63,17 +63,16 @@ function openNewChat() {
 }
 
 function loadConfig() {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
+      $.ajax({
+        url: 'js/config.txt',
+        type: 'GET',
+        success: function (result) {
             var ips = xhr.responseText.split(";");
             ipLogin = ips[0].substring("ipLogin:".length + 1);
             ipChat = ips[1].substring("ipChat:".length + 1);
             ipRegister = ips[2].substring("ipRegister:".length + 1);
         }
     }
-    xhr.open('GET', 'http://141.19.142.57/chatFrontend/chatApplication/js/config.txt', false);
-    xhr.send();
 }
 
 function openChat(partner) {
@@ -141,7 +140,6 @@ function testContactDiv() {
 }
 
 function loadContacts() {
-    ip = "141.19.142.57";
     var URL = ipRegister + "/profile/";
     var dataObject = { 'getownprofile': pseudonym, 'token': token };
 
