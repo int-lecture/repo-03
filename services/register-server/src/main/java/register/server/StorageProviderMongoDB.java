@@ -61,7 +61,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
     }
 
     public static void clearForTest() {
-        DeleteCollection(Config.getSettingValue(Config.dbAccountCollection));
+        deleteCollection(Config.getSettingValue(Config.dbAccountCollection));
     }
 
 }

@@ -11,7 +11,8 @@ public enum Config {
     baseURI("http://0.0.0.0:5000/"),
     mongoURI("mongodb://141.19.142.57:27017"),
     dbName("benutzer"),
-    dbAccountCollection("chats"),
+    dbChatCollection("chats"),
+    dbSequenceCollection("sequence"),
     loginURI("http://141.19.142.57:5001"),
     corsAllowOrigin("*");
 

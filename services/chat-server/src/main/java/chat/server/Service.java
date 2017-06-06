@@ -38,6 +38,7 @@ public class Service {
 
     public static void main(String[] args) throws Exception {
         Config.init(args);
+        StorageProviderMongoDB.init();
         startChatServer(Config.getSettingValue(Config.baseURI));
     }
 
@@ -103,7 +104,11 @@ public class Service {
                 }
 
                 if (thisUser.authenticateUser(msg.token)) {
-                    msg = user.sendMessage(msg);
+                    if(user.sendMessage(msg) == null) {
+                        return Response.status(Response.Status.BAD_REQUEST)
+                                .header("Access-Control-Allow-Origin", corsOrigin)
+                                .entity("Message was not correctly formatted").build();
+                    }
                 } else {
                     System.out.printf("Could not authenticate user %s with token %s", user.getName(), msg.token);
                     return Response.status(Response.Status.UNAUTHORIZED)
@@ -167,7 +172,13 @@ public class Service {
             User user = Service.users.get(userID);
             if (user.authenticateUser(map.get("Authorization").get(0))) {
                 List<Message> newMsgs = user.receiveMessages(sequenceNumber);
-                if (newMsgs.isEmpty()) {
+                if(newMsgs == null) {
+                    return Response
+                            .status(Response.Status.BAD_REQUEST)
+                            .header("Access-Control-Allow-Origin", corsOrigin)
+                            .entity("User not found.").build();
+                }
+                else if (newMsgs.isEmpty()) {
                     return Response.status(Response.Status.NO_CONTENT)
                             .header("Access-Control-Allow-Origin", corsOrigin).build();
                 } else {

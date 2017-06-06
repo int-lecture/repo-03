@@ -26,16 +26,6 @@ public class User {
     private String name;
 
     /**
-     * The sequence number of the last message sent.
-     */
-    private int sequenceNumber;
-
-    /**
-     * Messages to be delivered.
-     */
-    private Queue<Message> messages = new ArrayDeque<Message>();
-
-    /**
      * The user's token.
      */
     private String token;
@@ -62,8 +52,11 @@ public class User {
      * @return The sent message with the correct sequence number.
      */
     public Message sendMessage(Message msg) {
-        msg.sequence = sequenceNumber++;
-        messages.add(msg);
+        int seq = StorageProviderMongoDB.addMessage(this,msg);
+        if (seq == -1){
+            return null;
+        }
+
         System.out.println(String.format("%s -> %s [%d]: %s", msg.from, msg.to, msg.sequence, msg.text));
         return msg;
     }
@@ -78,26 +71,16 @@ public class User {
      * parameter.
      */
     public List<Message> receiveMessages(int sequenceNumber) {
-        ArrayList<Message> recvMsgs = new ArrayList<>();
-
-        for (Message message : messages) {
-            if (sequenceNumber == 0 || message.sequence > sequenceNumber) {
-                recvMsgs.add(message);
-            }
+        List<Message> recvMsgs = StorageProviderMongoDB.getMessages(this,sequenceNumber);
+        if (recvMsgs == null){
+            return null;
         }
 
         // Remove all message with a sequence <= the parameter. This removes all
         // messages from storage that
         // the client confirmed as received.
-        if (User.removeOldMessages) {
-            while (!this.messages.isEmpty()) {
-                Message msg = this.messages.peek();
-                if (msg.sequence <= sequenceNumber) {
-                    this.messages.poll();
-                } else {
-                    break;
-                }
-            }
+        if (User.removeOldMessages && sequenceNumber > 0) {
+            StorageProviderMongoDB.removeMessages(this,sequenceNumber);
         }
 
         return recvMsgs;

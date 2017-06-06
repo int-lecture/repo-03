@@ -45,10 +45,10 @@ public class StorageProviderCoreMongoDB {
         return sp;
     }
 
-    protected static MongoCollection<Document> DeleteCollection(String collectionName) {
+    protected static MongoCollection<Document> deleteCollection(String collectionName) {
         MongoCollection<Document> collection = database.getCollection(collectionName);
         // Deletes all items in the collection
-        collection.deleteMany(ne("remove", "all"));
+        collection.drop();
         return collection;
     }
 }

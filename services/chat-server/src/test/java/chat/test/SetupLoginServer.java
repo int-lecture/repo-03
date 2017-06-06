@@ -15,7 +15,7 @@ public class SetupLoginServer {
 	public static void start() throws Exception {
 		login.server.Config.init(new String[]{
 				"-mongoURI", "mongodb://testmongodb:27017/",
-				"-dbName", "regTest"
+				"-dbName", "msgTest"
 		});
 
 		try {

@@ -115,8 +115,8 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
     }
 
     public static void clearForTest(User[] newUsers) {
-        MongoCollection<Document> collection = DeleteCollection(Config.getSettingValue(Config.dbAccountCollection));
-        DeleteCollection(Config.getSettingValue(Config.dbTokenCollection));
+        MongoCollection<Document> collection = deleteCollection(Config.getSettingValue(Config.dbAccountCollection));
+        deleteCollection(Config.getSettingValue(Config.dbTokenCollection));
 
         for (User u :
                 newUsers) {
