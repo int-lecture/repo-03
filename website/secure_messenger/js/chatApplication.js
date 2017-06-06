@@ -67,7 +67,7 @@ function loadConfig() {
         url: 'js/config.txt',
         type: 'GET',
         success: function (result) {
-            var ips = xhr.responseText.split(";");
+            var ips = result.split(";");
             ipLogin = ips[0].substring("ipLogin:".length + 1);
             ipChat = ips[1].substring("ipChat:".length + 1);
             ipRegister = ips[2].substring("ipRegister:".length + 1);
