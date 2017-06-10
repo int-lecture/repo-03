@@ -14,7 +14,8 @@ public enum Config {
     dbChatCollection("chats"),
     dbSequenceCollection("sequence"),
     loginURI("http://141.19.142.57:5001"),
-    corsAllowOrigin("*");
+    corsAllowOrigin("*"),
+    useAuthCache("true");
 
     private static Map<String, List<String>> settings = new HashMap<>();
 

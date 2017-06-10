@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,9 +37,16 @@ public class Service {
     public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
     private static SelectorThread threadSelector = null;
 
+    private final static Map<String,User> authCache = new ConcurrentHashMap<>();
+    private static boolean useAuthCaching;
+
     public static void main(String[] args) throws Exception {
         Config.init(args);
         StorageProviderMongoDB.init();
+        useAuthCaching = Config.getSettingValue(Config.useAuthCache).equals("true");
+        if (!useAuthCaching) {
+            System.out.println("Auth caching is disabled.");
+        }
         startChatServer(Config.getSettingValue(Config.baseURI));
     }
 
@@ -199,7 +207,6 @@ public class Service {
         }
     }
 
-
     @OPTIONS
     @Path("/send")
     public Response optionsReg() {
@@ -234,5 +241,26 @@ public class Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
                 .header("Access-Control-Max-Age", "1209600")
                 .build();
+    }
+
+    private static boolean AuthenticateUser(String token, String pseudonym) {
+        User cachedUser = authCache.get(pseudonym);
+        if (cachedUser != null) {
+            if (cachedUser.authenticateUser(token)){
+                return true;
+            } else {
+                // Failed to authenticate this user, token was definitely expired.
+                authCache.remove(token);
+                return false;
+            }
+        } else {
+            User user = new User(pseudonym);
+            if (user.authenticateUser(token)) {
+                authCache.put(pseudonym,user);
+                return true;
+            }
+        }
+
+        return false;
     }
 }
