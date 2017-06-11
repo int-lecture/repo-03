@@ -195,6 +195,7 @@ function getMessages() {
                 }
             },
             error: function (xhr, a, b) {
+            	alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
                 window.location.href = "loginApplication.html";
                 //alert("getMessages von " + pseudonym + " fehlgeschlagen");
             }
