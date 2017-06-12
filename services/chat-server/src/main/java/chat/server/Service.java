@@ -101,9 +101,8 @@ public class Service {
 
         if (msg != null && msg.to != null && msg.from != null &&
                 msg.date != null && msg.text != null && msg.token != null) {
-            User sender = new User(msg.from);
-            User receiver = new User(msg.to);
-            if (sender.authenticateUser(msg.token)) {
+            if (authenticateUser(msg.token, msg.from) != null) {
+                User receiver = new User(msg.to);
                 if (receiver.sendMessage(msg) == null) {
                     System.out.println("[/send] DB refused message.");
                     return Response.status(Response.Status.BAD_REQUEST)
@@ -111,7 +110,7 @@ public class Service {
                             .entity("Message was not correctly formatted").build();
                 }
             } else {
-                System.out.printf("[/send] Could not authenticate user %s with token %s\n", sender.getName(), msg.token);
+                System.out.printf("[/send] Could not authenticate user %s with token %s\n", msg.from, msg.token);
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("Invalid Token")
                         .header("Access-Control-Allow-Origin", corsOrigin)
@@ -167,8 +166,8 @@ public class Service {
         MultivaluedMap<String, String> map = header.getRequestHeaders();
         String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
         JSONArray jsonMsgs = new JSONArray();
-        User receiver = new User(userID);
-        if (receiver.authenticateUser(map.get("Authorization").get(0))) {
+        User receiver = authenticateUser(map.get("Authorization").get(0),userID);
+        if (receiver != null) {
             List<Message> newMsgs = receiver.receiveMessages(sequenceNumber);
             if (newMsgs == null) {
                 return Response
@@ -243,24 +242,24 @@ public class Service {
                 .build();
     }
 
-    private static boolean AuthenticateUser(String token, String pseudonym) {
+    private static User authenticateUser(String token, String pseudonym) {
         User cachedUser = authCache.get(pseudonym);
         if (cachedUser != null) {
             if (cachedUser.authenticateUser(token)){
-                return true;
+                return cachedUser;
             } else {
                 // Failed to authenticate this user, token was definitely expired.
                 authCache.remove(token);
-                return false;
+                return null;
             }
         } else {
             User user = new User(pseudonym);
             if (user.authenticateUser(token)) {
                 authCache.put(pseudonym,user);
-                return true;
+                return user;
             }
         }
 
-        return false;
+        return null;
     }
 }
