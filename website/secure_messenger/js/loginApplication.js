@@ -1,6 +1,11 @@
 $( document ).ready(function() {  
-	
+
 });
+$(document).keypress(function(e){
+    if(e.which==13){
+        checkPw();
+    }
+})
 var ip="141.19.142.57";
 function checkPw(){
     ip="141.19.142.57";

@@ -31,6 +31,15 @@ $(document).ready(function () {
     $("#startChatWithFriend").click(function () {
         openChat($("#newFriendsName"));
     })
+    
+    $("#comment").on('keypress', function (e){
+                     if(e.which==13){
+        
+        $(this).attr("disabled", "disabled");
+        send();
+        $(this).removeAttr("disabled");
+    }
+    })
 
 
 });
@@ -203,7 +212,7 @@ function getMessages() {
         });
 
     }
-    setInterval(update, 10000);
+    setInterval(update, 1000);
 }
 
 function sortMessages() {
