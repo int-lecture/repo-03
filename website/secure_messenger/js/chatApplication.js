@@ -1,11 +1,10 @@
 $(document).ready(function () {
     loadConfig();
-    //loginTest("bob@web.de", "HalloIchbinBob");
-    //loginTest("tom@web.de", "HalloIchbinTom");
     readCookie();
     openChat("Secure Messenger");
-    testContactDiv();
-    //loadContacts();
+    //testContactDiv();
+    //Teste die contact array methoden
+    loadContacts();
     getMessages();
     $(".heading-compose").click(function () {
         $(".side-two").css({
@@ -65,22 +64,9 @@ function openThisChat(id) {
 function openNewChat() {
     var newFriendsName = $("#newFriendsName").val();
     openChat(newFriendsName);
-    //newContact(newFriendsName);
+    newContact(newFriendsName);
     $(".side-two").css({
         "left": "-100%"
-    });
-}
-
-function loadConfig() {
-      $.ajax({
-        url: 'js/config.txt',
-        type: 'GET',
-        success: function (result) {
-            var ips = result.split(";");
-            ipLogin = ips[0].substring("ipLogin:".length + 1);
-            ipChat = ips[1].substring("ipChat:".length + 1);
-            ipRegister = ips[2].substring("ipRegister:".length + 1);
-        }
     });
 }
 
@@ -137,7 +123,8 @@ function send() {
     }
 }
 function newContact(newChatPartner) {
-    $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + newChatPartner + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + newChatPartner + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
+    contact.push(newChatPartner);
+    loadContacts();
 
 }
 
@@ -167,7 +154,10 @@ function loadContacts() {
 
     });
     $.each(contact, function (index, value) {
-        $(".sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + value + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
+         $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + value + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" +value + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
+    $("#"+value).click(function () {
+        openChat($(this).attr('id'));
+    });
 
     });
 }
@@ -206,7 +196,6 @@ function getMessages() {
             error: function (xhr, a, b) {
             	alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
                 window.location.href = "loginApplication.html";
-                //alert("getMessages von " + pseudonym + " fehlgeschlagen");
             }
 
         });
@@ -241,6 +230,19 @@ function saveSettings() {
     document.cookie = "ipLogin=" + $("#inputIpLogin").val();
 }
 
+function loadConfig() {
+      $.ajax({
+        url: 'js/config.txt',
+        type: 'GET',
+        success: function (result) {
+            var ips = result.split(";");
+            ipLogin = ips[0].substring("ipLogin:".length + 1);
+            ipChat = ips[1].substring("ipChat:".length + 1);
+            ipRegister = ips[2].substring("ipRegister:".length + 1);
+        }
+    });
+}
+
 function readCookie() {
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
@@ -255,23 +257,6 @@ function readCookie() {
     });
 }
 
-function loginTest(user, password) {
-    var URL = ipLogin + "/login/";
-    var dataObject = { 'user': user, 'password': password };
-    $.ajax({
-        url: URL,
-        type: 'POST',
-        data: JSON.stringify(dataObject),
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json',
-        success: function (result) {
-            document.cookie = "token=" + result.token;
-            document.cookie = "pseudonym=" + result.pseudonym;
-        },
-        error: function (xhr, a, b) {
-        }, async: false
-    });
-}
 
 
 
