@@ -1,11 +1,8 @@
 $(document).ready(function () {
     loadConfig();
-    //loginTest("bob@web.de", "HalloIchbinBob");
-    //loginTest("tom@web.de", "HalloIchbinTom");
     readCookie();
     openChat("Secure Messenger");
     testContactDiv();
-    //loadContacts();
     getMessages();
     $(".heading-compose").click(function () {
         $(".side-two").css({
@@ -31,14 +28,14 @@ $(document).ready(function () {
     $("#startChatWithFriend").click(function () {
         openChat($("#newFriendsName"));
     })
-    
-    $("#comment").on('keypress', function (e){
-                     if(e.which==13){
-        
-        $(this).attr("disabled", "disabled");
-        send();
-        $(this).removeAttr("disabled");
-    }
+
+    $("#comment").on('keypress', function (e) {
+        if (e.which == 13) {
+
+            $(this).attr("disabled", "disabled");
+            send();
+            $(this).removeAttr("disabled");
+        }
     })
 
 
@@ -47,8 +44,7 @@ var token;
 var pseudonym;
 var contact = [];
 var partner;
-var sequenceNumbers = [];
-var sequenceNumber;
+var sequenceNumber = 0;
 var ipLogin;
 var ipRegister;
 var ipChat;
@@ -72,7 +68,7 @@ function openNewChat() {
 }
 
 function loadConfig() {
-      $.ajax({
+    $.ajax({
         url: 'js/config.txt',
         type: 'GET',
         success: function (result) {
@@ -174,12 +170,7 @@ function loadContacts() {
 
 function getMessages() {
     function update() {
-        if (typeof sequenceNumber != 'undefined') {
-            var URL = ipChat + "/messages/" + pseudonym + "/0"
-            //+ sequenceNumber.toString();
-        } else {
-            var URL = ipChat + "/messages/" + pseudonym + "/0";
-        }
+        var URL = ipChat + "/messages/" + pseudonym + "/" + sequenceNumber;
         $.ajax({
             headers: {
                 "Authorization": token
@@ -190,23 +181,19 @@ function getMessages() {
             dataType: 'json',
             success: function (result, textStatus, xhr) {
                 if (xhr.status == 200) {
-                    if (typeof sequenceNumber == 'undefined') {
-                        messages = result;
-                        showMessages();
-                    }
-                    else {
-                        messages = result;
-                        sequenceNumber = sequenceNumber + result.length;
-                        showMessages();
-                    }
+                    messages=messages.concat(result);
+                    sequenceNumber = result[result.length-1].sequence;
+                    showMessages();
                 } else if (xhr.status == 204) {
 
                 }
             },
             error: function (xhr, a, b) {
-            	alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
-                window.location.href = "loginApplication.html";
-                //alert("getMessages von " + pseudonym + " fehlgeschlagen");
+                if (xhr.status == 401) {
+                    alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
+                    window.location.href = "loginApplication.html";
+                    //alert("getMessages von " + pseudonym + " fehlgeschlagen");
+                }
             }
 
         });
@@ -252,24 +239,6 @@ function readCookie() {
         if (value.substring(0, "pseudonym=".length) == "pseudonym=") {
             pseudonym = value.substring("pseudonym=".length);
         }
-    });
-}
-
-function loginTest(user, password) {
-    var URL = ipLogin + "/login/";
-    var dataObject = { 'user': user, 'password': password };
-    $.ajax({
-        url: URL,
-        type: 'POST',
-        data: JSON.stringify(dataObject),
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json',
-        success: function (result) {
-            document.cookie = "token=" + result.token;
-            document.cookie = "pseudonym=" + result.pseudonym;
-        },
-        error: function (xhr, a, b) {
-        }, async: false
     });
 }
 
