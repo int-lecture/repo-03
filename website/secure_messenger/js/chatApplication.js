@@ -45,8 +45,7 @@ var token;
 var pseudonym;
 var contact = [];
 var partner;
-var sequenceNumbers = [];
-var sequenceNumber;
+var sequenceNumber=0;
 var ipLogin;
 var ipRegister;
 var ipChat;
@@ -172,12 +171,8 @@ function loadContacts() {
 
 function getMessages() {
     function update() {
-        if (typeof sequenceNumber != 'undefined') {
-            var URL = ipChat + "/messages/" + pseudonym + "/0"
-            //+ sequenceNumber.toString();
-        } else {
-            var URL = ipChat + "/messages/" + pseudonym + "/0";
-        }
+            alert(sequenceNumber);
+            var URL = ipChat + "/messages/" + pseudonym + "/"+sequenceNumber;
         $.ajax({
             headers: {
                 "Authorization": token
@@ -189,7 +184,7 @@ function getMessages() {
             success: function (result, textStatus, xhr) {
                 if (xhr.status == 200) {
                     messages = messages.concat(result);
-                    sequenceNumber = result[sequenceNumber.length - 1].sequence;
+                    sequenceNumber = result[result.length - 1].sequence;
                     showMessages();
                 } else if (xhr.status == 204) {
 
