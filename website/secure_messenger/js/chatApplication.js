@@ -29,7 +29,11 @@ $(document).ready(function () {
     $("#startChatWithFriend").click(function () {
         openChat($("#newFriendsName"));
     })
-
+    $("#newFriendsName").on('keypress', function (e) {
+        if (e.which == 13) {
+            openNewChat();
+        }
+    })
     $("#comment").on('keypress', function (e) {
         if (e.which == 13) {
 
