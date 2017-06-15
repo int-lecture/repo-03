@@ -195,7 +195,10 @@ public class Service {
                             .entity(jsonMsgs.toString(4)).build();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                    return Response
+                            .status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .header("Access-Control-Allow-Origin", corsOrigin)
+                            .build();
                 }
             }
         } else {
