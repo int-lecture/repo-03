@@ -237,14 +237,6 @@ body {
   color: rgba(0, 0, 0, .4);
   vertical-align: baseline;
 }
-/*Config*/
-.config {
-  padding: 0 !important;
-  margin: 0 !important;
-  height: 100%;
-  position: relative;
-  left: -100%;
-}
 
 /*New Message*/
 
@@ -255,7 +247,7 @@ body {
   position: relative;
   left: -100%;
 }
-.newMessage-heading, .config-heading {
+.newMessage-heading {
   padding: 10px 16px 10px 15px !important;
   margin: 0 !important;
   height: 100px;
@@ -264,7 +256,7 @@ body {
   z-index: 1001;
 }
 
-.newMessage-main, .config-main {
+.newMessage-main {
   padding: 10px 16px 0 15px !important;
   margin: 0 !important;
   height: 60px;
@@ -274,19 +266,19 @@ body {
   color: #fff;
 }
 
-.newMessage-title, .config-title {
+.newMessage-title {
   font-size: 18px;
   font-weight: 700;
   padding: 10px 5px !important;
 }
-.newMessage-back, .config-back {
+.newMessage-back {
   text-align: center;
   vertical-align: baseline;
   padding: 12px 5px !important;
   display: block;
   cursor: pointer;
 }
-.newMessage-back i, .config-back i {
+.newMessage-back i {
   margin: auto !important;
 }
 
