@@ -417,6 +417,7 @@ body {
 }
 
 .sender {
+  float: right;
   width: auto !important;
   background: #54CAFF;
   border-radius: 10px 10px 0 10px;

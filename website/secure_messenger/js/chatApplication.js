@@ -21,8 +21,8 @@ $(document).ready(function () {
             "left": "-100%"
         });
     })
-    $("#toTop").click(function(){
-      $("#searchText").focus();
+    $("#toTop").click(function () {
+        $("#searchText").focus();
     })
 
     $(".newMessage-back").click(function () {
@@ -65,6 +65,7 @@ $(document).ready(function () {
 var token;
 var pseudonym;
 var contact = [];
+var currenChatPartner = [];
 var partner;
 var sequenceNumber = 0;
 
@@ -83,9 +84,6 @@ function openNewChat() {
     openChat(newFriendsName);
     newContact(newFriendsName);
     $("#newFriendsName").val("");
-    $(".side-two").css({
-        "left": "-100%"
-    });
 }
 
 function openChat(partner) {
@@ -184,7 +182,17 @@ function sortMessages() {
 function showMessages() {
     sortMessages();
     $("#conversation").empty();
+    $(".sideBar").empty();
     $.each(chatMessages, function (index, value) {
+        if (value.to == pseudonym) {
+        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + value.from + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + value.from + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
+        $("#" + value.from).click(function () {
+            openChat($(this).attr('id'));
+            $(".side-two").css({
+            "left": "-100%"
+        });
+        });
+    }
         if (value.from == partner && value.to == pseudonym) {
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + value.text + "</div><span class='message-time pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
         }
