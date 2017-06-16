@@ -295,7 +295,6 @@ body {
 }
 .newMessage-back, .config-back {
   text-align: center;
-  vertical-align: baseline;
   padding: 12px 5px !important;
   display: block;
   cursor: pointer;
@@ -419,7 +418,6 @@ body {
 }
 
 .sender {
-  float: right;
   width: auto !important;
   background: #54CAFF;
   border-radius: 10px 10px 0 10px;
