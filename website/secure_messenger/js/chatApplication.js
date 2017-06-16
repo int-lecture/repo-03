@@ -2,8 +2,8 @@ $(document).ready(function () {
     loadConfig();
     readCookie();
     openChat("Secure Messenger");
-    loadContacts();
     getMessages();
+    window.setTimeout(loadContacts, 2000);
     $(".heading-compose").click(function () {
         $(".side-two").css({
             "left": "0"
@@ -50,7 +50,7 @@ $(document).ready(function () {
         }
 
     })
-    $("#logout").click(function(){
+    $("#logout").click(function () {
         var decodedCookie = decodeURIComponent(document.cookie);
         document.cookie = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.href = "loginApplication.html";
@@ -63,7 +63,7 @@ var token;
 var pseudonym;
 var contact = [];
 var partner;
-var sequenceNumber=0;
+var sequenceNumber = 0;
 
 var messages = [];
 var sentMessages = [];
@@ -79,6 +79,7 @@ function openNewChat() {
     var newFriendsName = $("#newFriendsName").val();
     openChat(newFriendsName);
     newContact(newFriendsName);
+    $("#newFriendsName").val("");
     $(".side-two").css({
         "left": "-100%"
     });
@@ -119,7 +120,6 @@ function send() {
             contentType: "application/json; charset=utf-8",
             dataType: 'json',
             success: function (result) {
-                sequenceNumber = result.sequence;
                 var sentMessage = {
                     from: pseudonym, to: partner
                     , date: getLegalDate(), text: $("#comment").val(), sequence: result.sequence
@@ -139,12 +139,7 @@ function send() {
 
 function getMessages() {
     function update() {
-        if (typeof sequenceNumber != 'undefined') {
-            var URL = ipChat + "/messages/" + pseudonym + "/0"
-            //+ sequenceNumber.toString();
-        } else {
-            var URL = ipChat + "/messages/" + pseudonym + "/0";
-        }
+        var URL = ipChat + "/messages/" + pseudonym + "/" + sequenceNumber;
         $.ajax({
             headers: {
                 "Authorization": token
@@ -155,22 +150,18 @@ function getMessages() {
             dataType: 'json',
             success: function (result, textStatus, xhr) {
                 if (xhr.status == 200) {
-                    if (typeof sequenceNumber == 'undefined') {
-                        messages = result;
-                        showMessages();
-                    }
-                    else {
-                        messages = result;
-                        sequenceNumber = sequenceNumber + result.length;
-                        showMessages();
-                    }
+                    messages = messages.concat(result);
+                    sequenceNumber = result[result.length - 1].sequence;
+                    showMessages();
                 } else if (xhr.status == 204) {
 
                 }
             },
             error: function (xhr, a, b) {
-            	alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
-                window.location.href = "loginApplication.html";
+                if (xhr.status == 401) {
+                    alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
+                    window.location.href = "loginApplication.html";
+                }
             }
 
         });
@@ -206,7 +197,7 @@ function saveSettings() {
 }
 
 function loadConfig() {
-      $.ajax({
+    $.ajax({
         url: 'js/config.txt',
         type: 'GET',
         success: function (result) {
