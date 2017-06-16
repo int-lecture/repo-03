@@ -14,6 +14,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="js/chatApplication.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/contacts.js"></script>
 </head>
 
 <body id="body">
@@ -27,14 +29,14 @@
           <div class="row heading">
             <div class="col-sm-3 col-xs-3 heading-avatar">
               <div class="heading-avatar-icon">
-                  <a href='http://141.19.142.57'><img src="img/logo.svg"></a>
+                <a href='http://141.19.142.57'><img src="img/logo.svg"></a>
               </div>
             </div>
             <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
-              <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
+              <i class="fa fa-cog fa-2x fa-fw  pull-right" id="config" aria-hidden="true"></i>
             </div>
             <div class="col-sm-2 col-xs-2 heading-compose  pull-right">
-              <i class="fa fa-comments fa-2x  pull-right" aria-hidden="true"></i>
+              <i class="fa fa-address-book-o fa-2x  pull-right" aria-hidden="true"></i>
             </div>
           </div>
           <!-- Heading End -->
@@ -50,6 +52,7 @@
           </div>
 
           <!-- Search Box End -->
+
           <!-- sideBar -->
           <div class="row sideBar">
 
@@ -67,32 +70,20 @@
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
               </div>
               <div class="col-sm-10 col-xs-10 newMessage-title">
-                New Chat
+                New Contact
               </div>
             </div>
           </div>
           <!-- Heading End -->
-
-          <!-- ComposeBox -->
-          <div class="row composeBox">
-            <div class="col-sm-12 composeBox-inner">
-              <div class="form-group has-feedback">
-                <input id="composeText" type="text" class="form-control" name="searchText" placeholder="Search People">
-                <span class="glyphicon glyphicon-search form-control-feedback"></span>
-              </div>
-            </div>
-          </div>
-          <!-- ComposeBox End -->
           <!-- Start new Chat -->
           <div class="row composeBox">
             <div class="col-sm-12 composeBox-inner">
               <div class="form-group has-feedback">
                 <input id="newFriendsName" type="text" class="form-control" name="friendsName" placeholder="Enter Friends Name">
-                <span class="glyphicon glyphicon-search form-control-feedback" id="startChatWithFriend"></span>
               </div>
             </div>
           </div>
-          <button class="btn btn-lg btn-primary btn-block btn-signin" onclick="openNewChat()">los chatten</button>
+          <button class="btn btn-lg btn-primary btn-block btn-signin" onclick="openNewChat()">start Chat</button>
           <!-- End new Chat -->
 
           <!-- sideBar -->
@@ -101,7 +92,60 @@
           </div>
           <!-- Sidebar End -->
         </div>
+        <div class="side-three">
+        <!-- HeadingConfig -->
+        <div class="row config-heading">
+          <div class="row config-main">
+            <div class="col-sm-2 col-xs-2 config-back">
+              <i class="fa fa-arrow-left" id="config-back" aria-hidden="true"></i>
+            </div>
+            <div class="col-sm-10 col-xs-10 config-title">
+              Settings
+            </div>
+          </div>
+        </div>
+        <!-- HeadingConfig End -->
+
+        <!-- IpLogin -->
+        <div class="form-control">
+                IPLogin:
+              </div>
+        <div class="row composeBox">
+          <div class="col-sm-12 composeBox-inner">
+            <div class="form-group has-feedback">
+              <input id="inputIpLogin" type="text" class="form-control" name="ipLogin" placeholder="http://141.19.142.57:5001" value="http://141.19.142.57:5001">
+            </div>
+          </div>
+        </div>
+        <!-- IpLogin End -->
+        <!-- IpRegister -->
+        <div class="form-control">
+                IPRegister:
+              </div>
+        <div class="row composeBox">
+          <div class="col-sm-12 composeBox-inner">
+            <div class="form-group has-feedback">
+              <input id="inputIpRegister" type="text" class="form-control" name="ipRegister" placeholder="http://141.19.142.57:5002" value="http://141.19.142.57:5002">
+            </div>
+          </div>
+        </div>
+        <!-- IpRegister End -->
+        <!-- IpChat -->
+        <div class="form-control">
+                IPChat:
+              </div>
+        <div class="row composeBox">
+          <div class="col-sm-12 composeBox-inner">
+            <div class="form-group has-feedback">
+              <input id="inputIpChat" type="text" class="form-control" name="ipChat" placeholder="http://141.19.142.57:5000" value="http://141.19.142.57:5000">
+            </div>
+          </div>
+        </div>
+        <!-- IpChat End -->
+        <button class="btn btn-lg btn-primary btn-block btn-signin" onclick="saveConfig()">save Settings</button>
       </div>
+      </div>
+      
 
 
       <!-- New Message Sidebar End -->
@@ -120,7 +164,7 @@
             <span class="heading-online">Online</span>
           </div>
           <div class="col-sm-1 col-xs-1  heading-dot pull-right">
-            <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
+            <i class="fa fa-sign-out fa-2x  pull-right" id="logout" aria-hidden="true"></i>
           </div>
         </div>
         <!-- Heading End -->
@@ -138,10 +182,8 @@
             <i class="fa fa-smile-o fa-2x"></i>
           </div>
           <div class="col-sm-9 col-xs-9 reply-main">
-            <textarea class="form-control" rows="1" id="comment"></textarea>
-          </div>
-          <div class="col-sm-1 col-xs-1 reply-recording">
-            <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
+            <textarea class="form-control" rows="1" id="comment" data-emojiable="converted"></textarea>
+
           </div>
           <div class="col-sm-1 col-xs-1 reply-send">
             <i class="fa fa-send fa-2x" aria-hidden="true"></i>
