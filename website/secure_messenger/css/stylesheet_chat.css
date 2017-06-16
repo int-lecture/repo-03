@@ -158,7 +158,6 @@ body {
 
 .heading-dot {
   padding: 0;
-  margin-left: 10px;
 }
 
 .heading-dot i {
@@ -476,6 +475,9 @@ body {
 .reply-main {
   padding: 2px 5px !important;
 }
+#toTop{
+  visibility: hidden;
+}
 
 .reply-main textarea {
   width: 100%;
@@ -498,6 +500,12 @@ body {
 }
 
 @media screen and (max-width: 700px) {
+  .col-xs-7{
+    width: 40%;
+  }
+  #toTop{
+  visibility: visible;
+}
   .app {
     top: 0;
     height: 100%;
@@ -523,7 +531,6 @@ body {
   }
   .heading-dot {
     padding: 5px !important;
-    margin-left: 10px !important;
   }
   .heading-dot i {
     cursor: pointer;

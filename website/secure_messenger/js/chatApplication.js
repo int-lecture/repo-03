@@ -21,6 +21,9 @@ $(document).ready(function () {
             "left": "-100%"
         });
     })
+    $("#toTop").click(function(){
+      $("#searchText").focus();
+    })
 
     $(".newMessage-back").click(function () {
         $(".side-two").css({
