@@ -42,7 +42,7 @@ function loadConfig() {
         type: 'GET',
         success: function (result) {
             var ips = result.split(";");
-            ipRegister = ips[2].substring("ipRegister:".length + 1);
+            ipRegister = ips[2].substring("ipLogin:".length + 1);
         }
     });
 }

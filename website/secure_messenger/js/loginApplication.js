@@ -9,7 +9,6 @@ $(document).keypress(function(e){
 var ipLogin;
 function checkPw(){
 	var URL = ipLogin+"/login/";
-    alert(URL);
 	var dataObject = {'user': $("#inputEmail").val(), 'password': $("#inputPassword").val()};
 
         alert(JSON.stringify(dataObject));
@@ -39,7 +38,7 @@ function loadConfig() {
         type: 'GET',
         success: function (result) {
             var ips = result.split(";");
-            ipLogin = ips[0].substring("ipLogin:".length);
+            ipLogin = ips[0].substring("ipLogin:".length + 1);
         }
     });
 }

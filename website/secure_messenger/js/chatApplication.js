@@ -46,7 +46,8 @@ var token;
 var pseudonym;
 var contact = [];
 var partner;
-var sequenceNumber=0;
+var sequenceNumbers = [];
+var sequenceNumber;
 var ipLogin;
 var ipRegister;
 var ipChat;
@@ -135,7 +136,6 @@ function testContactDiv() {
 }
 
 function loadContacts() {
-    loadConfig();
     var URL = ipRegister + "/profile/";
     var dataObject = { 'getownprofile': pseudonym, 'token': token };
 
@@ -164,7 +164,12 @@ function loadContacts() {
 
 function getMessages() {
     function update() {
-        var URL = ipChat + "/messages/" + pseudonym + "/"+sequenceNumber;
+        if (typeof sequenceNumber != 'undefined') {
+            var URL = ipChat + "/messages/" + pseudonym + "/0"
+            //+ sequenceNumber.toString();
+        } else {
+            var URL = ipChat + "/messages/" + pseudonym + "/0";
+        }
         $.ajax({
             headers: {
                 "Authorization": token
@@ -175,19 +180,22 @@ function getMessages() {
             dataType: 'json',
             success: function (result, textStatus, xhr) {
                 if (xhr.status == 200) {
-                    messages.append(result);
-                    sequenceNumber = result[result.length].sequence;
-                    showMessages();
-                    
+                    if (typeof sequenceNumber == 'undefined') {
+                        messages = result;
+                        showMessages();
+                    }
+                    else {
+                        messages = result;
+                        sequenceNumber = sequenceNumber + result.length;
+                        showMessages();
+                    }
                 } else if (xhr.status == 204) {
 
                 }
             },
             error: function (xhr, a, b) {
-                if(xhr.status==401){
             	alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
                 window.location.href = "loginApplication.html";
-                }
             }
 
         });
