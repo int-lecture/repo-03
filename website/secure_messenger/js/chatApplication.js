@@ -2,8 +2,7 @@ $(document).ready(function () {
     loadConfig();
     readCookie();
     openChat("Secure Messenger");
-    testContactDiv();
-    //loadContacts();
+    loadContacts();
     getMessages();
     $(".heading-compose").click(function () {
         $(".side-two").css({
@@ -11,8 +10,16 @@ $(document).ready(function () {
         });
     })
 
-    $(".heading-dot").click(function () {
-        $("#conversation").empty();
+    $("#config").click(function () {
+        $(".side-three").css({
+            "left": "0",
+            "top": "0"
+        });
+    })
+    $(".config-back").click(function () {
+        $(".side-three").css({
+            "left": "-100%"
+        });
     })
 
     $(".newMessage-back").click(function () {
@@ -42,6 +49,12 @@ $(document).ready(function () {
             $(this).removeAttr("disabled");
         }
     })
+    $("#logout").click(function(){
+        var decodedCookie = decodeURIComponent(document.cookie);
+        document.cookie = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "loginApplication.html";
+
+    })
 
 
 });
@@ -50,9 +63,6 @@ var pseudonym;
 var contact = [];
 var partner;
 var sequenceNumber=0;
-var ipLogin;
-var ipRegister;
-var ipChat;
 var messages = [];
 var sentMessages = [];
 var tokenBob;
@@ -66,23 +76,11 @@ function openThisChat(id) {
 function openNewChat() {
     var newFriendsName = $("#newFriendsName").val();
     openChat(newFriendsName);
-    //newContact(newFriendsName);
+    newContact(newFriendsName);
     $(".side-two").css({
         "left": "-100%"
     });
-}
-
-function loadConfig() {
-    $.ajax({
-        url: 'js/config.txt',
-        type: 'GET',
-        success: function (result) {
-            var ips = result.split(";");
-            ipLogin = ips[0].substring("ipLogin:".length + 1);
-            ipChat = ips[1].substring("ipChat:".length + 1);
-            ipRegister = ips[2].substring("ipRegister:".length + 1);
-        }
-    });
+    $("#newFriendsName").val("");
 }
 
 function openChat(partner) {
@@ -109,7 +107,6 @@ function send() {
         $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Du kannst nicht mit uns schreiben, wähle bitte einen deiner Kontakte aus deiner Kontaktliste aus oder suche über die Sprechblase nach neuen Freunden</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         getMessages();
     } else if ($("#comment").val() == "") {
-
     } else {
         readCookie();
         var URL = ipChat + "/send/";
@@ -137,43 +134,7 @@ function send() {
         });
     }
 }
-function newContact(newChatPartner) {
-    $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + newChatPartner + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + newChatPartner + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
 
-}
-
-function testContactDiv() {
-    $(".sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='tom'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>tom</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
-    $(".sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='bob'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>bob</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
-    $(".sideBar").append("<div class='row sideBar-body'><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='peter'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>peter</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
-
-}
-
-function loadContacts() {
-    var URL = ipRegister + "/profile/";
-    var dataObject = { 'getownprofile': pseudonym, 'token': token };
-
-    $.ajax({
-        url: URL,
-        type: 'POST',
-        data: JSON.stringify(dataObject),
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json',
-        success: function (result) {
-            contact = result.contact;
-        },
-        error: function (xhr, a, b) {
-            alert("Kontakte wurden nicht erfolgreich geladen");
-        }
-
-    });
-    $.each(contact, function (index, value) {
-    $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + value + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + value + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>18:18</span></div></div></div></div>");
-    $("#"+value).click(function(){
-        openChat($(this).attr('id'));
-    });
-    });
-}
 
 function getMessages() {
     function update() {
@@ -232,7 +193,7 @@ function showMessages() {
 
 
 function saveSettings() {
-    document.cookie = "ipLogin=" + $("#inputIpLogin").val();
+    alert($("#inputIpLogin").val());
 }
 
 function readCookie() {
