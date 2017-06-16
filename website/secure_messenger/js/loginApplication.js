@@ -1,14 +1,15 @@
 $( document ).ready(function() {  
-    loadConfig();
+
 });
 $(document).keypress(function(e){
     if(e.which==13){
         checkPw();
     }
 })
-var ipLogin;
+var ip="141.19.142.57";
 function checkPw(){
-	var URL = ipLogin+"/login/";
+    ip="141.19.142.57";
+	var URL = "http://"+ip+":5001/login/";
 	var dataObject = {'user': $("#inputEmail").val(), 'password': $("#inputPassword").val()};
 
         alert(JSON.stringify(dataObject));
@@ -31,15 +32,5 @@ function checkPw(){
   	});
 	return false;
 
-}
-function loadConfig() {
-      $.ajax({
-        url: 'js/config.txt',
-        type: 'GET',
-        success: function (result) {
-            var ips = result.split(";");
-            ipLogin = ips[0].substring("ipLogin:".length + 1);
-        }
-    });
 }
 

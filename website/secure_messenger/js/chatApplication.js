@@ -51,7 +51,6 @@ var sequenceNumber;
 var ipLogin;
 var ipRegister;
 var ipChat;
-var ipDB;
 var messages = [];
 var sentMessages = [];
 var tokenBob;
@@ -93,6 +92,7 @@ function getLegalDate() {
 function send() {
     if (document.getElementById("partner").innerHTML == "Secure Messenger") {
         $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Du kannst nicht mit uns schreiben, wähle bitte einen deiner Kontakte aus deiner Kontaktliste aus oder suche über die Sprechblase nach neuen Freunden</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        getMessages();
     } else if ($("#comment").val() == "") {
 
     } else {
@@ -228,13 +228,6 @@ function showMessages() {
 
 function saveSettings() {
     document.cookie = "ipLogin=" + $("#inputIpLogin").val();
-    document.cookie = "ipChat=" + $("#inputIpChat").val();
-    document.cookie = "ipRegister=" + $("#inputIpRegister").val();
-    //document.cookie = "ipDB=" + $("#inputIpDB").val();
-    //TODO: write Ips into the config file
-    alert("Du musst dich nun neu EInloggen, da du die Server IPs verändert hast.");
-    window.location.href = "loginApplication.html";
-    
 }
 
 function loadConfig() {
@@ -246,7 +239,6 @@ function loadConfig() {
             ipLogin = ips[0].substring("ipLogin:".length + 1);
             ipChat = ips[1].substring("ipChat:".length + 1);
             ipRegister = ips[2].substring("ipRegister:".length + 1);
-            //ipDB= ips[3].substring("ipDB:".length+1);
         }
     });
 }

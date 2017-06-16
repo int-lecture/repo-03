@@ -1,12 +1,12 @@
 $( document ).ready(function() {  
-	loadConfig();
+	
 });
 $(document).keypress(function(e){
     if(e.which==13){
         checkPw();
     }
 })
-var ipRegister;
+var ip="141.19.142.57";
 function checkPw(){
 	var pw1= $("#pw1").val();
 	var pw2= $("#pw2").val();
@@ -15,7 +15,7 @@ function checkPw(){
 		$("#error").html("Du böser bube die Passwörter sind nicht Identisch!");
 		return false;}
 	
-	var URL = ipRegister+/register/";
+	var URL = "http://"+ip+":5002/register/";
 	var dataObject = {'pseudonym': $("#inputPseudonym").val(), 'user': $("#inputEmail").val(), 'password': pw1 };
 
         alert(JSON.stringify(dataObject));
@@ -35,16 +35,6 @@ function checkPw(){
 		}
   	});
 	return false;
-}
-function loadConfig() {
-      $.ajax({
-        url: 'js/config.txt',
-        type: 'GET',
-        success: function (result) {
-            var ips = result.split(";");
-            ipRegister = ips[2].substring("ipLogin:".length + 1);
-        }
-    });
 }
 
 
