@@ -95,6 +95,7 @@ function openChat(partner) {
             getMessages();
         }
         showMessages();
+        $("#comment").focus();
     }
 }
 
@@ -126,6 +127,7 @@ function send() {
                 };
                 sentMessages.push(sentMessage);
                 $("#comment").val("");
+                $("#comment").focus();
                 showMessages();
             },
             error: function (xhr, a, b) {
