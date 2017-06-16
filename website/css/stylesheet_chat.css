@@ -11,14 +11,23 @@ span {
 }
 
 body {
-  background: url("http://shurl.esy.es/y") no-repeat fixed center;
-  background-size: cover;
+  background-image: linear-gradient(#07B0FB, white); 
 }
 
 .fa-2x {
   font-size: 1.5em;
 }
-
+.fa-2x:hover{
+    color: #07B0FB;
+}
+/*Config*/
+.config {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100%;
+  position: relative;
+  left: -100%;
+}
 #buttonForNewChat{
     border: 2px solid #189d0e;
     border-radius: 32px;
@@ -73,7 +82,19 @@ body {
   width: 100%;
   z-index: 2;
   position: relative;
+  left: -100%;
   top: -100%;
+  -webkit-transition: left 0.3s ease;
+  transition: left 0.3s ease;
+
+}
+.side-three {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 3;
+  position: absolute;
   left: -100%;
   -webkit-transition: left 0.3s ease;
   transition: left 0.3s ease;
@@ -141,7 +162,7 @@ body {
 }
 
 .heading-dot i {
-  text-align: right;
+  text-align: center;
   padding: 5px;
   color: #93918f;
   cursor: pointer;
@@ -248,16 +269,16 @@ body {
   position: relative;
   left: -100%;
 }
-.newMessage-heading {
+.newMessage-heading, .config-heading {
   padding: 10px 16px 10px 15px !important;
   margin: 0 !important;
   height: 100px;
   width: 100%;
-  background-color: #00bfa5;
+  background-color: #2A657F;
   z-index: 1001;
 }
 
-.newMessage-main {
+.newMessage-main, .config-main {
   padding: 10px 16px 0 15px !important;
   margin: 0 !important;
   height: 60px;
@@ -267,19 +288,19 @@ body {
   color: #fff;
 }
 
-.newMessage-title {
+.newMessage-title, .config-title {
   font-size: 18px;
   font-weight: 700;
   padding: 10px 5px !important;
 }
-.newMessage-back {
+.newMessage-back, .config-back {
   text-align: center;
   vertical-align: baseline;
   padding: 12px 5px !important;
   display: block;
   cursor: pointer;
 }
-.newMessage-back i {
+.newMessage-back i, .config-back i {
   margin: auto !important;
 }
 
@@ -485,7 +506,6 @@ body {
   }
   .heading {
     height: 70px;
-    background-color: #009688;
   }
   .fa-2x {
     font-size: 2.3em !important;
@@ -501,7 +521,6 @@ body {
     padding: 5px !important;
   }
   .heading-compose i {
-    color: #fff;
     cursor: pointer;
   }
   .heading-dot {
@@ -509,7 +528,6 @@ body {
     margin-left: 10px !important;
   }
   .heading-dot i {
-    color: #fff;
     cursor: pointer;
   }
   .sideBar {

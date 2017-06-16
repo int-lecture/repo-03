@@ -17,6 +17,9 @@ body {
 .fa-2x {
   font-size: 1.5em;
 }
+.fa-2x:hover{
+    color: #07B0FB;
+}
 /*Config*/
 .config {
   padding: 0 !important;
@@ -159,7 +162,7 @@ body {
 }
 
 .heading-dot i {
-  text-align: right;
+  text-align: center;
   padding: 5px;
   color: #93918f;
   cursor: pointer;
@@ -503,7 +506,6 @@ body {
   }
   .heading {
     height: 70px;
-    background-color: #009688;
   }
   .fa-2x {
     font-size: 2.3em !important;
@@ -519,7 +521,6 @@ body {
     padding: 5px !important;
   }
   .heading-compose i {
-    color: #fff;
     cursor: pointer;
   }
   .heading-dot {
@@ -527,7 +528,6 @@ body {
     margin-left: 10px !important;
   }
   .heading-dot i {
-    color: #fff;
     cursor: pointer;
   }
   .sideBar {
