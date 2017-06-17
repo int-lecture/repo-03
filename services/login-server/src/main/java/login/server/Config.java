@@ -12,6 +12,7 @@ public enum Config {
     mongoURI("mongodb://141.19.142.57:27017"),
     dbName("benutzer"),
     dbAccountCollection("account"),
+    tokenDuration("300"),
     dbTokenCollection("token"),
     allowEmailLogin("true"),
     corsAllowOrigin("*");

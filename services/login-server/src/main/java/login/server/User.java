@@ -21,11 +21,6 @@ public class User {
 	private static SecureRandom srnd = new SecureRandom();
 
 	/**
-	 * The duration a token is valid in seconds.
-	 */
-	private static final int tokenDuration = 10 * 60; // seconds
-
-	/**
 	 * Create a new User with an imported password hash.
 	 *
 	 * @param email
@@ -99,7 +94,7 @@ public class User {
 		srnd.nextBytes(rng);
 		this.currentToken = Base64.getEncoder().encodeToString(rng);
 		this.tokenExpiration = Calendar.getInstance();
-		this.tokenExpiration.add(Calendar.SECOND, tokenDuration);
+		this.tokenExpiration.add(Calendar.SECOND, Integer.parseInt(Config.getSettingValue(Config.tokenDuration)));
 	}
 
 	/**

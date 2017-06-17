@@ -55,7 +55,11 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
     }
 
     /**
+     * Saves the token with the given expire date into the database.
      *
+     * @param token          The users new token.
+     * @param expirationDate The tokens expire date.
+     * @param pseudonym      The users pseudonym.
      */
     public static void saveToken(String token, String expirationDate, String pseudonym) {
 
@@ -73,13 +77,13 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
     }
 
     /**
-     * Fetches a user's current Token from the database. If the token is not found or expired null is returned.
+     * Fetches a user's current token expire date. If the token is not found or expired null is returned.
      *
      * @param pseudonym The user's pseudonym.
      * @param token     The user's current token.
      * @return The token's expiration date or null if the token was not found or is expired.
      */
-    public static Date retrieveToken(String pseudonym, String token) {
+    public static Date retrieveTokenExpireDate(String pseudonym, String token) {
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
         // Retreive the tokeninformation
         Document doc = collection.find(and(eq("pseudonym", pseudonym), eq("token", token))).first();
@@ -92,23 +96,29 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-        Date expireDate;
+        Calendar expireDate = Calendar.getInstance();
         try {
-            expireDate = sdf.parse(expDateString);
+            expireDate.setTime(sdf.parse(expDateString));
         } catch (ParseException e) {
             // The token seems to be corrupted.
             collection.deleteOne(and(eq("pseudonym", pseudonym), eq("token", token)));
             return null;
         }
 
-        if (Calendar.getInstance().getTime().before(expireDate))
-            return expireDate;
+        Calendar currentTime = Calendar.getInstance();
+        if (currentTime.before(expireDate))
+            return expireDate.getTime();
         else
-            return null;
+            System.out.printf("User %s's token has expired for %f s.\n",
+                    pseudonym,
+                    (currentTime.getTimeInMillis() - expireDate.getTimeInMillis())  / 1000f);
+        return null;
     }
 
     /**
+     * Removes a token from the token db.
      *
+     * @param token The token to remove.
      */
     public static void deleteToken(String token) {
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
