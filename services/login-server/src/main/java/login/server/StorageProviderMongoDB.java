@@ -36,7 +36,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
      * @param pseudonym The user's pseudonym.
      * @return Returns the user's data or null if the user wasn't found.
      */
-    static User retrieveUser(String username, String pseudonym) {
+    public static User retrieveUser(String username, String pseudonym) {
 
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
         Document doc;
@@ -57,7 +57,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
     /**
      *
      */
-    static void saveToken(String token, String expirationDate, String pseudonym) {
+    public static void saveToken(String token, String expirationDate, String pseudonym) {
 
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
 
@@ -79,7 +79,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
      * @param token     The user's current token.
      * @return The token's expiration date or null if the token was not found or is expired.
      */
-    static Date retrieveToken(String pseudonym, String token) {
+    public static Date retrieveToken(String pseudonym, String token) {
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
         // Retreive the tokeninformation
         Document doc = collection.find(and(eq("pseudonym", pseudonym), eq("token", token))).first();
@@ -110,7 +110,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
     /**
      *
      */
-    static void deleteToken(String token) {
+    public static void deleteToken(String token) {
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbTokenCollection));
         collection.deleteOne(eq("token", token));
     }
