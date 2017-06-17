@@ -99,6 +99,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
             return false;
         }
 
+        // TODO : Check if the contact wants to be added?
         MongoCollection<Document> collection = database.getCollection(Config.getSettingValue(Config.dbAccountCollection));
         Document doc = collection.findOneAndUpdate(
                 and(eq("pseudonym", user.getPseudonym()), eq("user", user.getEmail())),

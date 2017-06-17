@@ -156,9 +156,77 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .entity(obj.toString()).build();
         } else {
-            System.out.println("[/profile] User failed to authenticate.");
+            System.out.println("[/profile] User sent invalid token to authenticate.");
             return Response
                     .status(Response.Status.FORBIDDEN)
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+    }
+
+    @PUT
+    @Path("/addcontact")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addContact(String jsonString) {
+        String token, pseudonym, newContact;
+        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            token = obj.getString("token");
+            pseudonym = obj.getString("pseudonym");
+            newContact = obj.getString("newContact");
+
+        } catch (JSONException e) {
+            System.out.println("[/addcontact] User send invalid json data.");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid json data.")
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+        if(token == null || pseudonym == null || newContact == null) {
+            System.out.println("[/addcontact] User send incomplete json data.");
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("Incomplete json data.")
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+        if (!verifyToken(pseudonym,token)) {
+            System.out.println("[/addcontact] User sent invalid token to authenticate.");
+            return Response
+                    .status(Response.Status.FORBIDDEN)
+                    .entity("Invalid token.")
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+        if(pseudonym.equals(newContact)){
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("Can't add self to contact list.")
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+        User user = StorageProviderMongoDB.getUserProfile(pseudonym);
+        User contact = StorageProviderMongoDB.getUserProfile(newContact);
+        if(user == null || contact == null) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("The user doesn't exist.")
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+        if(user.addContact(contact) == null) {
+            return Response
+                    .status(Response.Status.FORBIDDEN)
+                    .entity("The user cannot be added to the contact list.")
+                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .build();
+        }
+        else {
+            return Response
+                    .status(Response.Status.OK)
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
@@ -179,6 +247,18 @@ public class Service {
     @OPTIONS
     @Path("/profile")
     public Response optionsProfile() {
+        return Response.ok("")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .header("Access-Control-Max-Age", "1209600")
+                .build();
+    }
+
+    @OPTIONS
+    @Path("/addcontact")
+    public Response optionsAddContact() {
         return Response.ok("")
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")

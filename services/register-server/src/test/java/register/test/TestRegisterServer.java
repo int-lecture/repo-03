@@ -112,4 +112,65 @@ public class TestRegisterServer {
     }
 
 
+    @Test
+    public void testAddContact() {
+        // Register new user
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue()).given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(("{'pseudonym': 'tom','password': 'tom', 'user': 'tom@web.de'}").replace('\'', '"'))
+                .when().put("/register");
+        expect().statusCode(200).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).body("success", notNullValue()).given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(("{'pseudonym': 'bob','password': '1234', 'user': 'bob@web.de'}").replace('\'', '"'))
+                .when().put("/register");
+        // Login the new user
+        String token = SetupLoginServer.LoginUser("tom@web.de", "tom");
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'" + token + "','pseudonym':'tom','newContact':'bob'}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(200);
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'abcd','pseudonym':'tom','newContact':'bob'}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(403);
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'" + token + "','pseudonym':'tom','newContact':'tom'}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(400);
+        // Add no existing user
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'" + token + "','pseudonym':'tom','newContact':'susi'}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(400);
+        // contact already in list
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'" + token + "','pseudonym':'tom','newContact':'bob'}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(403);
+    }
 }

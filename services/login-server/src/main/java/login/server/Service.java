@@ -26,7 +26,7 @@ public class Service {
     /**
      * String for date parsing in ISO 8601 format.
      */
-    static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+    public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     public static void main(String[] args) throws Exception {
         try {
@@ -163,7 +163,7 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
-        Date expireDate = StorageProviderMongoDB.retrieveToken(pseudonym, token);
+        Date expireDate = StorageProviderMongoDB.retrieveTokenExpireDate(pseudonym, token);
         if (expireDate != null) {
             Calendar cal = Calendar.getInstance();
             if (cal.getTime().before(expireDate)) {
