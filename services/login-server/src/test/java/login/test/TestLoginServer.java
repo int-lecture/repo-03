@@ -16,6 +16,7 @@ import org.junit.Test;
 import io.restassured.response.Response;
 import login.server.Service;
 import login.server.StorageProviderMongoDB;
+import services.common.StorageException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +35,10 @@ public class TestLoginServer {
 
         try {
             StorageProviderMongoDB.init();
-        } catch (Exception e) {
-            System.out.println("Storage provider already initiliazed");
+        } catch (StorageException e) {
+            System.out.println("Storage provider already initialized.");
         }
+
         //Fill db
         StorageProviderMongoDB.clearForTest(new User[]{
                 new User("bob@web.de", "HalloIchbinBob", "bob")

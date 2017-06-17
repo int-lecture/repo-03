@@ -5,6 +5,7 @@ import login.server.Service;
 import login.server.StorageProviderMongoDB;
 import org.json.JSONObject;
 import register.server.Config;
+import services.common.StorageException;
 
 import javax.ws.rs.core.MediaType;
 
@@ -16,11 +17,13 @@ public class SetupLoginServer {
 				"-dbName", "regTest"
 		});
 
+
 		try {
 			StorageProviderMongoDB.init();
-		} catch (Exception e) {
-			System.out.println("Storage provider already initiliazed");
+		} catch (StorageException e) {
+			System.out.println("Storage provider already initialized.");
 		}
+
 		Service.startLoginServer(Config.getSettingValue(Config.loginURI));
 	}
 

@@ -2,6 +2,7 @@ package login.server;
 
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import services.common.StorageException;
 import services.common.StorageProviderCoreMongoDB;
 
 import java.text.ParseException;
@@ -22,7 +23,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
         super();
     }
 
-    public static synchronized void init() throws Exception {
+    public static synchronized void init() throws StorageException {
         StorageProviderCoreMongoDB.init(
                 Config.getSettingValue(Config.mongoURI),
                 Config.getSettingValue(Config.dbName));

@@ -16,6 +16,7 @@ import io.restassured.RestAssured;
 import register.server.Config;
 import register.server.Service;
 import register.server.StorageProviderMongoDB;
+import services.common.StorageException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,11 +35,13 @@ public class TestRegisterServer {
                 "-loginURI", "http://localhost:5001/"});
         expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
 
+
         try {
             StorageProviderMongoDB.init();
-        } catch (Exception e) {
-            System.out.println("Storage provider already initiliazed");
+        } catch (StorageException e) {
+            System.out.println("Storage provider already initialized.");
         }
+
         StorageProviderMongoDB.clearForTest();
         SetupLoginServer.start();
 

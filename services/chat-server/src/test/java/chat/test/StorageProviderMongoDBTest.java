@@ -6,6 +6,7 @@ import chat.server.StorageProviderMongoDB;
 import chat.server.User;
 import org.junit.Before;
 import org.junit.Test;
+import services.common.StorageException;
 
 import java.util.Date;
 import java.util.List;
@@ -21,11 +22,13 @@ public class StorageProviderMongoDBTest {
                         "-dbName", "msgTest"
                 }
         );
+
         try {
             StorageProviderMongoDB.init();
-        } catch (Exception e) {
-            System.out.println("Storage Provider already initialized.");
+        } catch (StorageException e) {
+            System.out.println("Storage provider already initialized.");
         }
+
 
         StorageProviderMongoDB.clearForTests();
     }

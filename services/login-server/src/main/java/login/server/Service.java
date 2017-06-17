@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
+import services.common.StorageException;
 
 @Path("/")
 public class Service {
@@ -35,7 +36,11 @@ public class Service {
             System.exit(-1);
         }
 
-        StorageProviderMongoDB.init();
+        try {
+            StorageProviderMongoDB.init();
+        } catch (StorageException e) {
+            System.out.println("Storage provider already initialized.");
+        }
         startLoginServer(Config.getSettingValue(Config.baseURI));
     }
 

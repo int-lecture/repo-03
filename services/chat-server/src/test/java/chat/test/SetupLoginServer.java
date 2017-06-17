@@ -9,6 +9,7 @@ import login.server.Service;
 import login.server.StorageProviderMongoDB;
 import login.server.User;
 import org.json.JSONObject;
+import services.common.StorageException;
 
 public class SetupLoginServer {
 
@@ -18,11 +19,13 @@ public class SetupLoginServer {
                 "-dbName", "msgTest"
         });
 
+
         try {
             StorageProviderMongoDB.init();
-        } catch (Exception e) {
-            System.out.println("Storage provider already initiliazed");
+        } catch (StorageException e) {
+            System.out.println("Storage provider already initialized.");
         }
+
         StorageProviderMongoDB.clearForTest(
                 new User[]{
                         new User("bob@web.de", "HalloIchbinBob", "bob"),

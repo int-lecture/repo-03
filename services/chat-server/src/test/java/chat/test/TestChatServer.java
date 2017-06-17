@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.restassured.RestAssured;
+import services.common.StorageException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +31,13 @@ public class TestChatServer {
                 "-loginURI", "http://localhost:5001/"
         });
         expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
+
         try {
             StorageProviderMongoDB.init();
-        } catch (Exception e) {
-
+        } catch (StorageException e) {
+            System.out.println("Storage provider already initialized.");
         }
+
         SetupLoginServer.start();
 
 

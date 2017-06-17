@@ -24,6 +24,7 @@ import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
+import services.common.StorageException;
 
 /**
  * Provides a basic REST chat server.
@@ -42,7 +43,11 @@ public class Service {
 
     public static void main(String[] args) throws Exception {
         Config.init(args);
-        StorageProviderMongoDB.init();
+        try {
+            StorageProviderMongoDB.init();
+        } catch (StorageException e) {
+            System.out.println("Storage provider already initialized.");
+        }
         useAuthCaching = Config.getSettingValue(Config.useAuthCache).equals("true");
         if (!useAuthCaching) {
             System.out.println("Auth caching is disabled.");

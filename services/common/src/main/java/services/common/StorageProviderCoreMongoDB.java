@@ -21,7 +21,7 @@ public class StorageProviderCoreMongoDB {
     }
 
     @SuppressWarnings("deprecation")
-    protected static synchronized void init(String mongoURI, String dbName) throws Exception {
+    protected static synchronized void init(String mongoURI, String dbName) throws StorageException {
         if (sp == null) {
             sp = new StorageProviderCoreMongoDB(true);
             MongoClient mongoClient = new MongoClient(
@@ -37,7 +37,8 @@ public class StorageProviderCoreMongoDB {
             System.out.println("MongoDB storage provider initialized.");
         }
         else {
-            throw new Exception("Already initialized.");
+
+            throw new StorageException("Already initialized.");
         }
     }
 
