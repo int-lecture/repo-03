@@ -1,11 +1,24 @@
 $( document ).ready(function() {  
 	loadConfig();
+	startConnection();
 });
 $(document).keypress(function(e){
     if(e.which==13){
         checkPw();
     }
 })
+
+function startConnection(){
+	var URL = ipLogin+"/register/";
+	$.ajax({
+			url: URL,
+			type: 'OPTIONS',    
+			success: function(result) {
+			},
+			error: function(xhr, ajaxOptions, thrownError){
+			}
+  	});
+}
 function checkPw(){
 	var pw1= $("#pw1").val();
 	var pw2= $("#pw2").val();
@@ -17,7 +30,7 @@ function checkPw(){
 	var URL = ipRegister+"/register/";
 	var dataObject = {'pseudonym': $("#inputPseudonym").val(), 'user': $("#inputEmail").val(), 'password': pw1 };
 
-        alert(JSON.stringify(dataObject));
+        //alert(JSON.stringify(dataObject));
 
         $.ajax({
 			url: URL,
@@ -26,11 +39,11 @@ function checkPw(){
 			contentType: "application/json; charset=utf-8",
 			dataType: 'json',
 			success: function(result) {
-				alert("success?");
+				//alert("success?");
 				window.location.href = "loginApplication.html";
 			},
 			error: function(xhr, ajaxOptions, thrownError){
-			alert("Error!§§!");
+			//alert("Error!§§!");
 		}
   	});
 	return false;
