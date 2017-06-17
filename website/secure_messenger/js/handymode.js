@@ -9,3 +9,6 @@
         "left": "-100%"
       });
     });
+    $("#toTop").click(function(){
+      $("#searchText").focus();
+    });

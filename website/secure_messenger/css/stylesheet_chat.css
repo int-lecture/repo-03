@@ -17,6 +17,9 @@ body {
 .fa-2x {
   font-size: 1.5em;
 }
+.fa-2x:hover{
+    color: #07B0FB;
+}
 /*Config*/
 .config {
   padding: 0 !important;
@@ -155,11 +158,10 @@ body {
 
 .heading-dot {
   padding: 0;
-  margin-left: 10px;
 }
 
 .heading-dot i {
-  text-align: right;
+  text-align: center;
   padding: 5px;
   color: #93918f;
   cursor: pointer;
@@ -190,6 +192,10 @@ body {
   box-shadow: none;
 }
 
+.messagePrev{
+  font-style: oblique;
+  font-size: 80%;
+}
 .sideBar {
   padding: 0 !important;
   margin: 0 !important;
@@ -292,7 +298,6 @@ body {
 }
 .newMessage-back, .config-back {
   text-align: center;
-  vertical-align: baseline;
   padding: 12px 5px !important;
   display: block;
   cursor: pointer;
@@ -418,7 +423,7 @@ body {
 .sender {
   float: right;
   width: auto !important;
-  background: #dcf8c6;
+  background: #54CAFF;
   border-radius: 10px 10px 0 10px;
   padding: 4px 10px 7px !important;
   font-size: 12px;
@@ -475,6 +480,9 @@ body {
 .reply-main {
   padding: 2px 5px !important;
 }
+#toTop{
+  visibility: hidden;
+}
 
 .reply-main textarea {
   width: 100%;
@@ -497,13 +505,18 @@ body {
 }
 
 @media screen and (max-width: 700px) {
+  .col-xs-7{
+    width: 40%;
+  }
+  #toTop{
+  visibility: visible;
+}
   .app {
     top: 0;
     height: 100%;
   }
   .heading {
     height: 70px;
-    background-color: #009688;
   }
   .fa-2x {
     font-size: 2.3em !important;
@@ -519,15 +532,12 @@ body {
     padding: 5px !important;
   }
   .heading-compose i {
-    color: #fff;
     cursor: pointer;
   }
   .heading-dot {
     padding: 5px !important;
-    margin-left: 10px !important;
   }
   .heading-dot i {
-    color: #fff;
     cursor: pointer;
   }
   .sideBar {

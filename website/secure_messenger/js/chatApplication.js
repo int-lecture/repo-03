@@ -2,12 +2,13 @@ $(document).ready(function () {
     loadConfig();
     readCookie();
     openChat("Secure Messenger");
-    loadContacts();
     getMessages();
+    window.setTimeout(loadContacts, 2000);
     $(".heading-compose").click(function () {
         $(".side-two").css({
             "left": "0"
         });
+        $("#newFriendsName").focus();
     })
 
     $("#config").click(function () {
@@ -20,6 +21,9 @@ $(document).ready(function () {
         $(".side-three").css({
             "left": "-100%"
         });
+    })
+    $("#toTop").click(function () {
+        $("#searchText").focus();
     })
 
     $(".newMessage-back").click(function () {
@@ -50,7 +54,7 @@ $(document).ready(function () {
         }
 
     })
-    $("#logout").click(function(){
+    $("#logout").click(function () {
         var decodedCookie = decodeURIComponent(document.cookie);
         document.cookie = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.href = "loginApplication.html";
@@ -62,8 +66,9 @@ $(document).ready(function () {
 var token;
 var pseudonym;
 var contact = [];
+var currenChatPartner = [];
 var partner;
-var sequenceNumber=0;
+var sequenceNumber = 0;
 
 var messages = [];
 var sentMessages = [];
@@ -79,9 +84,7 @@ function openNewChat() {
     var newFriendsName = $("#newFriendsName").val();
     openChat(newFriendsName);
     newContact(newFriendsName);
-    $(".side-two").css({
-        "left": "-100%"
-    });
+    $("#newFriendsName").val("");
 }
 
 function openChat(partner) {
@@ -94,6 +97,7 @@ function openChat(partner) {
             getMessages();
         }
         showMessages();
+        $("#comment").focus();
     }
 }
 
@@ -119,13 +123,13 @@ function send() {
             contentType: "application/json; charset=utf-8",
             dataType: 'json',
             success: function (result) {
-                sequenceNumber = result.sequence;
                 var sentMessage = {
                     from: pseudonym, to: partner
                     , date: getLegalDate(), text: $("#comment").val(), sequence: result.sequence
                 };
                 sentMessages.push(sentMessage);
                 $("#comment").val("");
+                $("#comment").focus();
                 showMessages();
             },
             error: function (xhr, a, b) {
@@ -139,12 +143,7 @@ function send() {
 
 function getMessages() {
     function update() {
-        if (typeof sequenceNumber != 'undefined') {
-            var URL = ipChat + "/messages/" + pseudonym + "/0"
-            //+ sequenceNumber.toString();
-        } else {
-            var URL = ipChat + "/messages/" + pseudonym + "/0";
-        }
+        var URL = ipChat + "/messages/" + pseudonym + "/" + sequenceNumber;
         $.ajax({
             headers: {
                 "Authorization": token
@@ -155,22 +154,18 @@ function getMessages() {
             dataType: 'json',
             success: function (result, textStatus, xhr) {
                 if (xhr.status == 200) {
-                    if (typeof sequenceNumber == 'undefined') {
-                        messages = result;
-                        showMessages();
-                    }
-                    else {
-                        messages = result;
-                        sequenceNumber = sequenceNumber + result.length;
-                        showMessages();
-                    }
+                    messages = messages.concat(result);
+                    sequenceNumber = result[result.length - 1].sequence;
+                    showMessages();
                 } else if (xhr.status == 204) {
 
                 }
             },
             error: function (xhr, a, b) {
-            	alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
-                window.location.href = "loginApplication.html";
+                if (xhr.status == 401) {
+                    alert("Leider ist da etwas schief gelaufen :(\nBeim abrufen Ihrer Nachricht gab es einen Fehler : " + xhr.status + ".\n Loggen Sie sich erneut ein.");
+                    window.location.href = "loginApplication.html";
+                }
             }
 
         });
@@ -185,10 +180,38 @@ function sortMessages() {
         return (a.date < b.date) ? -1 : ((a.date > b.date) ? 1 : 0);
     });
 }
+
+function checkCurrentChat(partner) {
+    var isCurrent = false;
+    $.each(currenChatPartner, function (index, value) {
+        if (partner.from == value) {
+            isCurrent = true;
+        }
+    })
+
+    if (isCurrent) {
+        $("#"+partner.from+"-messagePrev").html(partner.text.substr(0, 10)+"...");
+        $("#"+partner.from+"-messagePrevDate").html(partner.date.substr(11, 5));
+    } else {
+        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + partner.from + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + partner.from + "<br/><p class='messagePrev' id='"+partner.from+"-messagePrev'>" + partner.text.substr(0, 10) + "...</p>" + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right' id='"+partner.from+"-messagePrevDate'>" + partner.date.substr(11, 5) + "</span></div></div></div></div>");
+        $("#" + partner.from).click(function () {
+            openChat($(this).attr('id'));
+            $(".side-two").css({
+                "left": "-100%"
+            });
+        });
+        currenChatPartner.push(partner.from);
+    }
+}
+
+
 function showMessages() {
     sortMessages();
     $("#conversation").empty();
     $.each(chatMessages, function (index, value) {
+        if (value.to == pseudonym) {
+            checkCurrentChat(value);
+        }
         if (value.from == partner && value.to == pseudonym) {
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + value.text + "</div><span class='message-time pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
         }
@@ -206,7 +229,7 @@ function saveSettings() {
 }
 
 function loadConfig() {
-      $.ajax({
+    $.ajax({
         url: 'js/config.txt',
         type: 'GET',
         success: function (result) {
