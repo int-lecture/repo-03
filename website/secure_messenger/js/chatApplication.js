@@ -8,6 +8,7 @@ $(document).ready(function () {
         $(".side-two").css({
             "left": "0"
         });
+        $("#newFriendsName").focus();
     })
 
     $("#config").click(function () {
@@ -179,20 +180,38 @@ function sortMessages() {
         return (a.date < b.date) ? -1 : ((a.date > b.date) ? 1 : 0);
     });
 }
+
+function checkCurrentChat(partner) {
+    var isCurrent = false;
+    $.each(currenChatPartner, function (index, value) {
+        if (partner.from == value) {
+            isCurrent = true;
+        }
+    })
+
+    if (isCurrent) {
+        $("#"+partner.from+"-messagePrev").html(partner.text.substr(0, 10)+"...");
+        $("#"+partner.from+"-messagePrevDate").html(partner.date.substr(11, 5));
+    } else {
+        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + partner.from + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + partner.from + "<br/><p class='messagePrev' id='"+partner.from+"-messagePrev'>" + partner.text.substr(0, 10) + "...</p>" + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right' id='"+partner.from+"-messagePrevDate'>" + partner.date.substr(11, 5) + "</span></div></div></div></div>");
+        $("#" + partner.from).click(function () {
+            openChat($(this).attr('id'));
+            $(".side-two").css({
+                "left": "-100%"
+            });
+        });
+        currenChatPartner.push(partner.from);
+    }
+}
+
+
 function showMessages() {
     sortMessages();
     $("#conversation").empty();
-    $(".sideBar").empty();
     $.each(chatMessages, function (index, value) {
         if (value.to == pseudonym) {
-        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + value.from + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + value.from + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
-        $("#" + value.from).click(function () {
-            openChat($(this).attr('id'));
-            $(".side-two").css({
-            "left": "-100%"
-        });
-        });
-    }
+            checkCurrentChat(value);
+        }
         if (value.from == partner && value.to == pseudonym) {
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + value.text + "</div><span class='message-time pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
         }

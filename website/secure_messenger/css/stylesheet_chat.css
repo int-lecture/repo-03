@@ -192,6 +192,10 @@ body {
   box-shadow: none;
 }
 
+.messagePrev{
+  font-style: oblique;
+  font-size: 80%;
+}
 .sideBar {
   padding: 0 !important;
   margin: 0 !important;
