@@ -23,14 +23,15 @@ import java.util.Map;
 
 public class TestLoginServer {
 
-    private static Map<String,String> expectedCORSHeaders = new HashMap<>();
+    private static Map<String, String> expectedCORSHeaders = new HashMap<>();
 
     @Before
     public void setUp() throws Exception {
         // Setup dependencies
         Config.init(new String[]{
                 "-mongoURI", "mongodb://testmongodb:27017/",
-                "-dbName", "regTest"});
+                "-dbName", "regTest",
+                "-tokenDuration", "2"});
         expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
 
         try {
@@ -111,7 +112,13 @@ public class TestLoginServer {
 
         expect().statusCode(401).headers(expectedCORSHeaders).contentType(MediaType.APPLICATION_JSON).given().contentType(MediaType.APPLICATION_JSON)
                 .body(json.toString()).when().post("/auth");
-
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        expect().statusCode(401).headers(expectedCORSHeaders).given().contentType(MediaType.APPLICATION_JSON)
+                .body(json.toString()).when().post("/auth");
     }
 
 }
