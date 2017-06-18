@@ -77,63 +77,74 @@ public class Service {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response LoginUser(String jsonString) {
-        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
-        String userName, password, pseudonym;
-        boolean allowEmailLogin = Objects.equals(Config.getSettingValue(Config.allowEmailLogin), "true");
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            password = obj.getString("password");
-            userName = obj.getString("user");
-            pseudonym = obj.optString("pseudonym");
-            if (Objects.equals(pseudonym, "")) pseudonym = null;
-            System.out.println("user: " + userName);
-
-        } catch (JSONException e) {
-            System.out.println("[/login] Failed to parse json request.");
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-
-        // Check in settings if a login with partial login data is allow.
-        if (pseudonym == null && !allowEmailLogin) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-
-        User user = StorageProviderMongoDB.retrieveUser(userName, pseudonym);
-        if (user != null && user.VerifyPassword(password)) {
-            JSONObject obj = new JSONObject();
-            user.GenerateToken();
+            String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+            String userName, password, pseudonym;
+            boolean allowEmailLogin = Objects.equals(Config.getSettingValue(Config.allowEmailLogin), "true");
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-                Calendar expireDate = user.GetTokenExpireDate();
-                sdf.setTimeZone(expireDate.getTimeZone());
-                obj.put("expire-date", sdf.format(expireDate.getTime()));
-                obj.put("token", user.GetToken());
-                obj.put("pseudonym", user.pseudonym);
+                JSONObject obj = new JSONObject(jsonString);
+                password = obj.getString("password");
+                userName = obj.getString("user");
+                pseudonym = obj.optString("pseudonym");
+                if (Objects.equals(pseudonym, "")) pseudonym = null;
+                System.out.println("user: " + userName);
+
             } catch (JSONException e) {
-                System.out.println("[/login] Error when building json response.");
+                System.out.println("[/login] Failed to parse json request.");
                 return Response
-                        .status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .status(Response.Status.BAD_REQUEST)
                         .header("Access-Control-Allow-Origin", corsOrigin)
                         .build();
             }
-            SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
-            Calendar expireDate = user.GetTokenExpireDate();
-            sdf.setTimeZone(expireDate.getTimeZone());
-            StorageProviderMongoDB.saveToken(user.GetToken(), sdf.format(expireDate.getTime()), user.pseudonym);
+
+            // Check in settings if a login with partial login data is allow.
+            if (pseudonym == null && !allowEmailLogin) {
+                System.out.println("[/login] User sent incomplete request.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+
+            User user = StorageProviderMongoDB.retrieveUser(userName, pseudonym);
+            if (user != null && user.VerifyPassword(password)) {
+                JSONObject obj = new JSONObject();
+                user.GenerateToken();
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+                    Calendar expireDate = user.GetTokenExpireDate();
+                    sdf.setTimeZone(expireDate.getTimeZone());
+                    obj.put("expire-date", sdf.format(expireDate.getTime()));
+                    obj.put("token", user.GetToken());
+                    obj.put("pseudonym", user.pseudonym);
+                } catch (JSONException e) {
+                    System.out.println("[/login] Error when building json response.");
+                    return Response
+                            .status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .header("Access-Control-Allow-Origin", corsOrigin)
+                            .build();
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat(Service.ISO8601);
+                Calendar expireDate = user.GetTokenExpireDate();
+                sdf.setTimeZone(expireDate.getTimeZone());
+                StorageProviderMongoDB.saveToken(user.GetToken(), sdf.format(expireDate.getTime()), user.pseudonym);
+                return Response
+                        .status(Response.Status.OK)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .entity(obj.toString()).build();
+            } else {
+                System.out.printf("User %s entered a wrong password!", user);
+                return Response
+                        .status(Response.Status.UNAUTHORIZED)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+        } catch (Exception e) {
+            System.out.printf("[/login] Unhandled exception %s %s\n", jsonString, e.getMessage());
+            e.printStackTrace();
             return Response
-                    .status(Response.Status.OK)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .entity(obj.toString()).build();
-        } else {
-            return Response
-                    .status(Response.Status.UNAUTHORIZED)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header("Access-Control-Allow-Origin", "*")
                     .build();
         }
     }
@@ -150,51 +161,59 @@ public class Service {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response ValidateToken(String jsonString) {
-        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
-        String token, pseudonym;
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            token = obj.getString("token");
-            pseudonym = obj.getString("pseudonym");
-        } catch (JSONException e) {
-            System.out.println("[/auth] Failed to parse json request.");
+            String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+            String token, pseudonym;
+            try {
+                JSONObject obj = new JSONObject(jsonString);
+                token = obj.getString("token");
+                pseudonym = obj.getString("pseudonym");
+            } catch (JSONException e) {
+                System.out.println("[/auth] Failed to parse json request.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+            Date expireDate = StorageProviderMongoDB.retrieveTokenExpireDate(pseudonym, token);
+            if (expireDate != null) {
+                Calendar cal = Calendar.getInstance();
+                if (cal.getTime().before(expireDate)) {
+                    JSONObject obj = new JSONObject();
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat(ISO8601);
+                        obj.put("success", "true");
+                        obj.put("expire-date", sdf.format(expireDate));
+                        return Response
+                                .status(Response.Status.OK)
+                                .header("Access-Control-Allow-Origin", corsOrigin)
+                                .entity(obj.toString()).build();
+
+                    } catch (JSONException e) {
+                        System.out.println("[/auth] Error when building json response.");
+                        return Response
+                                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .header("Access-Control-Allow-Origin", corsOrigin)
+                                .build();
+                    }
+                } else {
+                    // Token has expired
+                    StorageProviderMongoDB.deleteToken(token);
+                }
+            }
+
             return Response
-                    .status(Response.Status.BAD_REQUEST)
+                    .status(Response.Status.UNAUTHORIZED)
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
+        } catch (Exception e) {
+            System.out.printf("[/auth] Unhandled exception  %s %s", jsonString, e.getMessage());
+            e.printStackTrace();
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .build();
         }
-        Date expireDate = StorageProviderMongoDB.retrieveTokenExpireDate(pseudonym, token);
-        if (expireDate != null) {
-            Calendar cal = Calendar.getInstance();
-            if (cal.getTime().before(expireDate)) {
-                JSONObject obj = new JSONObject();
-                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat(ISO8601);
-                    obj.put("success", "true");
-                    obj.put("expire-date", sdf.format(expireDate));
-                    return Response
-                            .status(Response.Status.OK)
-                            .header("Access-Control-Allow-Origin", corsOrigin)
-                            .entity(obj.toString()).build();
-
-                } catch (JSONException e) {
-                    System.out.println("[/auth] Error when building json response.");
-                    return Response
-                            .status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .header("Access-Control-Allow-Origin", corsOrigin)
-                            .build();
-                }
-            } else {
-                // Token has expired
-                StorageProviderMongoDB.deleteToken(token);
-            }
-        }
-
-        return Response
-                .status(Response.Status.UNAUTHORIZED)
-                .header("Access-Control-Allow-Origin", corsOrigin)
-                .build();
-
     }
 
     @OPTIONS

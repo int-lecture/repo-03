@@ -74,51 +74,60 @@ public class Service {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response RegisterNewUser(String jsonString) {
-        String pseudonym, email, password;
-        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            password = obj.getString("password");
-            email = obj.getString("user");
-            pseudonym = obj.getString("pseudonym");
+            String pseudonym, email, password;
+            String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+            try {
+                JSONObject obj = new JSONObject(jsonString);
+                password = obj.getString("password");
+                email = obj.getString("user");
+                pseudonym = obj.getString("pseudonym");
 
-        } catch (JSONException e) {
-            System.out.println("[/register] User send invalid json data.");
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
+            } catch (JSONException e) {
+                System.out.println("[/register] User send invalid json data.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
 
-        if (!isValidEmail(email) || !isValidPassword(password) || !isValidPseudonym(email)) {
-            System.out.println("[/register] A registration value was invalid.");
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
+            if (!isValidEmail(email) || !isValidPassword(password) || !isValidPseudonym(email)) {
+                System.out.println("[/register] A registration value was invalid.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
 
-        User user = new User(pseudonym, password, email);
-        if (StorageProviderMongoDB.userExists(pseudonym, email)) {
-            System.out.printf("[/register] User %s was already registered and is potentially a teapot.\n", email);
-            return Response
-                    .status(418)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
+            User user = new User(pseudonym, password, email);
+            if (StorageProviderMongoDB.userExists(pseudonym, email)) {
+                System.out.printf("[/register] User %s was already registered and is potentially a teapot.\n", email);
+                return Response
+                        .status(418)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
 
-        if (StorageProviderMongoDB.createNewUser(user)) {
-            JSONObject obj = new JSONObject();
-            obj.append("success", "true");
-            System.out.printf("[/register] Added new user %s. \n", email);
+            if (StorageProviderMongoDB.createNewUser(user)) {
+                JSONObject obj = new JSONObject();
+                obj.append("success", "true");
+                System.out.printf("[/register] Added new user %s. \n", email);
+                return Response
+                        .status(Response.Status.OK)
+                        .header("Access-Control-Allow-Origin", corsOrigin).entity(obj.toString()).build();
+            } else {
+                System.out.println("[/register] Registration failed.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+        } catch (Exception e) {
+            System.out.printf("[/register] Unhandled exception  %s %s", jsonString, e.getMessage());
+            e.printStackTrace();
             return Response
-                    .status(Response.Status.OK)
-                    .header("Access-Control-Allow-Origin", corsOrigin).entity(obj.toString()).build();
-        } else {
-            System.out.println("[/register] Registration failed.");
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header("Access-Control-Allow-Origin", "*")
                     .build();
         }
     }
@@ -128,38 +137,47 @@ public class Service {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getUserProfile(String jsonString) {
-        String token, pseudonym;
-        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            token = obj.getString("token");
-            pseudonym = obj.getString("getownprofile");
+            String token, pseudonym;
+            String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+            try {
+                JSONObject obj = new JSONObject(jsonString);
+                token = obj.getString("token");
+                pseudonym = obj.getString("getownprofile");
 
-        } catch (JSONException e) {
-            System.out.println("[/profile] User send invalid json data.");
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
+            } catch (JSONException e) {
+                System.out.println("[/profile] User send invalid json data.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
 
-        if (verifyToken(pseudonym, token)) {
-            User user = StorageProviderMongoDB.getUserProfile(pseudonym);
-            JSONObject obj = new JSONObject();
-            obj.append("name", user.getPseudonym());
-            obj.append("email", user.getEmail());
-            JSONArray contacts = new JSONArray(user.getContacts());
-            obj.append("contact", contacts);
+            if (verifyToken(pseudonym, token)) {
+                User user = StorageProviderMongoDB.getUserProfile(pseudonym);
+                JSONObject obj = new JSONObject();
+                obj.append("name", user.getPseudonym());
+                obj.append("email", user.getEmail());
+                JSONArray contacts = new JSONArray(user.getContacts());
+                obj.append("contact", contacts);
 
+                return Response
+                        .status(Response.Status.OK)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .entity(obj.toString()).build();
+            } else {
+                System.out.println("[/profile] User sent invalid token to authenticate.");
+                return Response
+                        .status(Response.Status.FORBIDDEN)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+        } catch (Exception e) {
+            System.out.printf("[/profile] Unhandled exception  %s %s", jsonString, e.getMessage());
+            e.printStackTrace();
             return Response
-                    .status(Response.Status.OK)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .entity(obj.toString()).build();
-        } else {
-            System.out.println("[/profile] User sent invalid token to authenticate.");
-            return Response
-                    .status(Response.Status.FORBIDDEN)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header("Access-Control-Allow-Origin", "*")
                     .build();
         }
     }
@@ -169,65 +187,73 @@ public class Service {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addContact(String jsonString) {
-        String token, pseudonym, newContact;
-        String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            token = obj.getString("token");
-            pseudonym = obj.getString("pseudonym");
-            newContact = obj.getString("newContact");
+            String token, pseudonym, newContact;
+            String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
+            try {
+                JSONObject obj = new JSONObject(jsonString);
+                token = obj.getString("token");
+                pseudonym = obj.getString("pseudonym");
+                newContact = obj.getString("newContact");
 
-        } catch (JSONException e) {
-            System.out.println("[/addcontact] User send invalid json data.");
+            } catch (JSONException e) {
+                System.out.println("[/addcontact] User send invalid json data.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity("Invalid json data.")
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+            if (token == null || pseudonym == null || newContact == null || token.equals("") || pseudonym.equals("") || newContact.equals("")) {
+                System.out.println("[/addcontact] User send incomplete json data.");
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity("Incomplete json data.")
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+            if (!verifyToken(pseudonym, token)) {
+                System.out.println("[/addcontact] User sent invalid token to authenticate.");
+                return Response
+                        .status(Response.Status.FORBIDDEN)
+                        .entity("Invalid token.")
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+            if (pseudonym.equals(newContact)) {
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity("Can't add self to contact list.")
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+            User user = StorageProviderMongoDB.getUserProfile(pseudonym);
+            User contact = StorageProviderMongoDB.getUserProfile(newContact);
+            if (user == null || contact == null) {
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity("The user doesn't exist.")
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+            if (user.addContact(contact) == null) {
+                return Response
+                        .status(Response.Status.FORBIDDEN)
+                        .entity("The user cannot be added to the contact list.")
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            } else {
+                return Response
+                        .status(Response.Status.OK)
+                        .header("Access-Control-Allow-Origin", corsOrigin)
+                        .build();
+            }
+        } catch (Exception e) {
+            System.out.printf("[/addContact] Unhandled exception  %s %s", jsonString, e.getMessage());
+            e.printStackTrace();
             return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid json data.")
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-        if(token == null || pseudonym == null || newContact == null || token.equals("") || pseudonym.equals("") || newContact.equals("")) {
-            System.out.println("[/addcontact] User send incomplete json data.");
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("Incomplete json data.")
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-        if (!verifyToken(pseudonym,token)) {
-            System.out.println("[/addcontact] User sent invalid token to authenticate.");
-            return Response
-                    .status(Response.Status.FORBIDDEN)
-                    .entity("Invalid token.")
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-        if(pseudonym.equals(newContact)){
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("Can't add self to contact list.")
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-        User user = StorageProviderMongoDB.getUserProfile(pseudonym);
-        User contact = StorageProviderMongoDB.getUserProfile(newContact);
-        if(user == null || contact == null) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("The user doesn't exist.")
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-        if(user.addContact(contact) == null) {
-            return Response
-                    .status(Response.Status.FORBIDDEN)
-                    .entity("The user cannot be added to the contact list.")
-                    .header("Access-Control-Allow-Origin", corsOrigin)
-                    .build();
-        }
-        else {
-            return Response
-                    .status(Response.Status.OK)
-                    .header("Access-Control-Allow-Origin", corsOrigin)
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header("Access-Control-Allow-Origin", "*")
                     .build();
         }
     }
