@@ -185,7 +185,7 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
-        if(token == null || pseudonym == null || newContact == null) {
+        if(token == null || pseudonym == null || newContact == null || token.equals("") || pseudonym.equals("") || newContact.equals("")) {
             System.out.println("[/addcontact] User send incomplete json data.");
             return Response
                     .status(Response.Status.BAD_REQUEST)

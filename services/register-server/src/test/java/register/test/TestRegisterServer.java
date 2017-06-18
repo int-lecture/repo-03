@@ -172,5 +172,33 @@ public class TestRegisterServer {
                 .then()
                 .headers(expectedCORSHeaders)
                 .statusCode(403);
+        // Incomplete json data.
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'" + token + "','pseudonym':'','newContact':'tom'}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(400);
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'" + token + "','pseudonym':'bob','newContact':''}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(400);
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{'token':'','pseudonym':'bob','newContact':'tom'}")
+                .when()
+                .put("/addcontact")
+
+                .then()
+                .headers(expectedCORSHeaders)
+                .statusCode(400);
     }
 }
