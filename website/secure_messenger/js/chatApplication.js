@@ -65,7 +65,7 @@ $(document).ready(function () {
 });
 var token;
 var pseudonym;
-var contact = [];
+var contact;
 var currenChatPartner = [];
 var partner;
 var sequenceNumber = 0;
