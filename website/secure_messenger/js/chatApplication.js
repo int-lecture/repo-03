@@ -65,9 +65,6 @@ var partner;
 var sequenceNumber = 0;
 var messages = [];
 var sentMessages = [];
-var tokenBob;
-var tokenTom;
-var date;
 var chatMessages = [];
 
 //opens the chat with the given partner, loads the messages and shows them.
