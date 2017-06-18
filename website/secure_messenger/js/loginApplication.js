@@ -37,6 +37,9 @@ function checkPw() {
 			window.location.href = "chatApplication.html";
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
+			if(xhr.status==401){
+				$("#error").html("Das Passwort ist nicht korrekt");
+			}
 		}
 	});
 	return false;

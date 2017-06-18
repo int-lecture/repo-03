@@ -26,7 +26,7 @@ function checkPw() {
 	var pw1 = $("#pw1").val();
 	var pw2 = $("#pw2").val();
 	if (pw1 != pw2) {
-		$("#error").html("Du böser bube die Passwörter sind nicht Identisch!");
+		$("#error").html("Die Passwörter sind nicht Identisch");
 		return false;
 	}
 	var URL = ipRegister + "/register";
@@ -41,6 +41,13 @@ function checkPw() {
 				window.location.href = "loginApplication.html";
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
+			if(xhr.status==418){
+				$("#error").html("Diesen Benutzer gibt es schon");
+			}
+
+
+
+
 		}
 	});
 	return false;
