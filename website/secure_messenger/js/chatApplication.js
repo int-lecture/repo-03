@@ -56,6 +56,9 @@ $(document).ready(function () {
         document.cookie = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.href = "loginApplication.html";
     })
+    $("#help").click(function(){
+        openChat("Secure Messenger");
+    })
 });
 var token;
 var pseudonym;
@@ -70,8 +73,10 @@ var chatMessages = [];
 //opens the chat with the given partner, loads the messages and shows them.
 function openChat(partner) {
     if (partner == "Secure Messenger") {
-        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger neben siehst du deine bisherigen Freunde</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        sendSecureMessenger("start");
+        document.getElementById("partner").innerHTML = partner;
     } else {
+        $("#receiver-picture").attr("src", "css/profilePic.png");
         this.partner = partner;
         document.getElementById("partner").innerHTML = partner;
         if (typeof messages == 'undefined') {
@@ -92,8 +97,8 @@ function getLegalDate() {
 //sends the message from the input field.
 function send() {
     if (document.getElementById("partner").innerHTML == "Secure Messenger") {
-        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Du kannst nicht mit uns schreiben, wähle bitte einen deiner Kontakte aus deiner Kontaktliste aus oder suche über die Sprechblase nach neuen Freunden</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        getMessages();
+        sendSecureMessenger("running");
+        $("#comment").val("");
     } else if ($("#comment").val() == "") {
     } else {
         readCookie();
@@ -170,7 +175,6 @@ function checkCurrentChat(partner) {
             isCurrent = true;
         }
     })
-
     if (isCurrent) {
         $("#" + partner.from + "-messagePrev").html(partner.text.substr(0, 10) + "...");
         $("#" + partner.from + "-messagePrevDate").html(partner.date.substr(11, 5));
@@ -217,6 +221,24 @@ function readCookie() {
             pseudonym = value.substring("pseudonym=".length);
         }
     });
+}
+
+function sendSecureMessenger(zustand) {
+    if (zustand == "running") {
+        var command = $("#comment").val();
+        if (command == "!hilfe") {
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Klicke auf eine empfangene Nachricht um auf diese zu antworten, oder füge über das Kontakt symbol einen Neuen Kontakt hinzu und starte durch drücken auf diesen Kontakt einen chat mit dieser Person.</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
+        if (command == "!zeit") {
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + getLegalDate() + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
+    }
+    if (zustand == "start") {
+        $("#receiver-picture").attr("src", "img/chatbot.png");
+        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger, wähle eine der folgenen Optionen:\n!hilfe\n!zeit</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+    }
+
+    $("#comment").focus();
 }
 
 
