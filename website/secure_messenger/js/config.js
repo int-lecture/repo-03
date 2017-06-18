@@ -1,6 +1,8 @@
 var ipLogin;
 var ipRegister;
 var ipChat;
+
+//gets the ips from our config file and writes them into the variables.
 function loadConfig() {
     $.ajax({
         url: 'js/config.txt',
@@ -14,20 +16,18 @@ function loadConfig() {
     });
 }
 
-
-function saveConfig(){
+//saves the ips from the input fields to our config file via php.
+function saveConfig() {
     $.ajax
-		({
-			type: "POST",
-			url: 'js/write.php',
-			data:{message: "ipLogin:"+$("#inputIpLogin").val()+";\nipChat:"+$("#inputIpChat").val()+";\nipRegister:"+$("#inputIpRegister").val()+";", file: 'config.txt'},
-			success: function(data){
-				alert(data);
-			},
-
-		   
-			error:function(){
-			  alert("es ist ein Fehler aufgetreten");
-		   }
-	});
+        ({
+            type: "POST",
+            url: 'js/write.php',
+            data: { message: "ipLogin:" + $("#inputIpLogin").val() + ";\nipChat:" + $("#inputIpChat").val() + ";\nipRegister:" + $("#inputIpRegister").val() + ";", file: 'config.txt' },
+            success: function (data) {
+                alert(data);
+            },
+            error: function () {
+                alert("es ist ein Fehler aufgetreten");
+            }
+        });
 }

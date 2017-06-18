@@ -8,6 +8,7 @@ $(document).keypress(function (e) {
 	}
 })
 
+//starts the connection to our server, cause otherwise the user needs to wait after pressing login.
 function startConnection() {
 	var URL = ipLogin + "/login/";
 	$.ajax({
@@ -19,12 +20,11 @@ function startConnection() {
 		}
 	});
 }
+
+//checks if the password is correct then logs the user in.
 function checkPw() {
 	var URL = ipLogin + "/login/";
 	var dataObject = { 'user': $("#inputEmail").val(), 'password': $("#inputPassword").val() };
-
-	//alert(JSON.stringify(dataObject));
-
 	$.ajax({
 		url: URL,
 		type: 'POST',
@@ -34,11 +34,9 @@ function checkPw() {
 		success: function (result) {
 			document.cookie = "token=" + result.token;
 			document.cookie = "pseudonym=" + result.pseudonym + ";expires=" + result["expire-date"];
-			//alert("success?");
 			window.location.href = "chatApplication.html";
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
-			//alert(" error");
 		}
 	});
 	return false;
