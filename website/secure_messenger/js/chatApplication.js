@@ -3,7 +3,6 @@ $(document).ready(function () {
     readCookie();
     openChat("Secure Messenger");
     getMessages();
-    //little buffer, cause otherwise the ips arent loaded
     window.setTimeout(loadContacts, 1000);
     $(".heading-compose").click(function () {
         $(".side-two").css({
@@ -56,7 +55,7 @@ $(document).ready(function () {
         document.cookie = "expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         window.location.href = "loginApplication.html";
     })
-    $("#help").click(function(){
+    $("#help").click(function () {
         openChat("Secure Messenger");
     })
 });
@@ -83,8 +82,8 @@ function openChat(partner) {
             getMessages();
         }
         showMessages();
-        $("#comment").focus();
     }
+    $("#comment").focus();
 }
 
 //returns the current date in our string date format.
@@ -126,6 +125,8 @@ function send() {
 
         });
     }
+    $("#comment").focus();
+
 }
 
 //gets all messages from our service and updates them every second.
@@ -168,25 +169,25 @@ function sortMessages() {
 }
 
 //this realizes the currentChats tab where you see all received messages but only the newest one per partner.
-function checkCurrentChat(partner) {
+function checkCurrentChat(partner, chatName) {
     var isCurrent = false;
     $.each(currenChatPartner, function (index, value) {
-        if (partner.from == value) {
+        if (chatName == value) {
             isCurrent = true;
         }
     })
     if (isCurrent) {
-        $("#" + partner.from + "-messagePrev").html(partner.text.substr(0, 10) + "...");
-        $("#" + partner.from + "-messagePrevDate").html(partner.date.substr(11, 5));
+        $("#" + chatName + "-messagePrev").html(partner.from + ": " + partner.text.substr(0, 10) + "...");
+        $("#" + chatName + "-messagePrevDate").html(partner.date.substr(11, 5));
     } else {
-        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + partner.from + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + partner.from + "<br/><p class='messagePrev' id='" + partner.from + "-messagePrev'>" + partner.text.substr(0, 10) + "...</p>" + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right' id='" + partner.from + "-messagePrevDate'>" + partner.date.substr(11, 5) + "</span></div></div></div></div>");
-        $("#" + partner.from).click(function () {
+        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + chatName + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + chatName + "<br/><p class='messagePrev' id='" + chatName + "-messagePrev'>" + partner.from + ": " + partner.text.substr(0, 10) + "...</p>" + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right' id='" + partner.from + "-messagePrevDate'>" + partner.date.substr(11, 5) + "</span></div></div></div></div>");
+        $("#" + chatName).click(function () {
             openChat($(this).attr('id'));
             $(".side-two").css({
                 "left": "-100%"
             });
         });
-        currenChatPartner.push(partner.from);
+        currenChatPartner.push(chatName);
     }
 }
 
@@ -195,8 +196,11 @@ function showMessages() {
     sortMessages();
     $("#conversation").empty();
     $.each(chatMessages, function (index, value) {
-        if (value.to == pseudonym) {
-            checkCurrentChat(value);
+        if (pseudonym == value.from) {
+            checkCurrentChat(value, value.to);
+        }
+        if (pseudonym == value.to) {
+            checkCurrentChat(value, value.from);
         }
         if (value.from == partner && value.to == pseudonym) {
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + value.text + "</div><span class='message-time pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
@@ -223,6 +227,7 @@ function readCookie() {
     });
 }
 
+//our small chatbot, more functions are coming soon.
 function sendSecureMessenger(zustand) {
     if (zustand == "running") {
         var command = $("#comment").val();
@@ -230,15 +235,17 @@ function sendSecureMessenger(zustand) {
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Klicke auf eine empfangene Nachricht um auf diese zu antworten, oder füge über das Kontakt symbol einen Neuen Kontakt hinzu und starte durch drücken auf diesen Kontakt einen chat mit dieser Person.</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         }
         if (command == "!zeit") {
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + getLegalDate() + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + new Date() + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         }
     }
     if (zustand == "start") {
+        $("#conversation").empty();
         $("#receiver-picture").attr("src", "img/chatbot.png");
         $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger, wähle eine der folgenen Optionen:\n!hilfe\n!zeit</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
     }
-
-    $("#comment").focus();
+    window.setTimeout(function () {
+        $("#comment").focus();
+    }, 0);
 }
 
 
