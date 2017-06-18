@@ -10,7 +10,7 @@ $(document).keypress(function (e) {
 
 //starts the connection to our server, cause otherwise the user needs to wait after pressing login.
 function startConnection() {
-	var URL = ipLogin + "/register/";
+	var URL = ipLogin + "/register";
 	$.ajax({
 		url: URL,
 		type: 'OPTIONS',
@@ -29,7 +29,7 @@ function checkPw() {
 		$("#error").html("Du böser bube die Passwörter sind nicht Identisch!");
 		return false;
 	}
-	var URL = ipRegister + "/register/";
+	var URL = ipRegister + "/register";
 	var dataObject = { 'pseudonym': $("#inputPseudonym").val(), 'user': $("#inputEmail").val(), 'password': pw1 };
 	$.ajax({
 		url: URL,
@@ -38,7 +38,7 @@ function checkPw() {
 		contentType: "application/json; charset=utf-8",
 		dataType: 'json',
 		success: function (result) {
-			window.location.href = "loginApplication.html";
+				window.location.href = "loginApplication.html";
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 		}

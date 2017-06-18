@@ -10,7 +10,7 @@ $(document).keypress(function (e) {
 
 //starts the connection to our server, cause otherwise the user needs to wait after pressing login.
 function startConnection() {
-	var URL = ipLogin + "/login/";
+	var URL = ipLogin + "/login";
 	$.ajax({
 		url: URL,
 		type: 'OPTIONS',
@@ -23,7 +23,7 @@ function startConnection() {
 
 //checks if the password is correct then logs the user in.
 function checkPw() {
-	var URL = ipLogin + "/login/";
+	var URL = ipLogin + "/login";
 	var dataObject = { 'user': $("#inputEmail").val(), 'password': $("#inputPassword").val() };
 	$.ajax({
 		url: URL,
