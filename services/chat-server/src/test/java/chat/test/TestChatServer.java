@@ -278,7 +278,7 @@ public class TestChatServer {
                     .body("[0].to", is("tom"))
                     .body("[0].from", is("hans"))
                     .body("[0].text", is("Test2"))
-                    .body("[0].sequence", is(3))
+                    .body("[0].sequence", is(2))
                     .body("[0].date", is("2017-04-26T11:30:30+0200"))
                     .headers(expectedCORSHeaders);
 
@@ -289,7 +289,7 @@ public class TestChatServer {
                 .header("Authorization", tokenTom)
 
                 .when()
-                .get("/messages/tom/2")
+                .get("/messages/tom/3")
 
                 .then()
                 .statusCode(204);
