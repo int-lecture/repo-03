@@ -252,8 +252,24 @@ function sendSecureMessenger(zustand) {
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Donald Trump: " + ausgabeTrump + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         }
         if (command == "!wetter") {
-            var ausgabeWetter ="Wetterfrosch: Heute wird es zwischen 17 und 28 Grad warm und die Regenwahrscheinlichkeit liegt bei 20%";
+            var ausgabeWetter = "Wetterfrosch: Heute wird es zwischen 17 und 28 Grad warm und die Regenwahrscheinlichkeit liegt bei 20%";
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + ausgabeWetter + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
+        if (command == "!jodel") {
+            //example jodel for testing format.
+            var ausgabeJodel = "Ich wünsche mein Bauch wäre genau so flach wie meine Witze Score:129";
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeJodel + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
+        if (command == "!news") {
+            //example news for testing format.
+            var ausgabeNews = "London: Fahrzeug fährt in Gruppe Muslime - mindestens ein Toter";
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeNews + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
+        if (command == "!primetime") {
+            //example tv programm for testing format.
+            var ausgabePrimetime = "Heute um 20:15 kommt:\nProsieben: Transformers\nSat1: irgendein Film vom Schweiger\nRTL: Wer wird Millionär ";
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabePrimetime + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+
         }
     }
     if (zustand == "start") {
