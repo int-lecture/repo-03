@@ -98,6 +98,7 @@ function send() {
     if (document.getElementById("partner").innerHTML == "Secure Messenger") {
         sendSecureMessenger("running");
         $("#comment").val("");
+        document.getElementById("conversation").scrollTop = document.getElementById("conversation").scrollHeight;
     } else if ($("#comment").val() == "") {
     } else {
         readCookie();
@@ -216,7 +217,7 @@ function showMessages() {
 function readCookie() {
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
-    $.each(ca, function (index, value) {
+    return $.each(ca, function (index, value) {
         value = value.trim();
         if (value.substring(0, "token=".length) == "token=") {
             token = value.substring(6);
@@ -236,7 +237,7 @@ function sendSecureMessenger(zustand) {
         }
         if (command == "!zeit") {
             var datum = new Date();
-            var ausgabeDatum = "Heute ist " + datum.getDay + " der " + datum.getDate + " " + datum.getMonth + " " + datum.getYear + " und wir haben " + datum.getHours + ":" + datum.getMinutes + " uhr."
+            var ausgabeDatum = "Heute ist " + datum.getDay() + " der " + datum.getDate() + " " + datum.getMonth() + " " + datum.getYear() + " und wir haben " + datum.getHours() + ":" + datum.getMinutes() + " uhr."
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeDatum + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         }
         if (command == "") {
@@ -267,7 +268,7 @@ function sendSecureMessenger(zustand) {
         }
         if (command == "!primetime") {
             //example tv programm for testing format.
-            var ausgabePrimetime = "Heute um 20:15 kommt:\nProsieben: Transformers\nSat1: irgendein Film vom Schweiger\nRTL: Wer wird Millionär ";
+            var ausgabePrimetime = "Heute um 20:15 kommt: <br />Prosieben: Transformers <br />Sat1: irgendein Film vom Schweiger <br />RTL: Wer wird Millionär ";
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabePrimetime + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
 
         }
@@ -275,7 +276,7 @@ function sendSecureMessenger(zustand) {
     if (zustand == "start") {
         $("#conversation").empty();
         $("#receiver-picture").attr("src", "img/chatbot.png");
-        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger, wähle eine der folgenen Optionen:\n!hilfe\n!zeit</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger, wähle eine der folgenen Optionen:</br>!hilfe</br>!zeit</br>!zitat</br>!trump</br>!news</br>!primetime</br>!jodel</br>!wetter</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
     }
     window.setTimeout(function () {
         $("#comment").focus();

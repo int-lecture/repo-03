@@ -1,12 +1,7 @@
 $(document).ready(function () {
 	loadConfig();
-	startConnection();
+	//startConnection();
 });
-$(document).keypress(function (e) {
-	if (e.which == 13) {
-		checkPw();
-	}
-})
 
 //starts the connection to our server, cause otherwise the user needs to wait after pressing login.
 function startConnection() {
