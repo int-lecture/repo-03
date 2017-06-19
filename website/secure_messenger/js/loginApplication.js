@@ -15,6 +15,12 @@ function startConnection() {
 		}
 	});
 }
+function showSettings() {
+	$(".card-container2").css({
+		"left": "0",
+		"top": "0"
+	});
+};
 
 //checks if the password is correct then logs the user in.
 function checkPw() {
@@ -32,7 +38,7 @@ function checkPw() {
 			window.location.href = "chatApplication.html";
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
-			if(xhr.status==401){
+			if (xhr.status == 401) {
 				$("#error").html("Das Passwort ist nicht korrekt");
 			}
 		}
