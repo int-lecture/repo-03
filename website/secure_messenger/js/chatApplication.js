@@ -235,8 +235,11 @@ function sendSecureMessenger(zustand) {
             $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Klicke auf eine empfangene Nachricht um auf diese zu antworten, oder füge über das Kontakt symbol einen Neuen Kontakt hinzu und starte durch drücken auf diesen Kontakt einen chat mit dieser Person.</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         }
         if (command == "!zeit") {
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + new Date() + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+            var datum = new Date();
+            var ausgabeDatum= "Heute ist "+datum.getDay+" der "+datum.getDate+" "+datum.getMonth+" "+datum.getYear+" und wir haben "+datum.getHours+":"+datum.getMinutes+" uhr."
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + ausgabeDatum + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         }
+        if(command==)
     }
     if (zustand == "start") {
         $("#conversation").empty();
