@@ -116,11 +116,11 @@ public class StorageProviderMongoDBTest {
         StorageProviderMongoDB.removeMessages(bob, 1);
         msgs = StorageProviderMongoDB.getMessages(bob, 0);
         assertEquals(3, msgs.size());
-        assertEquals("Hallo4", msgs.get(1).text);
-        assertEquals("Hallo3", msgs.get(0).text);
-        assertEquals(3, msgs.get(0).sequence);
-        assertEquals(4, msgs.get(1).sequence);
-        StorageProviderMongoDB.removeMessages(bob, 3);
+        assertEquals("Hallo3", msgs.get(1).text);
+        assertEquals("Hallo2", msgs.get(0).text);
+        assertEquals(2, msgs.get(0).sequence);
+        assertEquals(3, msgs.get(1).sequence);
+        StorageProviderMongoDB.removeMessages(bob, 4);
         msgs = StorageProviderMongoDB.getMessages(bob, 0);
         assertEquals(0, msgs.size());
     }
