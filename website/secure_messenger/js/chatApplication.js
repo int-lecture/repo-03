@@ -233,44 +233,43 @@ function sendSecureMessenger(zustand) {
     if (zustand == "running") {
         var command = $("#comment").val();
         if (command == "!hilfe") {
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Klicke auf eine empfangene Nachricht um auf diese zu antworten, oder füge über das Kontakt symbol einen Neuen Kontakt hinzu und starte durch drücken auf diesen Kontakt einen chat mit dieser Person.</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        }
+            var ausgabeHilfe="Klicke auf eine empfangene Nachricht um auf diese zu antworten, oder füge über das Kontakt symbol einen Neuen Kontakt hinzu und starte durch drücken auf diesen Kontakt einen chat mit dieser Person.";
+            getMessageSecureMessenger(ausgabeHilfe);
+    }
         if (command == "!zeit") {
             var datum = new Date();
-            var ausgabeDatum = "Heute ist " + datum.getDay() + " der " + datum.getDate() + " " + datum.getMonth() + " " + datum.getYear() + " und wir haben " + datum.getHours() + ":" + datum.getMinutes() + " uhr."
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeDatum + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        }
+            var days={Montag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag, Sonntag};
+            var months={Januar, Februar, März, April, Mai, Juni, Juli, August, September, Oktober, November, Dezember};
+            var ausgabeDatum = "Heute ist " + days[datum.getDay()] + " der " + datum.getDate() + " " + months[datum.getMonth()] + " " + datum.getYear() + " und wir haben " + datum.getHours() + ":" + datum.getMinutes() + " uhr."
+            getMessageSecureMessenger(ausgabeDatum);
+    }
         if (command == "") {
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Ich kann mit leeren Strings nichts anfangen da ein leerer String die Länge 0 hat und 0 modulo 3, 0 ergibt und jeder weiß 3=Illuminati</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-
+            var ausgabeNichts="Ich kann mit leeren Strings nichts anfangen da ein leerer String die Länge 0 hat und 0 modulo 3, 0 ergibt und jeder weiß 3=Illuminati";
+            getMessageSecureMessenger(ausgabeNichts);
         }
         if (command == "!zitat") {
             var ausgabeZitat = "Johann Wolfgang von Goethe: Mit dem Wissen wächst auch der Zweifel";
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeZitat + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        }
+            getMessageSecureMessenger(ausgabeZitat);
+    }
         if (command == "!trump") {
             var ausgabeTrump = "Ich könnte auf der 5th Avenue stehen und jemanden erschießen und würde keine Wähler verlieren";
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Donald Trump: " + ausgabeTrump + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        }
+            getMessageSecureMessenger(ausgabeTrump);
+    }
         if (command == "!wetter") {
             var ausgabeWetter = "Wetterfrosch: Heute wird es zwischen 17 und 28 Grad warm und die Regenwahrscheinlichkeit liegt bei 20%";
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + ausgabeWetter + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        }
+            getMessageSecureMessenger(ausgabeWetter);
+    }
         if (command == "!jodel") {
-            //example jodel for testing format.
             var ausgabeJodel = "Ich wünsche mein Bauch wäre genau so flach wie meine Witze Score:129";
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeJodel + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        }
+            getMessageSecureMessenger(ausgabeJodel);
+     }
         if (command == "!news") {
-            //example news for testing format.
             var ausgabeNews = "London: Fahrzeug fährt in Gruppe Muslime - mindestens ein Toter";
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeNews + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-        }
+            getMessageSecureMessenger(ausgabeNews);
+    }
         if (command == "!primetime") {
-            //example tv programm for testing format.
             var ausgabePrimetime = "Heute um 20:15 kommt: <br />Prosieben: Transformers <br />Sat1: irgendein Film vom Schweiger <br />RTL: Wer wird Millionär ";
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabePrimetime + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-
+            getMessageSecureMessenger(ausgabePrimetime);
         }
     }
     if (zustand == "start") {
@@ -281,6 +280,10 @@ function sendSecureMessenger(zustand) {
     window.setTimeout(function () {
         $("#comment").focus();
     }, 0);
+}
+
+function getMessageSecureMessenger(ausgabe){
+                $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabe + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
 }
 
 

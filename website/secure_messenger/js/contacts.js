@@ -48,6 +48,9 @@ function loadContacts() {
 //displays all contacts with the right values.
 function showContacts() {
     $(".compose-sideBar").empty();
+    contact.sort(function (a, b) {
+        return (a < b) ? -1 : ((a > b) ? 1 : 0);
+    });
     $.each(contact[0], function (index, value) {
         $(".compose-sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + value + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + value + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right'></span></div></div></div></div>");
         $("#" + value).click(function () {
