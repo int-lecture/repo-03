@@ -73,19 +73,19 @@ public class StorageProviderMongoDBTest {
 
         msgs = StorageProviderMongoDB.getMessages(bob, 1);
         assertNotNull(msgs);
-        assertEquals(2, msgs.size());
-        assertEquals("Hallo4", msgs.get(1).text);
-        assertEquals("Hallo3", msgs.get(0).text);
-        assertEquals(3, msgs.get(0).sequence);
-        assertEquals(4, msgs.get(1).sequence);
+        assertEquals(3, msgs.size());
+        assertEquals("Hallo3", msgs.get(1).text);
+        assertEquals("Hallo2", msgs.get(0).text);
+        assertEquals(2, msgs.get(0).sequence);
+        assertEquals(3, msgs.get(1).sequence);
 
         msgs = StorageProviderMongoDB.getMessages(bob, 1);
         assertNotNull(msgs);
-        assertEquals(2, msgs.size());
-        assertEquals("Hallo4", msgs.get(1).text);
-        assertEquals("Hallo3", msgs.get(0).text);
-        assertEquals(3, msgs.get(0).sequence);
-        assertEquals(4, msgs.get(1).sequence);
+        assertEquals(3, msgs.size());
+        assertEquals("Hallo3", msgs.get(1).text);
+        assertEquals("Hallo2", msgs.get(0).text);
+        assertEquals(2, msgs.get(0).sequence);
+        assertEquals(3, msgs.get(1).sequence);
 
         // Users not yet in db return empty List
         msgs = StorageProviderMongoDB.getMessages(new User("MrNotInDB"), 0);
