@@ -5,8 +5,8 @@ git pull
 (cd chat-server/; mvn clean compile test install assembly:single && sudo docker build -t chatserver .)
 (cd register-server/; mvn clean compile install test assembly:single && sudo docker build -t registerserver .)
 sudo docker tag loginserver d3adlysurprise/loginserver
-sudo docker tag loginserver d3adlysurprise/registerserver
-sudo docker tag loginserver d3adlysurprise/chatserver
+sudo docker tag registerserver d3adlysurprise/registerserver
+sudo docker tag chatserver d3adlysurprise/chatserver
 echo "Uploading docker images."
 sudo docker push d3adlysurprise/loginserver
 sudo docker push d3adlysurprise/registerserver
