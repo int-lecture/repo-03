@@ -111,7 +111,7 @@ public class User {
         Client client = Client.create();
         String response;
         try {
-            response = client.resource(url + "/auth").accept(MediaType.APPLICATION_JSON)
+            response = client.resource(Config.getSettingValue(Config.loginURI) + "/auth").accept(MediaType.APPLICATION_JSON)
                     .type(MediaType.APPLICATION_JSON).post(String.class, obj.toString());
             client.destroy();
         } catch (RuntimeException e) {
