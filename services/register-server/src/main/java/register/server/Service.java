@@ -194,7 +194,7 @@ public class Service {
                     .build();
         }
         if (!verifyToken(pseudonym,token)) {
-            System.out.println("[/addcontact] User sent invalid token to authenticate.");
+            System.out.printf("[/addcontact] User sent invalid token %s to authenticate.\n",token);
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .entity("Invalid token.")
