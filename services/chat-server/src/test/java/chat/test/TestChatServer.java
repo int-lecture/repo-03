@@ -74,7 +74,7 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(201)
-                .body("sequence", equalTo(0))
+                .body("sequence", equalTo(1))
                 .body("date", equalTo("2017-04-26T11:30:30+0200"))
                 .headers(expectedCORSHeaders);
 
@@ -87,7 +87,7 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(201)
-                .body("sequence", equalTo(1))
+                .body("sequence", equalTo(2))
                 .body("date", equalTo("2017-04-26T11:30:30+0200"))
                 .headers(expectedCORSHeaders);
 
@@ -100,7 +100,7 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(201)
-                .body("sequence", equalTo(0))
+                .body("sequence", equalTo(1))
                 .body("date", equalTo("2017-04-26T11:30:30+0200"))
                 .headers(expectedCORSHeaders);
         // testing a wrong token
@@ -218,7 +218,7 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(201)
-                .body("sequence", equalTo(0))
+                .body("sequence", equalTo(1))
                 .body("date", equalTo("2017-04-26T11:30:30+0200"))
                 .headers(expectedCORSHeaders);
 
@@ -231,7 +231,7 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(201)
-                .body("sequence", equalTo(1))
+                .body("sequence", equalTo(2))
                 .body("date", equalTo("2017-04-26T11:30:30+0200"))
                 .headers(expectedCORSHeaders);
 
@@ -244,7 +244,7 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(201)
-                .body("sequence", equalTo(2))
+                .body("sequence", equalTo(3))
                 .body("date", equalTo("2017-04-26T11:30:30+0200"))
                 .headers(expectedCORSHeaders);
 
@@ -274,10 +274,10 @@ public class TestChatServer {
 
                     .then()
                     .statusCode(200)
-                    .body("size()", is(1))
+                    .body("size()", is(2))
                     .body("[0].to", is("tom"))
-                    .body("[0].from", is("bob"))
-                    .body("[0].text", is("Test3"))
+                    .body("[0].from", is("hans"))
+                    .body("[0].text", is("Test2"))
                     .body("[0].sequence", is(2))
                     .body("[0].date", is("2017-04-26T11:30:30+0200"))
                     .headers(expectedCORSHeaders);
@@ -289,7 +289,7 @@ public class TestChatServer {
                 .header("Authorization", tokenTom)
 
                 .when()
-                .get("/messages/tom/2")
+                .get("/messages/tom/3")
 
                 .then()
                 .statusCode(204);

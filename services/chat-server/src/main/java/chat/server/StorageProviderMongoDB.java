@@ -17,6 +17,8 @@ import static com.mongodb.client.model.Updates.*;
 
 public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
 
+    private static final int sequenceOffset = 1;
+
     protected StorageProviderMongoDB() throws Exception {
     }
 
@@ -38,7 +40,7 @@ public class StorageProviderMongoDB extends StorageProviderCoreMongoDB {
                         combine(set("user", user.getName()), inc("sequence", 1)),
                         new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
         if (sequence == null) {
-            sequence = new Document("user", user.getName()).append("sequence", 0);
+            sequence = new Document("user", user.getName()).append("sequence", sequenceOffset);
             sequences.insertOne(sequence);
         }
 

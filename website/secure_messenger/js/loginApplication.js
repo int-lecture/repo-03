@@ -1,15 +1,11 @@
 $(document).ready(function () {
 	loadConfig();
-	startConnection();
+	//startConnection();
 });
-$(document).keypress(function (e) {
-	if (e.which == 13) {
-		checkPw();
-	}
-})
 
+//starts the connection to our server, cause otherwise the user needs to wait after pressing login.
 function startConnection() {
-	var URL = ipLogin + "/login/";
+	var URL = ipLogin + "/login";
 	$.ajax({
 		url: URL,
 		type: 'OPTIONS',
@@ -19,12 +15,17 @@ function startConnection() {
 		}
 	});
 }
+function showSettings() {
+	$(".card-container2").css({
+		"left": "0",
+		"top": "0"
+	});
+};
+
+//checks if the password is correct then logs the user in.
 function checkPw() {
-	var URL = ipLogin + "/login/";
+	var URL = ipLogin + "/login";
 	var dataObject = { 'user': $("#inputEmail").val(), 'password': $("#inputPassword").val() };
-
-	//alert(JSON.stringify(dataObject));
-
 	$.ajax({
 		url: URL,
 		type: 'POST',
@@ -34,11 +35,12 @@ function checkPw() {
 		success: function (result) {
 			document.cookie = "token=" + result.token;
 			document.cookie = "pseudonym=" + result.pseudonym + ";expires=" + result["expire-date"];
-			//alert("success?");
 			window.location.href = "chatApplication.html";
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
-			//alert(" error");
+			if (xhr.status == 401) {
+				$("#error").html("Das Passwort ist nicht korrekt");
+			}
 		}
 	});
 	return false;

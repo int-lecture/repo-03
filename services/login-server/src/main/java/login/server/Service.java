@@ -88,7 +88,6 @@ public class Service {
                 pseudonym = obj.optString("pseudonym");
                 if (Objects.equals(pseudonym, "")) pseudonym = null;
                 System.out.println("user: " + userName);
-
             } catch (JSONException e) {
                 System.out.println("[/login] Failed to parse json request.");
                 return Response
@@ -128,6 +127,7 @@ public class Service {
                 Calendar expireDate = user.GetTokenExpireDate();
                 sdf.setTimeZone(expireDate.getTimeZone());
                 StorageProviderMongoDB.saveToken(user.GetToken(), sdf.format(expireDate.getTime()), user.pseudonym);
+                System.out.printf("user %s : %s\n", user.pseudonym, user.GetToken());
                 return Response
                         .status(Response.Status.OK)
                         .header("Access-Control-Allow-Origin", corsOrigin)
@@ -202,6 +202,7 @@ public class Service {
                 }
             }
 
+            System.out.printf("[/auth] Could not authenticate user %s with token %s\n", pseudonym, token);
             return Response
                     .status(Response.Status.UNAUTHORIZED)
                     .header("Access-Control-Allow-Origin", corsOrigin)

@@ -145,11 +145,11 @@ body {
   font-size: 12px;
   color: #93918f;
 }
-.heading-compose {
+.heading-compose, .heading-help {
   padding: 0;
 }
 
-.heading-compose i {
+.heading-compose i, .heading-help i {
   text-align: center;
   padding: 5px;
   color: #93918f;
@@ -528,10 +528,10 @@ body {
     height: 50px;
     width: 50px;
   }
-  .heading-compose {
+  .heading-compose, .heading-help {
     padding: 5px !important;
   }
-  .heading-compose i {
+  .heading-compose i .heading-help i{
     cursor: pointer;
   }
   .heading-dot {

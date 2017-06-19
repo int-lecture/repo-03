@@ -166,7 +166,7 @@ public class Service {
                         .header("Access-Control-Allow-Origin", corsOrigin)
                         .entity(obj.toString()).build();
             } else {
-                System.out.println("[/profile] User sent invalid token to authenticate.");
+                System.out.printf("[/profile] User %s sent invalid token %s to authenticate.\n", pseudonym, token);
                 return Response
                         .status(Response.Status.FORBIDDEN)
                         .header("Access-Control-Allow-Origin", corsOrigin)
@@ -195,7 +195,6 @@ public class Service {
                 token = obj.getString("token");
                 pseudonym = obj.getString("pseudonym");
                 newContact = obj.getString("newContact");
-
             } catch (JSONException e) {
                 System.out.println("[/addcontact] User send invalid json data.");
                 return Response

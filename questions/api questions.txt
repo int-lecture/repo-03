@@ -1,2 +1,2 @@
-Login application erfährt nie pseudonym des users.
-Man kann keine Kontakte hinzufügen.
+Login application erfährt nie pseudonym des users. [solved]
+Man kann keine Kontakte hinzufügen. [solved]
