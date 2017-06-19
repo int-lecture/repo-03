@@ -98,28 +98,28 @@ public class StorageProviderMongoDBTest {
         User bob = new User("bob");
         User tom = new User("tom");
         Message msg = new Message("tom", "bob", new Date(), "Hallo1", "token");
-        assertEquals(0,StorageProviderMongoDB.addMessage(bob, msg));
-        msg = new Message("tom", "bob", new Date(), "Hallo2", "token");
         assertEquals(1,StorageProviderMongoDB.addMessage(bob, msg));
-        msg = new Message("tom", "bob", new Date(), "Hallo3", "token");
+        msg = new Message("tom", "bob", new Date(), "Hallo2", "token");
         assertEquals(2,StorageProviderMongoDB.addMessage(bob, msg));
-        msg = new Message("tom", "bob", new Date(), "Hallo4", "token");
+        msg = new Message("tom", "bob", new Date(), "Hallo3", "token");
         assertEquals(3,StorageProviderMongoDB.addMessage(bob, msg));
+        msg = new Message("tom", "bob", new Date(), "Hallo4", "token");
+        assertEquals(4,StorageProviderMongoDB.addMessage(bob, msg));
 
         List<Message> msgs = StorageProviderMongoDB.getMessages(bob, 0);
         assertEquals(4, msgs.size());
         assertEquals("Hallo4", msgs.get(3).text);
         assertEquals("Hallo1", msgs.get(0).text);
-        assertEquals(0, msgs.get(0).sequence);
-        assertEquals(1, msgs.get(1).sequence);
+        assertEquals(1, msgs.get(0).sequence);
+        assertEquals(2, msgs.get(1).sequence);
 
         StorageProviderMongoDB.removeMessages(bob,1);
         msgs = StorageProviderMongoDB.getMessages(bob, 0);
         assertEquals(2, msgs.size());
         assertEquals("Hallo4", msgs.get(1).text);
         assertEquals("Hallo3", msgs.get(0).text);
-        assertEquals(2, msgs.get(0).sequence);
-        assertEquals(3, msgs.get(1).sequence);
+        assertEquals(3, msgs.get(0).sequence);
+        assertEquals(4, msgs.get(1).sequence);
         StorageProviderMongoDB.removeMessages(bob,3);
         msgs = StorageProviderMongoDB.getMessages(bob, 0);
         assertEquals(0,msgs.size());

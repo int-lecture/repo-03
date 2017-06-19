@@ -276,8 +276,8 @@ public class TestChatServer {
                     .statusCode(200)
                     .body("size()", is(2))
                     .body("[0].to", is("tom"))
-                    .body("[0].from", is("bob"))
-                    .body("[0].text", is("Test3"))
+                    .body("[0].from", is("hans"))
+                    .body("[0].text", is("Test2"))
                     .body("[0].sequence", is(3))
                     .body("[0].date", is("2017-04-26T11:30:30+0200"))
                     .headers(expectedCORSHeaders);
