@@ -156,7 +156,7 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .entity(obj.toString()).build();
         } else {
-            System.out.println("[/profile] User sent invalid token to authenticate.");
+            System.out.printf("[/profile] User sent invalid token %s to authenticate.\n", token);
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .header("Access-Control-Allow-Origin", corsOrigin)
@@ -185,7 +185,7 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
-        if(token == null || pseudonym == null || newContact == null || token.equals("") || pseudonym.equals("") || newContact.equals("")) {
+        if (token == null || pseudonym == null || newContact == null || token.equals("") || pseudonym.equals("") || newContact.equals("")) {
             System.out.println("[/addcontact] User send incomplete json data.");
             return Response
                     .status(Response.Status.BAD_REQUEST)
@@ -193,15 +193,15 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
-        if (!verifyToken(pseudonym,token)) {
-            System.out.printf("[/addcontact] User sent invalid token %s to authenticate.\n",token);
+        if (!verifyToken(pseudonym, token)) {
+            System.out.printf("[/addcontact] User sent invalid token %s to authenticate.\n", token);
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .entity("Invalid token.")
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
-        if(pseudonym.equals(newContact)){
+        if (pseudonym.equals(newContact)) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity("Can't add self to contact list.")
@@ -210,21 +210,20 @@ public class Service {
         }
         User user = StorageProviderMongoDB.getUserProfile(pseudonym);
         User contact = StorageProviderMongoDB.getUserProfile(newContact);
-        if(user == null || contact == null) {
+        if (user == null || contact == null) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity("The user doesn't exist.")
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
         }
-        if(user.addContact(contact) == null) {
+        if (user.addContact(contact) == null) {
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .entity("The user cannot be added to the contact list.")
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .build();
-        }
-        else {
+        } else {
             return Response
                     .status(Response.Status.OK)
                     .header("Access-Control-Allow-Origin", corsOrigin)
