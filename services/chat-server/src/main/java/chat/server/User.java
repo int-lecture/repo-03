@@ -52,8 +52,8 @@ public class User {
      * @return The sent message with the correct sequence number.
      */
     public Message sendMessage(Message msg) {
-        int seq = StorageProviderMongoDB.addMessage(this,msg);
-        if (seq == -1){
+        int seq = StorageProviderMongoDB.addMessage(this, msg);
+        if (seq == -1) {
             return null;
         }
 
@@ -71,8 +71,8 @@ public class User {
      * parameter.
      */
     public List<Message> receiveMessages(int sequenceNumber) {
-        List<Message> recvMsgs = StorageProviderMongoDB.getMessages(this,sequenceNumber);
-        if (recvMsgs == null){
+        List<Message> recvMsgs = StorageProviderMongoDB.getMessages(this, sequenceNumber);
+        if (recvMsgs == null) {
             return null;
         }
 
@@ -80,7 +80,7 @@ public class User {
         // messages from storage that
         // the client confirmed as received.
         if (User.removeOldMessages && sequenceNumber > 0) {
-            StorageProviderMongoDB.removeMessages(this,sequenceNumber);
+            StorageProviderMongoDB.removeMessages(this, sequenceNumber);
         }
 
         return recvMsgs;
@@ -115,19 +115,24 @@ public class User {
                     .type(MediaType.APPLICATION_JSON).post(String.class, obj.toString());
             client.destroy();
         } catch (RuntimeException e) {
+            System.out.printf("Failed to authenticate user %s with token %s caused by : ", this.getName(), token);
+            e.printStackTrace();
             return false;
         }
 
-            JSONObject jo = new JSONObject(response);
-            if (jo.get("success").equals("true")) {
-                try {
-                    this.expireDate = sdf.parse(jo.getString("expire-date"));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                return true;
+        JSONObject jo = new JSONObject(response);
+        if (jo.get("success").equals("true")) {
+            try {
+                this.expireDate = sdf.parse(jo.getString("expire-date"));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-
+            return true;
+        }
+        System.out.printf(
+                "Failed to authenticate user %s with token %s. Auth server response did not indicate success",
+                this.getName(),
+                token);
         return false;
     }
 
