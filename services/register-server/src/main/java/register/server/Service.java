@@ -156,7 +156,7 @@ public class Service {
                     .header("Access-Control-Allow-Origin", corsOrigin)
                     .entity(obj.toString()).build();
         } else {
-            System.out.printf("[/profile] User sent invalid token %s to authenticate.\n", token);
+            System.out.printf("[/profile] User %s sent invalid token %s to authenticate.\n", pseudonym, token);
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .header("Access-Control-Allow-Origin", corsOrigin)

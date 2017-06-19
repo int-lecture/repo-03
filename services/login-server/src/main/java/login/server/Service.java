@@ -125,7 +125,7 @@ public class Service {
             Calendar expireDate = user.GetTokenExpireDate();
             sdf.setTimeZone(expireDate.getTimeZone());
             StorageProviderMongoDB.saveToken(user.GetToken(), sdf.format(expireDate.getTime()), user.pseudonym);
-            System.out.printf("user %s : %s\n",pseudonym,user.GetToken());
+            System.out.printf("user %s : %s\n",user.pseudonym,user.GetToken());
             return Response
                     .status(Response.Status.OK)
                     .header("Access-Control-Allow-Origin", corsOrigin)
