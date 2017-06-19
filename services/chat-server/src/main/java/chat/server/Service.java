@@ -38,7 +38,7 @@ public class Service {
     public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
     private static SelectorThread threadSelector = null;
 
-    private final static Map<String,User> authCache = new ConcurrentHashMap<>();
+    private final static Map<String, User> authCache = new ConcurrentHashMap<>();
     private static boolean useAuthCaching;
 
     public static void main(String[] args) throws Exception {
@@ -171,7 +171,7 @@ public class Service {
         MultivaluedMap<String, String> map = header.getRequestHeaders();
         String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
         JSONArray jsonMsgs = new JSONArray();
-        User receiver = authenticateUser(map.get("Authorization").get(0),userID);
+        User receiver = authenticateUser(map.get("Authorization").get(0), userID);
         if (receiver != null) {
             List<Message> newMsgs = receiver.receiveMessages(sequenceNumber);
             if (newMsgs == null) {
@@ -207,6 +207,7 @@ public class Service {
                 }
             }
         } else {
+            System.out.printf("Could not authenticate user %s with token %s", userID, map.get("Authorization").get(0));
             return Response
                     .status(Response.Status.UNAUTHORIZED)
                     .header("Access-Control-Allow-Origin", corsOrigin)
@@ -253,7 +254,7 @@ public class Service {
     private static User authenticateUser(String token, String pseudonym) {
         User cachedUser = authCache.get(pseudonym);
         if (cachedUser != null) {
-            if (cachedUser.authenticateUser(token)){
+            if (cachedUser.authenticateUser(token)) {
                 return cachedUser;
             } else {
                 // Failed to authenticate this user, token was definitely expired.
@@ -263,7 +264,7 @@ public class Service {
         } else {
             User user = new User(pseudonym);
             if (user.authenticateUser(token)) {
-                authCache.put(pseudonym,user);
+                authCache.put(pseudonym, user);
                 return user;
             }
         }

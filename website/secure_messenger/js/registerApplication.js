@@ -16,6 +16,13 @@ function startConnection() {
 	});
 }
 
+function showSettings() {
+	$(".card-container2").css({
+		"left": "0",
+		"top": "0"
+	});
+};
+
 //checks if both passwords are the same then trys to register the user.
 function checkPw() {
 	var pw1 = $("#pw1").val();

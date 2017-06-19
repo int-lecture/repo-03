@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Login</title>
-	 <link href="css/chatApplication.css" rel="stylesheet">
-   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <link href="css/chatApplication.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/loginApplication.js"></script>
     <script src="js/config.js"></script>
 
-   
-<!--
+
+    <!--
     you can substitue the span of reauth email for a input with the email and
     include the remember me checkbox
     -->
-  </head>
-  <body>
- <div class="container">
+</head>
+
+<body>
+    <div class="container">
         <div class="card card-container">
             <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
             <a href="http://141.19.142.57"><img id="profile-img" class="profile-img-card" src="img/logo.svg"/></a>
@@ -31,12 +33,33 @@
                 <input type="password" id="inputPassword" class="form-control" placeholder="Passwort" required>
                 <button class="btn btn-lg btn-primary btn-block btn-signin" id="login" type="submit">Einloggen</button>
                 <p id="error"></p>
-            </form><!-- /form -->
-            
-            <button class="btn btn-lg btn-primary btn-block btn-signin" id="backToRegister" type="button"  onclick="window.location.replace('http://141.19.142.57/secure_messenger/registerApplication.html')";>Registrieren</button>
-                      
-        </div><!-- /card-container -->
-    </div><!-- /container -->
+            </form>
+            <!-- /form -->
 
-  </body>
+            <button class="btn btn-lg btn-primary btn-block btn-signin" id="backToRegister" type="button" onclick="window.location.replace('http://141.19.142.57/secure_messenger/registerApplication.html')"
+                ;>Registrieren</button>
+            <button class="btn btn-lg btn-primary btn-block btn-signin" id="settings" type="button" onclick='showSettings()'>Einstellungen</button>
+
+        </div>
+        <!-- /card-container -->
+        <div class="card card-container2">
+            <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+            <a href="http://141.19.142.57"><img id="profile-img" class="profile-img-card" src="img/settings.png"/></a>
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin" onsubmit='saveConfig();'>
+                <span id="reauth-email" class="reauth-email"></span> IpLogin
+                <input type="text" id="inputIpLogin" class="form-control" placeholder="IpLogin" value="http://141.19.142.57:5001">                IpChat
+                <input type="text" id="inputIpChat" class="form-control" placeholder="IpChat" value="http://141.19.142.57:5000">                IpRegister
+                <input type="text" id="inputIpRegister" class="form-control" placeholder="IpRegister" value="http://141.19.142.57:5002">
+                <button class="btn btn-lg btn-primary btn-block btn-signin" id="settings" type="button" onclick='saveConfig()'>Einstellungen speichern</button>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" id="settings" type="button" onclick='resetConfig()'>Einstellungen zurücksetzen</button>
+
+                <p id="error"></p>
+            </form>
+            <!-- /form -->
+        </div>
+    </div>
+    <!-- /container -->
+</body>
+
 </html>
