@@ -236,10 +236,25 @@ function sendSecureMessenger(zustand) {
         }
         if (command == "!zeit") {
             var datum = new Date();
-            var ausgabeDatum= "Heute ist "+datum.getDay+" der "+datum.getDate+" "+datum.getMonth+" "+datum.getYear+" und wir haben "+datum.getHours+":"+datum.getMinutes+" uhr."
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + ausgabeDatum + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+            var ausgabeDatum = "Heute ist " + datum.getDay + " der " + datum.getDate + " " + datum.getMonth + " " + datum.getYear + " und wir haben " + datum.getHours + ":" + datum.getMinutes + " uhr."
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeDatum + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
         }
-        if(command==)
+        if (command == "") {
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Ich kann mit leeren Strings nichts anfangen da ein leerer String die Länge 0 hat und 0 modulo 3, 0 ergibt und jeder weiß 3=Illuminati</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+
+        }
+        if (command == "!zitat") {
+            var ausgabeZitat = "Johann Wolfgang von Goethe: Mit dem Wissen wächst auch der Zweifel";
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabeZitat + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
+        if (command == "!trump") {
+            var ausgabeTrump = "Ich könnte auf der 5th Avenue stehen und jemanden erschießen und würde keine Wähler verlieren";
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Donald Trump: " + ausgabeTrump + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
+        if (command == "!wetter") {
+            var ausgabeWetter ="Wetterfrosch: Heute wird es zwischen 17 und 28 Grad warm und die Regenwahrscheinlichkeit liegt bei 20%";
+            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Datum: " + ausgabeWetter + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        }
     }
     if (zustand == "start") {
         $("#conversation").empty();
