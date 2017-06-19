@@ -48,7 +48,7 @@ function loadContacts() {
 //displays all contacts with the right values.
 function showContacts() {
     $(".compose-sideBar").empty();
-    contact.sort(function (a, b) {
+    contact[0].sort(function (a, b) {
         return (a < b) ? -1 : ((a > b) ? 1 : 0);
     });
     $.each(contact[0], function (index, value) {

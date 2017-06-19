@@ -233,40 +233,35 @@ function sendSecureMessenger(zustand) {
     if (zustand == "running") {
         var command = $("#comment").val();
         if (command == "!hilfe") {
-            var ausgabeHilfe="Klicke auf eine empfangene Nachricht um auf diese zu antworten, oder füge über das Kontakt symbol einen Neuen Kontakt hinzu und starte durch drücken auf diesen Kontakt einen chat mit dieser Person.";
+            var ausgabeHilfe = "Klicke auf eine empfangene Nachricht um auf diese zu antworten, oder füge über das Kontakt symbol einen Neuen Kontakt hinzu und starte durch drücken auf diesen Kontakt einen chat mit dieser Person.";
             getMessageSecureMessenger(ausgabeHilfe);
-    }
+        }
         if (command == "!zeit") {
             var datum = new Date();
-            var days={Montag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag, Sonntag};
-            var months={Januar, Februar, März, April, Mai, Juni, Juli, August, September, Oktober, November, Dezember};
-            var ausgabeDatum = "Heute ist " + days[datum.getDay()] + " der " + datum.getDate() + " " + months[datum.getMonth()] + " " + datum.getYear() + " und wir haben " + datum.getHours() + ":" + datum.getMinutes() + " uhr."
+            var days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+            var months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+            var ausgabeDatum = "Heute ist " + days[datum.getDay()] + " der " + datum.getDate() + " " + months[datum.getMonth()] + " 2017 und wir haben " + datum.getHours() + ":" + datum.getMinutes() + " uhr."
             getMessageSecureMessenger(ausgabeDatum);
-    }
-        if (command == "") {
-            var ausgabeNichts="Ich kann mit leeren Strings nichts anfangen da ein leerer String die Länge 0 hat und 0 modulo 3, 0 ergibt und jeder weiß 3=Illuminati";
-            getMessageSecureMessenger(ausgabeNichts);
         }
         if (command == "!zitat") {
             var ausgabeZitat = "Johann Wolfgang von Goethe: Mit dem Wissen wächst auch der Zweifel";
             getMessageSecureMessenger(ausgabeZitat);
-    }
+        }
         if (command == "!trump") {
             var ausgabeTrump = "Ich könnte auf der 5th Avenue stehen und jemanden erschießen und würde keine Wähler verlieren";
             getMessageSecureMessenger(ausgabeTrump);
-    }
+        }
         if (command == "!wetter") {
             var ausgabeWetter = "Wetterfrosch: Heute wird es zwischen 17 und 28 Grad warm und die Regenwahrscheinlichkeit liegt bei 20%";
             getMessageSecureMessenger(ausgabeWetter);
-    }
+        }
         if (command == "!jodel") {
             var ausgabeJodel = "Ich wünsche mein Bauch wäre genau so flach wie meine Witze Score:129";
             getMessageSecureMessenger(ausgabeJodel);
-     }
+        }
         if (command == "!news") {
-            var ausgabeNews = "London: Fahrzeug fährt in Gruppe Muslime - mindestens ein Toter";
-            getMessageSecureMessenger(ausgabeNews);
-    }
+            news();
+        }
         if (command == "!primetime") {
             var ausgabePrimetime = "Heute um 20:15 kommt: <br />Prosieben: Transformers <br />Sat1: irgendein Film vom Schweiger <br />RTL: Wer wird Millionär ";
             getMessageSecureMessenger(ausgabePrimetime);
@@ -282,8 +277,28 @@ function sendSecureMessenger(zustand) {
     }, 0);
 }
 
-function getMessageSecureMessenger(ausgabe){
-                $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabe + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+function getMessageSecureMessenger(ausgabe) {
+    $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabe + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+}
+
+function news(){
+    var ausgabeNews;
+    var apiKey="bda04a5216a04482b9f16510be950218";
+    var URL = "https://newsapi.org/v1/articles?source=die-zeit&sortBy=latest&apiKey="+apiKey;
+        $.ajax({
+            url: URL,
+            type: 'GET',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            success: function (result, textStatus, xhr) {
+               ausgabeNews = result.articles[0].description;
+               ausgabeNews= ausgabeNews + "</br><a href='http://newsapi.org'>powered by : newsapi.org<a/>" 
+               getMessageSecureMessenger(ausgabeNews);
+            },
+            error: function (xhr, a, b) {
+                alert(xhr.status);
+            }
+        });
 }
 
 
