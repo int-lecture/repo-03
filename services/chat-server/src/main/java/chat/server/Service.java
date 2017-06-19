@@ -207,7 +207,8 @@ public class Service {
                 }
             }
         } else {
-            System.out.printf("Could not authenticate user %s with token %s", userID, map.get("Authorization").get(0));
+            System.out.println("Test");
+            System.out.printf("Could not authenticate user %s with token %s\n", userID, map.get("Authorization").get(0));
             return Response
                     .status(Response.Status.UNAUTHORIZED)
                     .header("Access-Control-Allow-Origin", corsOrigin)
