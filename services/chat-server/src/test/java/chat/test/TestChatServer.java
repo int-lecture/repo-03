@@ -100,7 +100,7 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(201)
-                .body("sequence", equalTo(3))
+                .body("sequence", equalTo(1))
                 .body("date", equalTo("2017-04-26T11:30:30+0200"))
                 .headers(expectedCORSHeaders);
         // testing a wrong token
@@ -274,7 +274,7 @@ public class TestChatServer {
 
                     .then()
                     .statusCode(200)
-                    .body("size()", is(1))
+                    .body("size()", is(2))
                     .body("[0].to", is("tom"))
                     .body("[0].from", is("bob"))
                     .body("[0].text", is("Test3"))
