@@ -21,8 +21,6 @@ import com.sun.jersey.api.client.Client;
 public class User {
 
     private static final boolean removeOldMessages = true;
-
-    private static final String url = "http://localhost:5001";
     private String name;
 
     /**
