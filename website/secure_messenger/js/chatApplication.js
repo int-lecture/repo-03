@@ -75,7 +75,7 @@ function openChat(partner) {
         sendSecureMessenger("start");
         document.getElementById("partner").innerHTML = partner;
     } else {
-        $("#receiver-picture").attr("src", "css/profilePic.png");
+        $("#receiver-picture").attr("src", "img/profilePic.png");
         this.partner = partner;
         document.getElementById("partner").innerHTML = partner;
         if (typeof messages == 'undefined') {
@@ -181,7 +181,7 @@ function checkCurrentChat(partner, chatName) {
         $("#" + chatName + "-messagePrev").html(partner.from + ": " + partner.text.substr(0, 10) + "...");
         $("#" + chatName + "-messagePrevDate").html(partner.date.substr(11, 5));
     } else {
-        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='css/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + chatName + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + chatName + "<br/><p class='messagePrev' id='" + chatName + "-messagePrev'>" + partner.from + ": " + partner.text.substr(0, 10) + "...</p>" + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right' id='" + partner.from + "-messagePrevDate'>" + partner.date.substr(11, 5) + "</span></div></div></div></div>");
+        $(".sideBar").append("<div class='row sideBar-body' ><div class='col-sm-3 col-xs-3 sideBar-avatar'><div class='avatar-icon'><img src='img/profilePic.png'></div></div><div class='col-sm-9 col-xs-9 sideBar-main' id='" + chatName + "'><div class='row'><div class='col-sm-8 col-xs-8 sideBar-name'><span class='name-meta' id='contacts'>" + chatName + "<br/><p class='messagePrev' id='" + chatName + "-messagePrev'>" + partner.from + ": " + partner.text.substr(0, 10) + "...</p>" + "</span></div><div class='col-sm-4 col-xs-4 pull-right sideBar-time'><span class='time-meta pull-right' id='" + partner.from + "-messagePrevDate'>" + partner.date.substr(11, 5) + "</span></div></div></div></div>");
         $("#" + chatName).click(function () {
             openChat($(this).attr('id'));
             $(".side-two").css({
