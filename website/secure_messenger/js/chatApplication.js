@@ -165,7 +165,9 @@ function getMessages() {
 function sortMessages() {
     chatMessages = sentMessages.concat(messages);
     chatMessages.sort(function (a, b) {
-        return (a.date < b.date) ? -1 : ((a.date > b.date) ? 1 : 0);
+        var dateA = moment(a.date);
+        var dateB = moment(b.date);
+        return (dateA.isBefore(dateB)) ? -1 : (dateA.isAfter(dateB) ? 1 : 0);
     });
 }
 
@@ -208,7 +210,7 @@ function showMessages() {
             // continue
             return true;
         }
-       
+
         var date = moment(value.date);
         var msgBody = $("<div class='row message-body'></div>");
         var msgText = $("<span></span>");
@@ -217,20 +219,20 @@ function showMessages() {
         msgTime.text(date.format("HH:mm"));
         var msgs = $("<div class='message-text' id='messages'></div>");
         msgs.append(msgText).append(msgTime);
-        
-        if (value.from == partner && value.to == pseudonym) {
-                var mainRecv = $("<div class='col-sm-12 message-main-receiver'/>").appendTo(msgBody);
-                var recv = $("<div class='receiver'/>").appendTo(mainRecv);
-                recv.append(msgs)
 
-                conv.append(msgBody);
+        if (value.from == partner && value.to == pseudonym) {
+            var mainRecv = $("<div class='col-sm-12 message-main-receiver'/>").appendTo(msgBody);
+            var recv = $("<div class='receiver'/>").appendTo(mainRecv);
+            recv.append(msgs)
+
+            conv.append(msgBody);
         }
         if (value.from == pseudonym && value.to == partner) {
-                var mainSend = $("<div class='col-sm-12 message-main-sender'/>").appendTo(msgBody);
-                var send = $("<div class='sender'/>").appendTo(mainSend);
-                send.append(msgs)
+            var mainSend = $("<div class='col-sm-12 message-main-sender'/>").appendTo(msgBody);
+            var send = $("<div class='sender'/>").appendTo(mainSend);
+            send.append(msgs)
 
-                conv.append(msgBody);
+            conv.append(msgBody);
         }
     });
 
