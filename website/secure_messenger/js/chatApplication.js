@@ -175,6 +175,7 @@ function checkCurrentChat(partner, chatName) {
     $.each(currenChatPartner, function (index, value) {
         if (chatName == value) {
             isCurrent = true;
+            return true;
         }
     })
     if (isCurrent) {
@@ -195,22 +196,45 @@ function checkCurrentChat(partner, chatName) {
 //displays all messages in the correct field with the correct values.
 function showMessages() {
     sortMessages();
-    $("#conversation").empty();
+    var conv = $("#conversation");
+    conv.empty();
     $.each(chatMessages, function (index, value) {
         if (pseudonym == value.from) {
             checkCurrentChat(value, value.to);
         }
-        if (pseudonym == value.to) {
+        else if (pseudonym == value.to) {
             checkCurrentChat(value, value.from);
+        } else {
+            // continue
+            return true;
         }
+       
+        var date = moment(value.date);
+        var msgBody = $("<div class='row message-body'></div>");
+        var msgText = $("<span></span>");
+        msgText.text(value.text);
+        var msgTime = $("<span class='message-time pull-right'></span>");
+        msgTime.text(date.format("HH:mm"));
+        var msgs = $("<div class='message-text' id='messages'></div>");
+        msgs.append(msgText).append(msgTime);
+        
         if (value.from == partner && value.to == pseudonym) {
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + value.text + "</div><span class='message-time pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
+                var mainRecv = $("<div class='col-sm-12 message-main-receiver'/>").appendTo(msgBody);
+                var recv = $("<div class='receiver'/>").appendTo(mainRecv);
+                recv.append(msgs)
+
+                conv.append(msgBody);
         }
         if (value.from == pseudonym && value.to == partner) {
-            $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-sender'><div class='sender'><div class='message-text' id='messages'>" + value.text + "</div><span class='message-time pull-right'>" + value.date.substr(11, 5) + "</span></div></div></div></div>");
+                var mainSend = $("<div class='col-sm-12 message-main-sender'/>").appendTo(msgBody);
+                var send = $("<div class='sender'/>").appendTo(mainSend);
+                send.append(msgs)
+
+                conv.append(msgBody);
         }
     });
-    document.getElementById("conversation").scrollTop = document.getElementById("conversation").scrollHeight;
+
+    conv.scrollTop = conv.scrollHeight;
 }
 
 //reads our cookie and saves all components into the correct variables.
@@ -281,24 +305,24 @@ function getMessageSecureMessenger(ausgabe) {
     $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>" + ausgabe + "</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
 }
 
-function news(){
+function news() {
     var ausgabeNews;
-    var apiKey="bda04a5216a04482b9f16510be950218";
-    var URL = "https://newsapi.org/v1/articles?source=die-zeit&sortBy=latest&apiKey="+apiKey;
-        $.ajax({
-            url: URL,
-            type: 'GET',
-            contentType: "application/json; charset=utf-8",
-            dataType: 'json',
-            success: function (result, textStatus, xhr) {
-               ausgabeNews = result.articles[0].description;
-               ausgabeNews= ausgabeNews + "</br><a href='http://newsapi.org'>powered by : newsapi.org<a/>" 
-               getMessageSecureMessenger(ausgabeNews);
-            },
-            error: function (xhr, a, b) {
-                alert(xhr.status);
-            }
-        });
+    var apiKey = "bda04a5216a04482b9f16510be950218";
+    var URL = "https://newsapi.org/v1/articles?source=die-zeit&sortBy=latest&apiKey=" + apiKey;
+    $.ajax({
+        url: URL,
+        type: 'GET',
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        success: function (result, textStatus, xhr) {
+            ausgabeNews = result.articles[0].description;
+            ausgabeNews = ausgabeNews + "</br><a href='http://newsapi.org'>powered by : newsapi.org<a/>"
+            getMessageSecureMessenger(ausgabeNews);
+        },
+        error: function (xhr, a, b) {
+            alert(xhr.status);
+        }
+    });
 }
 
 
