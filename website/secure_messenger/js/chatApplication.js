@@ -68,6 +68,8 @@ var sequenceNumber = 0;
 var messages = [];
 var sentMessages = [];
 var chatMessages = [];
+var zitate = ["Nichts ist schrecklicher als ein Lehrer, der nicht mehr weiß als das, was die Schüler wissen sollen. </br>Johann Wolgang von Goethe", "Das ärgerliche am Ärger ist, dass man sich schadet, ohne anderen zu nützen. </br> Kurt Tucholsky", "Wer immer tut, was er schon kann, bleibt immer das, was er schon ist.</br>Henry Ford", "Wer nicht kann, was er will, muss wollen, was er kann. Denn das zu wollen, was er nicht kann, wäre töricht.</br>Leonardo da Vinci", "Gib jedem Tag die Chance, der schönste deines Lebens zu werden. </br>Mark Twain", "Wenn du die Absicht hast, dich zu erneuern, tu es jeden Tag. </br>Konfuzius", "Sei du selbst die Veränderung, die du dir wünschst für diese Welt.</br>Mahatma Ghandi", "Der Schwache kann nicht verzeihen. Verzeihen ist eine Eigenschaft des Starken. </br>Mahatma Ghandi", "Halte dich fern von denjenigen, die versuchen, deinen Ehrgeiz herabzusetzen. Kleingeister tun das immer, aber die wirklich Großen geben dir das Gefühl, dass auch du selbst groß werden kannst.</br>Mark Twain", "Suche nicht nach Fehlern, suche nach Lösungen.</br>Henry Ford", "Mitleid bekommt man geschenkt, Neid muss man sich verdienen.</br>Robert Lembke", "Es ist besser, sich mit Leuten abzugeben, die besser sind als man selber. Wähle dir einen Kompagnon, dessen Verhalten besser ist als deines und du wirst dich ihm anpassen. </br>Warren Buffett", "Habe keine Angst, das Gute aufzugeben, um das Großartige zu erreichen.</br>John D. Rockefeller", "Menschen mit einer neuen Idee gelten so lange als Spinner, bis sich die Sache durchgesetzt hat.</br>Mark Twain", "Zuerst ignorieren sie dich, dann lachen sie über dich, dann bekämpfen sie dich und dann gewinnst du. </br>Mahatma Ghandi", "Man muss das Unmögliche versuchen, um das Mögliche zu erreichen. </br>Hermann Hesse", "Du musst bereit sein die Dinge zu tun, die andere niemals tun werden, um die Dinge zu haben, die andere niemals haben werden.</br>Les Brown", "Einfach machen. </br>Alexander Pavel", "Es ist sinnlos zu sagen: Wir tun unser Bestes. Es muss dir gelingen, das zu tun, was erforderlich ist.</br>Winston Churchill", "Die Kunst ist, einmal mehr aufzustehen, als man umgeworfen wird.</br>Winston Churchill", "Wer einen Fehler gemacht hat und ihn nicht korrigiert, begeht einen zweiten.</br>Konfuzius"];
+var trumpZitate = ["Ein Mann wurde in eine Pariser Polizeistation erschossen. Gerade wurde die höchste Terrorstufe ausgerufen. Deutschland ist ein großes Verbrechens-Chaos. Werdet schlauer!", "Es schneit und friert in New York. Wir brauchen globale Erwärmung", "Hindert Ebola-Patienten daran in die USA zu kommen. Behandelt sie, auf dem höchsten Niveau, woanders. Die Vereinigten Staaten haben genug Probleme.", "Ich werde eine große Mauer bauen - und niemand baut Mauern besser als ich, glauben Sie mir - und ich baue sie sehr kostengünstig. Ich werde eine große, große Mauer an unserer südlichen Grenze bauen und ich werde Mexiko für diese Mauer bezahlen lassen.", "Er ist kein Kriegsheld. Er war ein Kriegsheld, weil er gefangen genommen wurde. Ich mag Leute, die nicht gefangen genommen wurden.", "Wenn Ivanka nicht meine Tochter wäre, würde ich sie wahrscheinlich daten.", "Die Globale Erwärmung wurde von und für die Chinesen erfunden, um die US-Produktion wettbewerbsunfähig zu machen.", "Wenn Mexiko seine Leute schickt, dann schicken sie nicht die Besten. Sie schicken Leute mit vielen Problemen und die bringen diese Probleme zu uns. Sie bringen Drogen. Sie bringen Verbrechen. Sie sind Vergewaltiger... und manche, nehme ich an, sind gute Menschen.", "Belgien ist eine wunderschöne Stadt und ein herrlicher Ort - großartige Gebäude. Ich war mal dort, vor vielen, vielen Jahren.", ""];
 
 //opens the chat with the given partner, loads the messages and shows them.
 function openChat(partner) {
@@ -95,11 +97,12 @@ function getLegalDate() {
 
 //sends the message from the input field.
 function send() {
-    if (document.getElementById("partner").innerHTML == "Secure Messenger") {
+    if ($("#comment").val().charAt(0)=="!") {
         sendSecureMessenger("running");
         $("#comment").val("");
         document.getElementById("conversation").scrollTop = document.getElementById("conversation").scrollHeight;
-    } else if ($("#comment").val() == "") {
+    }
+    else if ($("#comment").val() == "") {
     } else {
         readCookie();
         var URL = ipChat + "/send/";
@@ -270,33 +273,23 @@ function sendSecureMessenger(zustand) {
             getMessageSecureMessenger(ausgabeDatum);
         }
         if (command == "!zitat") {
-            var ausgabeZitat = "Johann Wolfgang von Goethe: Mit dem Wissen wächst auch der Zweifel";
+            var randomnumber = Math.floor(Math.random() * (zitate.length));
+            var ausgabeZitat = zitate[randomnumber];
             getMessageSecureMessenger(ausgabeZitat);
         }
         if (command == "!trump") {
-            var ausgabeTrump = "Ich könnte auf der 5th Avenue stehen und jemanden erschießen und würde keine Wähler verlieren";
+            var randomnumber = Math.floor(Math.random() * (trumpZitate.length));
+            var ausgabeTrump = trumpZitate[randomnumber];
             getMessageSecureMessenger(ausgabeTrump);
-        }
-        if (command == "!wetter") {
-            var ausgabeWetter = "Wetterfrosch: Heute wird es zwischen 17 und 28 Grad warm und die Regenwahrscheinlichkeit liegt bei 20%";
-            getMessageSecureMessenger(ausgabeWetter);
-        }
-        if (command == "!jodel") {
-            var ausgabeJodel = "Ich wünsche mein Bauch wäre genau so flach wie meine Witze Score:129";
-            getMessageSecureMessenger(ausgabeJodel);
         }
         if (command == "!news") {
             news();
-        }
-        if (command == "!primetime") {
-            var ausgabePrimetime = "Heute um 20:15 kommt: <br />Prosieben: Transformers <br />Sat1: irgendein Film vom Schweiger <br />RTL: Wer wird Millionär ";
-            getMessageSecureMessenger(ausgabePrimetime);
         }
     }
     if (zustand == "start") {
         $("#conversation").empty();
         $("#receiver-picture").attr("src", "img/chatbot.png");
-        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger, wähle eine der folgenen Optionen:</br>!hilfe</br>!zeit</br>!zitat</br>!trump</br>!news</br>!primetime</br>!jodel</br>!wetter</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger, wähle eine der folgenen Optionen:</br>!hilfe</br>!zeit</br>!zitat</br>!trump</br>!news</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
     }
     window.setTimeout(function () {
         $("#comment").focus();
@@ -317,7 +310,8 @@ function news() {
         contentType: "application/json; charset=utf-8",
         dataType: 'json',
         success: function (result, textStatus, xhr) {
-            ausgabeNews = result.articles[0].description;
+            var randomnumber = Math.floor(Math.random() * (result.articles.length - 1 + 1));
+            ausgabeNews = result.articles[randomnumber].description;
             ausgabeNews = ausgabeNews + "</br><a href='http://newsapi.org'>powered by : newsapi.org<a/>"
             getMessageSecureMessenger(ausgabeNews);
         },
