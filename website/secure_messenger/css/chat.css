@@ -431,6 +431,16 @@ body {
   display: inline-block;
   word-wrap: break-word;
 }
+.bot {
+  width: auto !important;
+  padding: 4px 10px 7px !important;
+  border-radius: 10px 10px 10px 0;
+  background: #54CAFF;
+  font-size: 12px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  word-wrap: break-word;
+  display: inline-block;
+}
 
 
 /*Reply*/
