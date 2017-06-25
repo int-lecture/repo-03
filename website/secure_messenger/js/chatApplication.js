@@ -290,9 +290,7 @@ function sendSecureMessenger(zustand) {
         $("#conversation").empty();
         $("#receiver-picture").attr("src", "img/chatbot.png");
 
-        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='bot'><div class='message-text' id='messages'>Hey willkommen beim Secure Messenger, wähle eine der folgenen Optionen:</br>!hilfe</br>!zeit</br>!zitat</br>!trump</br>!news</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
-
-        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='receiver'><div class='message-text' id='messages'>Herzlich willkommen beim Secure Messenger! </br> Wähle eine der folgenen Optionen:</br>!hilfe</br>!zeit</br>!zitat</br>!trump</br>!news</br>!primetime</br>!jodel</br>!wetter</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
+        $("#conversation").append("<div class='row message-body'><div class='col-sm-12 message-main-receiver'><div class='bot'><div class='message-text' id='messages'>Herzlich willkommen beim Secure Messenger! </br> Wähle eine der folgenen Optionen:</br>!hilfe</br>!zeit</br>!zitat</br>!trump</br>!news</div><span class='message-time pull-right'>~42~</span></div></div></div></div>");
     }
     window.setTimeout(function () {
         $("#comment").focus();
