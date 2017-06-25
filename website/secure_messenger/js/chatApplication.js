@@ -75,6 +75,7 @@ var trumpZitate = ["Ein Mann wurde in eine Pariser Polizeistation erschossen. Ge
 function openChat(partner) {
     if (partner == "Secure Messenger") {
         sendSecureMessenger("start");
+        this.partner = partner;
         document.getElementById("partner").innerHTML = partner;
     } else {
         $("#receiver-picture").attr("src", "img/profilePic.png");
@@ -97,10 +98,13 @@ function getLegalDate() {
 
 //sends the message from the input field.
 function send() {
-    if ($("#comment").val().charAt(0)=="!") {
+    if ($("#comment").val().charAt(0) == "!") {
         sendSecureMessenger("running");
         $("#comment").val("");
         document.getElementById("conversation").scrollTop = document.getElementById("conversation").scrollHeight;
+    }
+    else if (partner == "Secure Messenger") {
+        $("#comment").val("");
     }
     else if ($("#comment").val() == "") {
     } else {
