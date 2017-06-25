@@ -205,8 +205,10 @@ function checkCurrentChat(partner, chatName) {
 //displays all messages in the correct field with the correct values.
 function showMessages() {
     sortMessages();
-    var conv = $("#conversation");
-    conv.empty();
+    if (partner != "Secure Messenger") {
+        var conv = $("#conversation");
+        conv.empty();
+    }
     $.each(chatMessages, function (index, value) {
         if (pseudonym == value.from) {
             checkCurrentChat(value, value.to);
