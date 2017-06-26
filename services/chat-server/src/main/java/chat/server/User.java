@@ -113,8 +113,7 @@ public class User {
                     .type(MediaType.APPLICATION_JSON).post(String.class, obj.toString());
             client.destroy();
         } catch (RuntimeException e) {
-            System.out.printf("Failed to authenticate user %s with token %s caused by : ", this.getName(), token);
-            e.printStackTrace();
+            System.out.printf("Failed to authenticate user %s with token %s caused by : %s", this.getName(), token, e.getMessage());
             return false;
         }
 
