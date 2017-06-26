@@ -313,6 +313,36 @@ public class TestChatServer {
 
                 .then()
                 .statusCode(204);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", " Token" + tokenTom)
+
+                .when()
+                .get("/messages/tom/0")
+
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", " Token " + tokenTom)
+
+                .when()
+                .get("/messages/tom/0")
+
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Token " + tokenTom)
+
+                .when()
+                .get("/messages/tom/0")
+
+                .then()
+                .statusCode(204);
     }
 
     @Test

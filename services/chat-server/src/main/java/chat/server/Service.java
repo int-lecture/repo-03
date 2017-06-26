@@ -180,7 +180,10 @@ public class Service {
             MultivaluedMap<String, String> map = header.getRequestHeaders();
             String corsOrigin = Config.getSettingValue(Config.corsAllowOrigin);
             JSONArray jsonMsgs = new JSONArray();
-            User receiver = authenticateUser(map.get("Authorization").get(0), userID);
+            String token = map.get("Authorization").get(0).trim();
+            token = token.startsWith("Token") ? token.substring("Token".length()) : token;
+            token = token.trim();
+            User receiver = authenticateUser(token, userID);
             if (receiver != null) {
                 List<Message> newMsgs = receiver.receiveMessages(sequenceNumber);
                 if (newMsgs == null) {
