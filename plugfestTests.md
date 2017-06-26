@@ -20,11 +20,12 @@
 
 ### Tests FE(4) -> BE(3)
 * Mit andere IP geht garnichts mehr da er dort das Javascript fehlt somit keine Tests möglich
+* 
 
 ### Tests FE(3) -> BE(4)
 * CORS Error für Login
 
-### Tests FE(3) -> BE(5)
+
 
 ## Gruppe 05
 ### Tests FE(5) -> BE(5)
@@ -44,4 +45,5 @@
 
 ### Tests FE(3) -> BE(5)
 * Unothaurized für /profile
-* immer 200 bei /messages
+* immer 200 bei /messages statt 204(da es keine messages gibt)
+* Not Acceptable bei Registrierung statt Im a Teapot
