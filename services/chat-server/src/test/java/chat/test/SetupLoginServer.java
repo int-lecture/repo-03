@@ -16,7 +16,8 @@ public class SetupLoginServer {
     public static void start() throws Exception {
         login.server.Config.init(new String[]{
                 "-mongoURI", "mongodb://testmongodb:27017/",
-                "-dbName", "msgTest"
+                "-dbName", "msgTest",
+                "-baseURI",  "http://localhost:5001/"
         });
 
 
@@ -33,7 +34,7 @@ public class SetupLoginServer {
                         new User("hans@web.de", "HalloIchbinHans", "hans")
                 }
         );
-        Service.startLoginServer(Config.getSettingValue(Config.loginURI));
+        Service.startLoginServer(login.server.Config.getSettingValue(login.server.Config.baseURI));
     }
 
     public static void stop() {
@@ -46,7 +47,7 @@ public class SetupLoginServer {
         obj.put("password", password);
 
         Client webClient = new Client();
-        String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "login")
+        String response = webClient.resource(Config.getSettingValue(Config.loginURI) + "/login")
                 .accept(MediaType.APPLICATION_JSON)
                 .type(MediaType.APPLICATION_JSON)
                 .post(String.class, obj.toString());
