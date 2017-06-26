@@ -42,7 +42,14 @@ public class Service {
     private static boolean useAuthCaching;
 
     public static void main(String[] args) throws Exception {
-        Config.init(args);
+        try {
+            Config.init(args);
+        } catch (Exception e) {
+            System.out.println("Invalid launch arguments!");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        
         try {
             StorageProviderMongoDB.init();
         } catch (StorageException e) {

@@ -34,6 +34,7 @@ public class Service {
             Config.init(args);
         } catch (Exception e) {
             System.out.println("Invalid launch arguments!");
+            e.printStackTrace();
             System.exit(-1);
         }
 

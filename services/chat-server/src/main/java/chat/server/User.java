@@ -87,7 +87,7 @@ public class User {
     /**
      * Method to authenticate a user with his token.
      *
-     * @return Returns true if the authentication was successfull and false if
+     * @return Returns true if the authentication was successful and false if
      * not
      */
     public boolean authenticateUser(String token) {
