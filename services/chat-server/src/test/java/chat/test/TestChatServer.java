@@ -28,7 +28,7 @@ public class TestChatServer {
         Config.init(new String[]{
                 "-mongoURI", "mongodb://testmongodb:27017/",
                 "-dbName", "msgTest",
-                "-loginURI", "http://localhost:5001/"
+                "-loginURI", "http://localhost:5001"
         });
         expectedCORSHeaders.put("Access-Control-Allow-Origin", "*");
 
