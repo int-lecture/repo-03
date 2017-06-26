@@ -143,7 +143,7 @@ function getMessages() {
         var URL = ipChat + "/messages/" + pseudonym + "/" + sequenceNumber;
         $.ajax({
             headers: {
-                "Authorization": token
+                "Authorization": " Token " + token
             },
             url: URL,
             type: 'GET',
