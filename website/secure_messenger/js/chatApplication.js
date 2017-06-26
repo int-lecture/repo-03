@@ -45,6 +45,7 @@ $(document).ready(function () {
     })
     $("#comment").on('keypress', function (e) {
         if (e.which == 13) {
+            e.preventDefault();
             $(this).attr("disabled", "disabled");
             send();
             $(this).removeAttr("disabled");
