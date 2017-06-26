@@ -24,6 +24,8 @@
 ### Tests FE(3) -> BE(4)
 * CORS Error für Login
 
+### Tests FE(3) -> BE(5)
+
 ## Gruppe 05
 ### Tests FE(5) -> BE(5)
 * Nachricht bleibt im Eingabefeld nach dem Absenden
@@ -38,3 +40,8 @@
 * Registrierte Accounts können nicht chatten
 
 ### Tests FE(5) -> BE(3)
+* alles funktioniert
+
+### Tests FE(3) -> BE(5)
+* Unothaurized für /profile
+* immer 200 bei /messages
